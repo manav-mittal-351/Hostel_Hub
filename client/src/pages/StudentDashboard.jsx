@@ -1,10 +1,8 @@
-import Navbar from "@/components/Navbar";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useContext, useState, useEffect } from "react";
 import AuthContext from "@/context/AuthContext";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
-import { BedDouble, CreditCard, AlertCircle, ArrowRight } from "lucide-react";
+import { BedDouble, CreditCard, AlertCircle, ArrowRight, FileText, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const StudentDashboard = () => {
@@ -38,72 +36,137 @@ const StudentDashboard = () => {
     }, [user]);
 
     return (
-        <div className="min-h-screen bg-background flex flex-col">
-            <Navbar />
-            <div className="h-28" />
-            <div className="container mx-auto p-6 space-y-8 pt-4 pb-12 max-w-7xl">
-                <div className="flex justify-between items-center glass-panel p-6 rounded-2xl">
-                    <div>
-                        <h1 className="text-3xl font-bold text-foreground text-glow">Welcome back, {user?.name}</h1>
-                        <p className="text-muted-foreground mt-1">Here's what's happening in your hostel today.</p>
+        <div className="space-y-10 animate-in fade-in duration-700">
+            <header>
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                    Welcome back, <span className="text-primary">{user?.name}</span>
+                </h1>
+                <p className="text-muted-foreground mt-1">Here's a quick overview of your hostel account.</p>
+            </header>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <StatsCard 
+                    title="Room Status" 
+                    value={user?.roomNumber || "Not Allotted"} 
+                    subtitle={user?.roomNumber ? "Allotment Active" : "Pending Allocation"}
+                    icon={BedDouble}
+                    color="primary"
+                    link="/room-allotment"
+                    linkText={user?.roomNumber ? "View Details" : "Book Room"}
+                />
+                <StatsCard 
+                    title="Fee Status" 
+                    value={user?.roomNumber ? "Paid" : "N/A"} 
+                    subtitle={user?.roomNumber ? "Monthly cycle active" : "No booking history"}
+                    icon={CreditCard}
+                    color="green"
+                    link="/payments"
+                    linkText="Payment History"
+                />
+                <StatsCard 
+                    title="Complaints" 
+                    value={complaintStats.active} 
+                    subtitle={`${complaintStats.resolved} Issues Resolved`}
+                    icon={AlertCircle}
+                    color="orange"
+                    link="/complaints"
+                    linkText="View Support"
+                />
+                <StatsCard 
+                    title="Gate Pass" 
+                    value="Active" 
+                    subtitle="Last used: yesterday"
+                    icon={FileText}
+                    color="blue"
+                    link="/gate-pass"
+                    linkText="Apply New"
+                />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <Card className="apple-card lg:col-span-2 overflow-hidden border-none shadow-sm bg-white">
+                    <CardHeader className="bg-muted/30 pb-4">
+                        <CardTitle className="text-lg flex items-center gap-2">
+                            <CheckCircle2 className="h-5 w-5 text-green-500" />
+                            Recent Activity
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                        <div className="divide-y divide-border">
+                            {[
+                                { title: "Room Payment Successful", date: "2 hours ago", type: "payment" },
+                                { title: "Complaint #124 Resolved", date: "Yesterday", type: "complaint" },
+                                { title: "Gate Pass Approved", date: "Oct 12, 2023", type: "gatepass" }
+                            ].map((activity, i) => (
+                                <div key={i} className="px-6 py-4 flex items-center justify-between hover:bg-muted/20 transition-colors">
+                                    <div className="flex gap-4 items-center">
+                                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                                            {activity.type === 'payment' && <CreditCard className="h-4 w-4 text-blue-500" />}
+                                            {activity.type === 'complaint' && <AlertCircle className="h-4 w-4 text-orange-500" />}
+                                            {activity.type === 'gatepass' && <FileText className="h-4 w-4 text-green-500" />}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-semibold text-foreground">{activity.title}</p>
+                                            <p className="text-xs text-muted-foreground">{activity.date}</p>
+                                        </div>
+                                    </div>
+                                    <ArrowRight className="h-4 w-4 text-muted-foreground/30" />
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="apple-card border-none shadow-sm bg-primary text-primary-foreground overflow-hidden relative">
+                    <div className="absolute top-0 right-0 p-8 opacity-10">
+                        <BedDouble className="w-32 h-32" />
                     </div>
-                    <div className="text-right hidden md:block">
-                        <p className="font-semibold text-foreground/80">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                        <p className="text-sm text-muted-foreground">Session 2024-2025</p>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-5 duration-500">
-                    <Card className="glass-card text-card-foreground">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Room Status</CardTitle>
-                            <BedDouble className="h-4 w-4 text-primary" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold text-glow">{user?.roomNumber ? user.roomNumber : 'Not Assigned'}</div>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                {user?.roomNumber ? 'Occupied' : 'Pending Allocation'}
-                            </p>
-                            <Link to="/room-allotment" className="text-primary text-sm flex items-center gap-1 mt-4 hover:underline">
-                                {user?.roomNumber ? 'View Details' : 'Book Now'} <ArrowRight className="w-3 h-3" />
-                            </Link>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="glass-card text-card-foreground">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Fee Status</CardTitle>
-                            <CreditCard className="h-4 w-4 text-primary" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className={`text-2xl font-bold ${user?.roomNumber ? 'text-green-400' : 'text-muted-foreground'} text-glow`}>
-                                {user?.roomNumber ? 'Paid' : 'No History'}
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                {user?.roomNumber ? 'Next due: Feb 28, 2026' : 'Allocate room to view fees'}
-                            </p>
-                            <Link to="/payments" className="text-primary text-sm flex items-center gap-1 mt-4 hover:underline">
-                                View History <ArrowRight className="w-3 h-3" />
-                            </Link>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="glass-card text-card-foreground">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Active Complaints</CardTitle>
-                            <AlertCircle className="h-4 w-4 text-primary" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold text-glow">{complaintStats.active}</div>
-                            <p className="text-xs text-muted-foreground mt-1">{complaintStats.pending} Pending, {complaintStats.resolved} Resolved</p>
-                            <Link to="/complaints" className="text-primary text-sm flex items-center gap-1 mt-4 hover:underline">
-                                File Complaint <ArrowRight className="w-3 h-3" />
-                            </Link>
-                        </CardContent>
-                    </Card>
-                </div>
+                    <CardHeader>
+                        <CardTitle className="text-lg">Need help with something?</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4 relative z-10">
+                        <p className="text-primary-foreground/80 text-sm">
+                            Our support team is available 24/7 for any hostel related queries or emergencies.
+                        </p>
+                        <Button className="w-full bg-white text-primary hover:bg-white/90 font-bold rounded-xl h-12">
+                            Contact Warden
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
         </div>
-    )
-}
+    );
+};
+
+const StatsCard = ({ title, value, subtitle, icon: Icon, color, link, linkText }) => {
+    const colors = {
+        primary: "text-blue-500 bg-blue-50",
+        green: "text-green-500 bg-green-50",
+        orange: "text-orange-500 bg-orange-50",
+        blue: "text-indigo-500 bg-indigo-50",
+    };
+
+    return (
+        <Card className="apple-card p-6 flex flex-col justify-between h-48 border-none shadow-sm bg-white">
+            <div className="flex justify-between items-start">
+                <div className={`p-3 rounded-2xl ${colors[color] || colors.primary}`}>
+                    <Icon className="h-6 w-6" />
+                </div>
+                <Link to={link}>
+                    <Button variant="ghost" size="sm" className="h-8 text-[10px] font-bold uppercase tracking-tight text-muted-foreground hover:text-primary">
+                        {linkText}
+                    </Button>
+                </Link>
+            </div>
+            <div>
+                <h3 className="text-sm font-medium text-muted-foreground mt-4">{title}</h3>
+                <div className="flex items-baseline gap-2">
+                    <p className="text-2xl font-bold tracking-tight text-foreground">{value}</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">{subtitle}</p>
+                </div>
+            </div>
+        </Card>
+    );
+};
+
 export default StudentDashboard;

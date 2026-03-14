@@ -2,10 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Eye, EyeOff } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Eye, EyeOff, UserPlus } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 const Register = () => {
@@ -20,104 +17,97 @@ const Register = () => {
             navigate("/dashboard");
         }
     }, [user, navigate]);
+
     const [error, setError] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        setLoading(true);
         setError(null);
         const res = await register(name, email, password);
         if (res.success) {
             navigate("/dashboard");
         } else {
             setError(res.message);
+            setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+        <div className="min-h-screen bg-[#FBFBFD] flex flex-col relative overflow-hidden">
             <Navbar />
+            
+            <div className="flex-1 flex items-center justify-center p-6 relative z-10">
+                <div className="w-full max-w-[420px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                    <div className="text-center mb-10">
+                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-[1.5rem] bg-primary/10 mb-6">
+                            <UserPlus className="w-8 h-8 text-primary" />
+                        </div>
+                        <h1 className="text-4xl font-black text-[#1D1D1F] tracking-tight mb-3">Join Us</h1>
+                        <p className="text-[#86868B] font-medium">Create your HostelHub account</p>
+                    </div>
 
-            {/* Background Decorations */}
-            <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -ml-64 -mt-64 animate-pulse" />
-            <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px] -mr-64 -mb-64 animate-pulse delay-1000" />
-
-            <div className="flex-1 flex items-center justify-center p-4 pt-24 relative z-10">
-                <Card className="w-full max-w-md glass-panel border-white/10 animate-in fade-in zoom-in duration-500 shadow-2xl">
-                    <CardHeader className="space-y-1">
-                        <CardTitle className="text-3xl font-bold text-center text-white tracking-tight">Create Account</CardTitle>
-                        <CardDescription className="text-center text-muted-foreground/80">
-                            Join HostelConnect and manage your stay efficiently
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-4">
+                    <div className="apple-card bg-white p-8 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] border-none">
                         {error && (
-                            <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm p-3 rounded-xl mb-6 animate-in slide-in-from-top-2 duration-300">
+                            <div className="bg-red-50 border border-red-100 text-red-600 text-[13px] font-bold p-4 rounded-xl mb-6 text-center">
                                 {error}
                             </div>
                         )}
-                        <form onSubmit={handleRegister} className="space-y-4">
+                        <form onSubmit={handleRegister} className="space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="name" className="text-white/80 ml-1">Full Name</Label>
-                                <Input
-                                    id="name"
+                                <label className="text-[11px] font-bold text-[#86868B] uppercase tracking-widest ml-1">Full Name</label>
+                                <input
                                     type="text"
                                     placeholder="John Doe"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     required
-                                    className="bg-white/5 border-white/10 focus:border-primary/50 transition-all rounded-xl h-11"
+                                    className="w-full bg-[#F5F5F7] border-none rounded-xl h-12 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="text-white/80 ml-1">Email Address</Label>
-                                <Input
-                                    id="email"
+                                <label className="text-[11px] font-bold text-[#86868B] uppercase tracking-widest ml-1">Email Address</label>
+                                <input
                                     type="email"
-                                    placeholder="student@example.com"
+                                    placeholder="name@example.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    className="bg-white/5 border-white/10 focus:border-primary/50 transition-all rounded-xl h-11"
+                                    className="w-full bg-[#F5F5F7] border-none rounded-xl h-12 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="password" className="text-white/80 ml-1">Password</Label>
+                                <label className="text-[11px] font-bold text-[#86868B] uppercase tracking-widest ml-1">Password</label>
                                 <div className="relative">
-                                    <Input
-                                        id="password"
+                                    <input
                                         type={showPassword ? "text" : "password"}
                                         placeholder="••••••••"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
-                                        className="bg-white/5 border-white/10 focus:border-primary/50 transition-all rounded-xl h-11 pr-10"
+                                        className="w-full bg-[#F5F5F7] border-none rounded-xl h-12 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none pr-12"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition-colors"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#86868B] hover:text-primary transition-colors"
                                     >
                                         {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                     </button>
                                 </div>
                             </div>
-                            <Button type="submit" className="w-full h-12 text-lg font-semibold bg-primary hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 rounded-xl mt-6">
-                                Create Account
+                            <Button type="submit" className="w-full h-12 text-sm font-bold bg-[#1D1D1F] hover:bg-black text-white transition-all shadow-xl shadow-black/10 rounded-xl mt-4" disabled={loading}>
+                                {loading ? "Creating account..." : "Create Account"}
                             </Button>
                         </form>
-                    </CardContent>
-                    <CardFooter className="flex flex-col gap-4 pb-8">
-                        <div className="flex items-center gap-4 w-full">
-                            <div className="h-px bg-white/10 flex-1" />
-                            <span className="text-xs text-muted-foreground uppercase tracking-wider">Already a Member?</span>
-                            <div className="h-px bg-white/10 flex-1" />
-                        </div>
-                        <p className="text-sm text-center text-muted-foreground">
-                            Already have an account? <Link to="/login" className="text-primary hover:text-primary/80 font-medium transition-colors">Sign In</Link>
-                        </p>
-                    </CardFooter>
-                </Card>
+                    </div>
+
+                    <p className="text-center mt-8 text-sm text-[#86868B] font-medium">
+                        Already have an account? <Link to="/login" className="text-primary hover:underline font-bold">Sign in here</Link>
+                    </p>
+                </div>
             </div>
         </div>
     );

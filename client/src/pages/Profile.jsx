@@ -1,68 +1,100 @@
-import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useContext } from "react";
 import AuthContext from "@/context/AuthContext";
-import { User, Mail, Hash, Building2, BookOpen, Shield, Calendar } from "lucide-react";
+import { User, Mail, Phone, MapPin, Building, Shield, Calendar, Edit2, LogOut, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { EditProfileDialog } from "@/components/EditProfileDialog";
+import { Badge } from "@/components/ui/badge";
 
 const Profile = () => {
-    const { user } = useContext(AuthContext);
+    const { user, logout } = useContext(AuthContext);
+
+    if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-background flex flex-col">
-            <Navbar />
-            <div className="h-28" />
-            <div className="container mx-auto p-6 pt-4 pb-12 max-w-7xl">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left Column: User Identity */}
-                    <Card className="glass-card lg:col-span-1 border-primary/20 h-fit sticky top-28">
-                        <CardHeader className="text-center pb-8 border-b border-white/5">
-                            <div className="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-primary/20 shadow-xl shadow-primary/10">
-                                <User className="w-16 h-16 text-primary" />
+        <div className="space-y-10 animate-in fade-in duration-700">
+            {/* Header / Hero Section */}
+            <div className="relative">
+                <div className="h-48 w-full bg-gradient-to-r from-blue-600 to-indigo-700 rounded-[2.5rem] overflow-hidden">
+                    <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
+                </div>
+                <div className="container px-8">
+                    <div className="flex flex-col md:flex-row items-end gap-6 -mt-16 relative z-10">
+                        <div className="relative group">
+                            <div className="h-32 w-32 rounded-[2rem] bg-white p-1.5 shadow-xl">
+                                <div className="h-full w-full rounded-[1.75rem] bg-muted flex items-center justify-center overflow-hidden relative">
+                                    <User className="h-16 w-16 text-muted-foreground/40" />
+                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                        <Camera className="h-6 w-6 text-white" />
+                                    </div>
+                                </div>
                             </div>
-                            <CardTitle className="text-3xl font-bold text-glow">{user?.name}</CardTitle>
-                            <div className="flex items-center justify-center gap-2 mt-2">
-                                <Shield className="w-4 h-4 text-primary" />
-                                <p className="text-muted-foreground capitalize font-medium">{user?.role}</p>
+                        </div>
+                        <div className="flex-1 pb-2">
+                            <div className="flex items-center gap-3 mb-1">
+                                <h1 className="text-3xl font-bold text-foreground tracking-tight">{user.name}</h1>
+                                <Badge className="bg-primary/10 text-primary border-none font-bold uppercase tracking-widest text-[10px] px-3 py-1">
+                                    {user.role}
+                                </Badge>
                             </div>
+                            <p className="text-muted-foreground font-medium flex items-center gap-2">
+                                <Mail className="h-4 w-4" /> {user.email}
+                            </p>
+                        </div>
+                        <div className="pb-2 flex gap-3">
+                            <Button variant="outline" className="rounded-xl font-bold h-11 px-6 border-muted shadow-none gap-2">
+                                <Edit2 className="h-4 w-4" /> Edit Profile
+                            </Button>
+                            <Button onClick={logout} variant="destructive" className="rounded-xl font-bold h-11 px-6 shadow-none gap-2">
+                                <LogOut className="h-4 w-4" /> Logout
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                {/* Personal Information */}
+                <Card className="apple-card lg:col-span-2 border-none bg-white shadow-sm overflow-hidden">
+                    <CardHeader className="border-b border-muted/50 p-8">
+                        <CardTitle className="text-xl font-bold">Personal Information</CardTitle>
+                        <CardDescription>View and manage your personal details and contact info.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-10 gap-x-12">
+                            <InfoItem icon={User} label="Full Name" value={user.name} />
+                            <InfoItem icon={Mail} label="Email Address" value={user.email} />
+                            <InfoItem icon={Phone} label="Phone Number" value="+91 98765 43210" />
+                            <InfoItem icon={Shield} label="Account Role" value={user.role} isBadge />
+                            <InfoItem icon={Building} label="Hostel Block" value="Block A" />
+                            <InfoItem icon={MapPin} label="Room Number" value="302" />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Account Settings / Sidebar */}
+                <div className="space-y-8">
+                    <Card className="apple-card border-none bg-white shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="text-lg">Account Security</CardTitle>
                         </CardHeader>
-                        <CardContent className="p-6 space-y-6">
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
-                                    <span className="text-sm text-muted-foreground">Status</span>
-                                    <span className="text-sm font-medium text-green-400 bg-green-400/10 px-2 py-1 rounded">Active</span>
-                                </div>
-                                <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
-                                    <span className="text-sm text-muted-foreground">Member Since</span>
-                                    <span className="text-sm font-medium">Jan 2024</span>
-                                </div>
-                            </div>
-                            <div className="pt-4 animate-in slide-in-from-bottom-2">
-                                <EditProfileDialog />
-                            </div>
+                        <CardContent className="space-y-4">
+                            <Button variant="outline" className="w-full justify-start rounded-xl h-12 px-4 border-muted hover:bg-muted/50 shadow-none font-bold gap-3">
+                                <Shield className="h-4 w-4 text-primary" /> Change Password
+                            </Button>
+                            <Button variant="outline" className="w-full justify-start rounded-xl h-12 px-4 border-muted hover:bg-muted/50 shadow-none font-bold gap-3">
+                                <Calendar className="h-4 w-4 text-primary" /> Login Sessions
+                            </Button>
                         </CardContent>
                     </Card>
 
-                    {/* Right Column: Detailed Info */}
-                    <Card className="glass-card lg:col-span-2 border-white/10">
-                        <CardHeader>
-                            <CardTitle className="text-xl flex items-center gap-2">
-                                <span className="bg-primary/20 p-2 rounded-lg"><BookOpen className="w-5 h-5 text-primary" /></span>
-                                Academic & Hostel Details
-                            </CardTitle>
-                            <CardDescription>Your personal and institutional information.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-                                <InfoItem icon={Mail} label="Email Address" value={user?.email} delay="0" />
-                                <InfoItem icon={Hash} label="Student ID" value={user?.studentId || 'Not set'} delay="100" />
-                                <InfoItem icon={BookOpen} label="Department" value={user?.department || 'Not set'} delay="200" />
-                                <InfoItem icon={Building2} label="Hostel Block" value={user?.hostelName || 'Not Assigned'} delay="300" />
-                                <InfoItem icon={Hash} label="Room Number" value={user?.roomNumber || 'Not Allocated'} delay="400" />
-                                <InfoItem icon={Calendar} label="Batch" value="2024 - 2028" delay="500" />
-                            </div>
-                        </CardContent>
+                    <Card className="apple-card border-none bg-primary p-8 text-primary-foreground text-center space-y-4">
+                        <div className="p-4 bg-white/10 rounded-3xl w-fit mx-auto">
+                            <Shield className="h-8 w-8 text-white" />
+                        </div>
+                        <h3 className="text-xl font-bold">Verified User</h3>
+                        <p className="text-sm text-primary-foreground/70 leading-relaxed">
+                            Your account is fully verified. You have all administrative privileges within your assigned sector.
+                        </p>
                     </Card>
                 </div>
             </div>
@@ -70,16 +102,20 @@ const Profile = () => {
     );
 };
 
-const InfoItem = ({ icon: Icon, label, value, delay }) => (
-    <div className={`p-4 rounded-xl bg-white/5 border border-white/5 hover:border-primary/30 hover:bg-white/10 transition-all duration-300 group animate-in fade-in slide-in-from-bottom-3 fill-mode-both`} style={{ animationDelay: `${delay}ms` }}>
-        <div className="flex items-start gap-4">
-            <div className="p-2 bg-primary/10 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                <Icon className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</p>
-                <p className="text-lg font-semibold mt-1 text-foreground/90">{value}</p>
-            </div>
+const InfoItem = ({ icon: Icon, label, value, isBadge }) => (
+    <div className="flex items-start gap-4">
+        <div className="p-3 bg-muted/50 rounded-2xl">
+            <Icon className="h-5 w-5 text-muted-foreground" />
+        </div>
+        <div className="space-y-1">
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
+            {isBadge ? (
+                <Badge className="bg-primary/10 text-primary border-none font-black uppercase tracking-widest text-[10px] px-3 py-1 mt-1">
+                    {value}
+                </Badge>
+            ) : (
+                <p className="text-sm font-bold text-foreground">{value || "Not provided"}</p>
+            )}
         </div>
     </div>
 );
