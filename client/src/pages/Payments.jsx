@@ -1,9 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "@/context/AuthContext";
 import axios from "axios";
-import { CreditCard, DollarSign, Clock, CheckCircle2, Printer } from "lucide-react";
+import { CreditCard, IndianRupee, Clock, CheckCircle2, Printer, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const Payments = () => {
     const { user } = useContext(AuthContext);
@@ -14,7 +15,7 @@ const Payments = () => {
         const fetchPayments = async () => {
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                const { data } = await axios.get("http://localhost:5000/api/rooms/payments/my", config);
+                const { data } = await axios.get("http://localhost:5000/api/payments/my-payments", config);
                 setPayments(data);
             } catch (error) {
                 console.error("Error fetching payments:", error);
@@ -25,136 +26,150 @@ const Payments = () => {
         fetchPayments();
     }, [user]);
 
-    const totalPaid = payments.filter(p => p.status === 'completed').reduce((acc, curr) => acc + curr.amount, 0);
+    const totalPaid = payments.filter(p => p.status === 'paid').reduce((acc, curr) => acc + curr.amount, 0);
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground">Transactions & <span className="text-primary">Billing</span></h1>
-                    <p className="text-muted-foreground mt-1">Monitor your payment history and current dues.</p>
+                    <h1 className="section-title">Institutional Billing</h1>
+                    <p className="section-subtitle">Comprehensive tracking of your financial commitments and transaction status.</p>
                 </div>
-                <Button className="rounded-xl h-11 px-6 font-bold shadow-none">
-                    Make New Payment
-                </Button>
+                <div className="flex gap-3">
+                    <Button variant="outline" className="h-10 px-5 text-[11px] font-bold uppercase tracking-widest border-border/60 bg-white hover:bg-secondary/50 rounded-xl flex items-center gap-2">
+                        <Printer className="h-3.5 w-3.5" /> Statement
+                    </Button>
+                    <Button className="btn-primary h-10 px-8 text-[11px] font-bold uppercase tracking-widest active:scale-95 shadow-lg shadow-primary/10">
+                        Initiate Payment
+                    </Button>
+                </div>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <PaymentSummaryCard 
-                    title="Total Paid" 
+                    title="Settled Capital" 
                     value={`₹${totalPaid.toLocaleString()}`} 
-                    subtitle="Cumulative amount"
-                    icon={DollarSign}
-                    color="primary"
+                    subtitle="Lifetime processed"
+                    icon={IndianRupee}
                 />
                 <PaymentSummaryCard 
-                    title="Pending Dues" 
+                    title="Interim Arrears" 
                     value="₹0.00" 
-                    subtitle="Up to date"
+                    subtitle="Registry status: Clear"
                     icon={Clock}
-                    color="orange"
                 />
                 <PaymentSummaryCard 
-                    title="Account Status" 
-                    value="Active" 
-                    subtitle="Monthly cycle active"
+                    title="Account Identity" 
+                    value="Authenticated" 
+                    subtitle="Secure payment protocol"
                     icon={CheckCircle2}
-                    color="green"
                 />
             </div>
 
-            <Card className="apple-card border-none bg-white shadow-sm overflow-hidden">
-                <CardHeader className="border-b border-muted/50 pb-4">
+            <Card className="premium-card bg-white p-0 overflow-hidden border-border/60 shadow-sm">
+                <CardHeader className="p-7 border-b border-border bg-secondary/5">
                     <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg">Recent Transactions</CardTitle>
-                        <Button variant="ghost" size="sm" className="text-xs font-bold text-primary gap-2">
-                            <Printer className="h-4 w-4" /> Download Statement
-                        </Button>
+                        <div>
+                            <CardTitle className="text-[17px] font-bold text-foreground">Transaction Registry</CardTitle>
+                            <CardDescription className="text-[12px] font-medium">Historical data of all institutional financial exchanges.</CardDescription>
+                        </div>
                     </div>
                 </CardHeader>
-                <CardContent className="p-0">
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="bg-muted/30 text-left">
-                                    <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Transaction ID</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Date</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Description</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Amount</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider text-right">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border">
-                                {loading ? (
-                                    Array.from({ length: 3 }).map((_, i) => (
-                                        <tr key={i} className="animate-pulse">
-                                            <td colSpan="5" className="px-6 py-8"><div className="h-4 bg-muted rounded w-full"></div></td>
-                                        </tr>
-                                    ))
-                                ) : payments.length > 0 ? (
-                                    payments.map((payment) => (
-                                        <tr key={payment._id} className="hover:bg-muted/20 transition-colors">
-                                            <td className="px-6 py-4">
-                                                <p className="text-sm font-mono text-foreground">#{payment._id.slice(-8).toUpperCase()}</p>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <p className="text-sm text-foreground">{new Date(payment.createdAt).toLocaleDateString()}</p>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <p className="text-sm font-medium text-foreground uppercase">{payment.paymentType.replace('_', ' ')}</p>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <p className="text-sm font-black text-foreground italic flex items-center gap-1">
-                                                    ₹{payment.amount.toLocaleString()}
-                                                </p>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                                                    payment.status === 'completed' 
-                                                    ? 'bg-green-50 text-green-600' 
-                                                    : 'bg-orange-50 text-orange-600'
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="bg-secondary/10 border-b border-border/50">
+                                <th className="px-7 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Transaction Trace</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Temporal Data</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Classification</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Valuation</th>
+                                <th className="px-7 py-4 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Compliance</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/30">
+                            {loading ? (
+                                Array.from({ length: 3 }).map((_, i) => (
+                                    <tr key={i} className="animate-pulse">
+                                        <td colSpan="5" className="px-7 py-6"><div className="h-8 bg-secondary/30 rounded-lg w-full"></div></td>
+                                    </tr>
+                                ))
+                            ) : payments.length > 0 ? (
+                                payments.map((payment) => (
+                                    <tr key={payment._id} className="hover:bg-secondary/10 transition-colors group cursor-default">
+                                        <td className="px-7 py-5">
+                                            <div className="flex items-center gap-3">
+                                                <div className="p-2.5 rounded-lg bg-secondary/50 text-primary border border-border/50">
+                                                    <CreditCard className="h-3.5 w-3.5" />
+                                                </div>
+                                                <p className="text-[12px] font-mono text-foreground font-bold opacity-80">#{payment._id.slice(-10).toUpperCase()}</p>
+                                            </div>
+                                        </td>
+                                        <td className="px-7 py-5">
+                                            <p className="text-[13px] text-muted-foreground font-semibold leading-tight">{new Date(payment.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                                        </td>
+                                        <td className="px-7 py-5">
+                                            <Badge className="bg-secondary/40 text-muted-foreground border-border/50 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md">
+                                                {payment.type?.replace('_', ' ') || 'GENERAL'}
+                                            </Badge>
+                                        </td>
+                                        <td className="px-7 py-5">
+                                            <p className="text-[15px] font-bold text-foreground">
+                                                ₹{payment.amount.toLocaleString()}
+                                            </p>
+                                        </td>
+                                        <td className="px-7 py-5 text-right">
+                                            <div className="flex items-center justify-end gap-3">
+                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest border-none shadow-sm ${
+                                                    payment.status === 'paid' 
+                                                    ? 'bg-emerald-500 text-white' 
+                                                    : 'bg-amber-400 text-white'
                                                 }`}>
                                                     {payment.status}
                                                 </span>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="5" className="px-6 py-20 text-center text-muted-foreground opacity-50">
-                                            <CreditCard className="h-10 w-10 mx-auto mb-2" />
-                                            <p className="text-sm font-bold">No payment history found</p>
+                                                <Button variant="ghost" size="sm" className="h-8 px-3 text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all rounded-lg flex items-center gap-2">
+                                                    <Printer className="h-3 w-3" /> Receipt
+                                                </Button>
+                                            </div>
                                         </td>
                                     </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </CardContent>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="5" className="px-7 py-24 text-center">
+                                        <div className="flex flex-col items-center justify-center space-y-4 opacity-30 grayscale items-center">
+                                            <div className="p-5 rounded-full bg-secondary/40">
+                                                <CreditCard className="h-10 w-10 text-muted-foreground" />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-[14px] font-bold text-foreground tracking-tight">Registry Trace Empty</p>
+                                                <p className="text-[12px] text-muted-foreground font-medium">No recorded transactions were found in your sector.</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </Card>
         </div>
     );
 };
 
-const PaymentSummaryCard = ({ title, value, subtitle, icon: Icon, color }) => {
-    const colors = {
-        primary: "bg-blue-50 text-blue-500",
-        orange: "bg-orange-50 text-orange-500",
-        green: "bg-green-50 text-green-500",
-    };
-
+const PaymentSummaryCard = ({ title, value, subtitle, icon: Icon }) => {
     return (
-        <Card className="apple-card border-none bg-white p-6 shadow-sm flex flex-col justify-between h-40">
-            <div className="flex justify-between items-start">
-                <div className={`p-3 rounded-2xl ${colors[color] || colors.primary}`}>
+        <Card className="premium-card p-7 bg-white group hover:border-primary/30 transition-all duration-300">
+            <div className="flex justify-between items-start mb-5">
+                <div className="p-3 rounded-2xl bg-secondary/40 text-primary border border-border/50 group-hover:bg-primary group-hover:text-white transition-all duration-500">
                     <Icon className="h-5 w-5" />
                 </div>
+                <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
             </div>
-            <div>
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{title}</p>
-                <div className="flex items-baseline gap-2">
-                    <h3 className="text-2xl font-black text-foreground">{value}</h3>
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase">{subtitle}</p>
+            <div className="space-y-1.5">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] opacity-70">{title}</p>
+                <div className="flex items-baseline gap-2.5">
+                    <h3 className="text-2xl font-bold text-foreground tracking-tight">{value}</h3>
+                    <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-tighter opacity-50">{subtitle}</p>
                 </div>
             </div>
         </Card>

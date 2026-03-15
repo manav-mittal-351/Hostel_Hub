@@ -22,7 +22,7 @@ const Sidebar = () => {
         { path: "/room-allotment", icon: BedDouble, label: "My Room" },
         { path: "/payments", icon: CreditCard, label: "Payments" },
         { path: "/gate-pass", icon: FileText, label: "Gate Pass" },
-        { path: "/non-disciplinary", icon: ShieldAlert, label: "Dues & Actions" },
+        { path: "/non-disciplinary", icon: ShieldAlert, label: "Student Records" },
         { path: "/complaints", icon: AlertCircle, label: "Complaints" },
         { path: "/profile", icon: UserIcon, label: "Profile" },
     ];
@@ -32,7 +32,7 @@ const Sidebar = () => {
         { path: "/room-allotment", icon: BedDouble, label: "Manage Rooms" },
         { path: "/payments", icon: CreditCard, label: "Fee Records" },
         { path: "/gate-pass", icon: FileText, label: "Gate Authorization" },
-        { path: "/non-disciplinary", icon: ShieldAlert, label: "Financial Dues" },
+        { path: "/non-disciplinary", icon: ShieldAlert, label: "Student Records" },
         { path: "/complaints", icon: AlertCircle, label: "Complaints" },
         { path: "/profile", icon: UserIcon, label: "Account" },
     ];
@@ -41,20 +41,20 @@ const Sidebar = () => {
 
     return (
         <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-border z-40 hidden lg:flex flex-col">
-            <div className="p-6">
-                <Link to="/" className="flex items-center gap-3 group">
-                    <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-colors">
-                        <Users className="h-6 w-6 text-primary" />
+            <div className="px-7 py-6">
+                <Link to="/" className="flex items-center gap-2 group">
+                    <div className="bg-primary p-1.5 rounded-lg shadow-sm group-hover:bg-primary/90 transition-all duration-300">
+                        <Users className="h-5 w-5 text-white" />
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-foreground">
-                        Hostel<span className="text-primary">Hub</span>
+                    <span className="text-lg font-bold text-foreground tracking-tight">
+                        HostelHub
                     </span>
                 </Link>
             </div>
 
             <nav className="flex-1 px-4 space-y-1">
-                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-4 mb-2 mt-4">
-                    Main Menu
+                <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 mb-3 mt-4">
+                    Product
                 </div>
                 {links.map((link) => {
                     const isActive = location.pathname === link.path;
@@ -70,22 +70,21 @@ const Sidebar = () => {
                                 : "sidebar-link-inactive"
                             }`}
                         >
-                            <Icon className="h-5 w-5" />
+                            <Icon className={`h-4 w-4 ${isActive ? "text-white" : "text-muted-foreground group-hover:text-primary"}`} />
                             <span>{link.label}</span>
-                            {isActive && <ChevronRight className="ml-auto h-4 w-4 opacity-50" />}
                         </Link>
                     );
                 })}
             </nav>
 
-            <div className="p-4 border-t border-border">
-                <div className="apple-card p-4 bg-muted/50 border-none flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+            <div className="p-4 mt-auto">
+                <div className="premium-card p-3 border-none bg-secondary/30 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold shadow-sm">
                         {user?.name?.charAt(0).toUpperCase()}
                     </div>
                     <div className="overflow-hidden">
-                        <p className="text-sm font-bold text-foreground truncate">{user?.name}</p>
-                        <p className="text-xs text-muted-foreground truncate uppercase">{user?.role}</p>
+                        <p className="text-[13px] font-semibold text-foreground truncate">{user?.name}</p>
+                        <p className="text-[10px] text-muted-foreground/80 truncate uppercase font-medium">{user?.role}</p>
                     </div>
                 </div>
             </div>

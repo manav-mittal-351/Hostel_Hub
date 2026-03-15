@@ -2,7 +2,10 @@ import { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, UserPlus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
+import { Eye, EyeOff, UserPlus, Users } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 const Register = () => {
@@ -36,78 +39,97 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#FBFBFD] flex flex-col relative overflow-hidden">
+        <div className="min-h-screen bg-white flex flex-col relative overflow-hidden">
             <Navbar />
             
+            {/* Background Decorations */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none opacity-20 z-0">
+                <div className="absolute top-[10%] right-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[120px]" />
+                <div className="absolute bottom-[10%] left-[-5%] w-[30%] h-[30%] bg-secondary/30 rounded-full blur-[100px]" />
+            </div>
+
             <div className="flex-1 flex items-center justify-center p-6 relative z-10">
-                <div className="w-full max-w-[420px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                <div className="w-full max-w-[460px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
                     <div className="text-center mb-10">
-                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-[1.5rem] bg-primary/10 mb-6">
-                            <UserPlus className="w-8 h-8 text-primary" />
-                        </div>
-                        <h1 className="text-4xl font-black text-[#1D1D1F] tracking-tight mb-3">Join Us</h1>
-                        <p className="text-[#86868B] font-medium">Create your HostelHub account</p>
+                        <Link to="/" className="flex items-center gap-3 justify-center mb-8 group">
+                            <div className="bg-primary p-2.5 rounded-xl shadow-lg shadow-primary/20 rotate-[-5deg] group-hover:rotate-0 transition-all duration-300">
+                                <Users className="h-6 w-6 text-white" />
+                            </div>
+                            <span className="text-2xl font-bold text-foreground tracking-tighter">
+                                Hostel<span className="text-primary italic">HUB</span>
+                            </span>
+                        </Link>
+                        <h1 className="text-4xl font-bold text-foreground tracking-tighter mb-3">Initialize Identity</h1>
+                        <p className="text-muted-foreground text-sm font-semibold uppercase tracking-widest opacity-60">Create your secure resident profile.</p>
                     </div>
 
-                    <div className="apple-card bg-white p-8 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] border-none">
+                    <Card className="premium-card p-10 border-border/60 shadow-2xl shadow-primary/5 bg-white rounded-[2.5rem]">
                         {error && (
-                            <div className="bg-red-50 border border-red-100 text-red-600 text-[13px] font-bold p-4 rounded-xl mb-6 text-center">
+                            <div className="bg-red-50 border border-red-100 text-red-600 text-[11px] font-bold p-4 rounded-xl mb-8 text-center animate-in shake duration-300 uppercase tracking-wider">
                                 {error}
                             </div>
                         )}
-                        <form onSubmit={handleRegister} className="space-y-6">
-                            <div className="space-y-2">
-                                <label className="text-[11px] font-bold text-[#86868B] uppercase tracking-widest ml-1">Full Name</label>
-                                <input
+                        <form onSubmit={handleRegister} className="space-y-5">
+                            <div className="space-y-2.5">
+                                <Label htmlFor="name" className="ml-1">Full Legal Name</Label>
+                                <Input
+                                    id="name"
                                     type="text"
-                                    placeholder="John Doe"
+                                    placeholder="Johnathan Doe"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     required
-                                    className="w-full bg-[#F5F5F7] border-none rounded-xl h-12 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                                    className="h-12 px-5 bg-secondary/10 border-border/40 focus:bg-white rounded-xl font-medium"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-[11px] font-bold text-[#86868B] uppercase tracking-widest ml-1">Email Address</label>
-                                <input
+                            <div className="space-y-2.5">
+                                <Label htmlFor="email" className="ml-1">Institutional Email</Label>
+                                <Input
+                                    id="email"
                                     type="email"
-                                    placeholder="name@example.com"
+                                    placeholder="name@university.edu"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    className="w-full bg-[#F5F5F7] border-none rounded-xl h-12 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                                    className="h-12 px-5 bg-secondary/10 border-border/40 focus:bg-white rounded-xl font-medium"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-[11px] font-bold text-[#86868B] uppercase tracking-widest ml-1">Password</label>
-                                <div className="relative">
-                                    <input
+                            <div className="space-y-2.5">
+                                <Label htmlFor="password" className="ml-1">Access Key</Label>
+                                <div className="relative group">
+                                    <Input
+                                        id="password"
                                         type={showPassword ? "text" : "password"}
                                         placeholder="••••••••"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
-                                        className="w-full bg-[#F5F5F7] border-none rounded-xl h-12 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none pr-12"
+                                        className="h-12 px-5 pr-12 bg-secondary/10 border-border/40 focus:bg-white rounded-xl font-medium"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#86868B] hover:text-primary transition-colors"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-primary transition-colors"
                                     >
-                                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </button>
                                 </div>
                             </div>
-                            <Button type="submit" className="w-full h-12 text-sm font-bold bg-[#1D1D1F] hover:bg-black text-white transition-all shadow-xl shadow-black/10 rounded-xl mt-4" disabled={loading}>
-                                {loading ? "Creating account..." : "Create Account"}
+                            <Button type="submit" className="w-full h-14 bg-primary text-white hover:bg-primary/90 rounded-2xl text-[12px] font-bold uppercase tracking-[0.2em] shadow-xl shadow-primary/10 mt-6 active:scale-95 transition-all" disabled={loading}>
+                                {loading ? "Recording Data..." : "Generate Identity"}
                             </Button>
                         </form>
-                    </div>
+                    </Card>
 
-                    <p className="text-center mt-8 text-sm text-[#86868B] font-medium">
-                        Already have an account? <Link to="/login" className="text-primary hover:underline font-bold">Sign in here</Link>
+                    <p className="text-center mt-10 text-[13px] text-muted-foreground font-medium">
+                        Already have an identity? <Link to="/login" className="text-primary hover:text-primary/80 font-bold transition-colors underline underline-offset-4">Sign In</Link>
                     </p>
                 </div>
+            </div>
+            
+            {/* Footer-like text */}
+            <div className="absolute bottom-8 left-0 right-0 text-center pointer-events-none opacity-30 px-6">
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">HostelHub Security Registry System — Integrity Validated</p>
             </div>
         </div>
     );

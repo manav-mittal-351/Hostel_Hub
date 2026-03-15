@@ -32,8 +32,10 @@ const Layout = ({ children }) => {
             {/* Main Content */}
             <div className="lg:pl-64 flex flex-col min-h-screen">
                 <Header onMenuClick={() => setIsSidebarOpen(true)} />
-                <main className="flex-1 p-6 md:p-10 max-w-[1600px] mx-auto w-full">
-                    {children}
+                <main className="flex-1 p-6 lg:p-10 max-w-7xl mx-auto w-full">
+                    <div className="animate-in fade-in duration-500">
+                        {children}
+                    </div>
                 </main>
             </div>
         </div>

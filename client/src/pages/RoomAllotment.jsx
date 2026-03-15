@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "@/context/AuthContext";
-import { BedDouble, Building, Users, CheckCircle2, LogOut, MapPin, User as UserIcon, ShieldCheck, CreditCard, Calendar, Download, Printer, CheckCircle, Info } from "lucide-react";
+import { BedDouble, Building, Users, CheckCircle2, LogOut, MapPin, User as UserIcon, ShieldCheck, CreditCard, Calendar, Download, Printer, CheckCircle, Info, MessageSquare, ArrowRight } from "lucide-react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,13 +17,8 @@ const RoomAllotment = () => {
     const [loadingRooms, setLoadingRooms] = useState(false);
     const [error, setError] = useState(null);
     const [showReceipt, setShowReceipt] = useState(false);
+    const [showAllAvailable, setShowAllAvailable] = useState(false);
     const token = user?.token;
-
-    useEffect(() => {
-        if (user?.role === 'student' && !user?.roomNumber) {
-            fetchRooms();
-        }
-    }, [user, token]);
 
     if (user?.role === 'admin') {
         return <AdminRoomManagement />;
@@ -44,6 +39,12 @@ const RoomAllotment = () => {
             setLoadingRooms(false);
         }
     };
+
+    useEffect(() => {
+        if (user?.role === 'student') {
+            fetchRooms();
+        }
+    }, [user, token]);
 
     const handleBookRoom = async (room) => {
         const price = room.type === 'AC' ? 8000 : 5000;
@@ -87,164 +88,183 @@ const RoomAllotment = () => {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-10 animate-in fade-in duration-1000">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                        Room <span className="text-primary">{user?.roomNumber ? "Allotted" : "Allotment"}</span>
+                    <h1 className="section-title">
+                        Residential <span className="text-primary">{user?.roomNumber ? "Confirmation" : "Selection"}</span>
                     </h1>
-                    <p className="text-muted-foreground mt-1">Manage your residence and booking details.</p>
+                    <p className="section-subtitle">Coordinate your academic residency and manage your allotted premises.</p>
                 </div>
                 {user?.roomNumber && (
                     <Button 
-                        variant="destructive" 
-                        className="bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 px-6 py-2 rounded-xl font-semibold flex items-center gap-2 transition-all shadow-none"
+                        variant="ghost" 
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50 px-6 h-10 rounded-xl font-bold text-[11px] uppercase tracking-widest flex items-center gap-2 transition-all border border-red-100/50 active:scale-95"
                         onClick={handleCheckout}
                     >
-                        <LogOut className="w-4 h-4" />
+                        <LogOut className="w-3.5 h-3.5" />
                         Checkout
                     </Button>
                 )}
             </div>
 
             {user?.roomNumber && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <Card className="apple-card lg:col-span-3 border-none bg-primary text-primary-foreground overflow-hidden shadow-sm">
-                        <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-8">
-                            <div className="flex items-center gap-6">
-                                <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center border border-white/30">
-                                    <BedDouble className="w-8 h-8 text-white" />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                    <Card className="premium-card lg:col-span-3 border-border/80 bg-white text-foreground overflow-hidden shadow-xl shadow-primary/5 p-0">
+                        <CardContent className="p-0 flex flex-col md:flex-row items-stretch justify-between relative min-h-[160px]">
+                            <div className="p-10 flex-1 flex items-center gap-8 relative z-10 border-r border-dashed border-border/60">
+                                <div className="w-20 h-20 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+                                    <BedDouble className="w-10 h-10 text-white" />
                                 </div>
-                                <div>
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <Badge className="bg-white/20 text-white border-none px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                                            Active Reservation
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-3">
+                                        <Badge className="bg-emerald-500 text-white border-none px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm shadow-emerald-500/10">
+                                            Registry Confirmed
                                         </Badge>
+                                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-secondary/30 rounded-lg border border-border/40">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Active</span>
+                                        </div>
                                     </div>
-                                    <h2 className="text-3xl font-extrabold tracking-tight">Room {user.roomNumber}</h2>
-                                    <p className="text-primary-foreground/70 text-sm font-medium">Official Residence ID: {user._id?.slice(-6).toUpperCase()}</p>
+                                    <h2 className="text-4xl font-bold tracking-tight text-foreground">Unit {user.roomNumber}</h2>
+                                    <div className="flex items-center gap-3 text-muted-foreground">
+                                        <p className="text-[11px] font-bold uppercase tracking-[0.1em]">Allocation ID</p>
+                                        <div className="px-2 py-0.5 bg-secondary/50 rounded font-mono text-[10px] border border-border/50 uppercase tracking-tighter">
+                                            {user._id?.slice(-12)}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4">
-                                <div className="text-right hidden md:block">
-                                    <p className="text-xs text-primary-foreground/60 font-bold uppercase tracking-widest">Monthly Commitment</p>
-                                    <p className="text-2xl font-black italic">₹{user.hostelBlock?.includes('AC') && !user.hostelBlock?.includes('Non-AC') ? '8,000' : '5,000'}</p>
+                            <div className="p-10 flex items-center gap-12 bg-secondary/10 relative z-10 min-w-[320px]">
+                                <div className="text-right space-y-1">
+                                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Institutional Billing</p>
+                                    <p className="text-3xl font-bold tracking-tighter text-foreground italic flex items-baseline justify-end gap-1">
+                                        <span className="text-lg translate-y-[-2px]">₹</span>
+                                        {user.hostelBlock?.includes('AC') && !user.hostelBlock?.includes('Non-AC') ? '8,000' : '5,000'}
+                                        <span className="text-sm text-muted-foreground font-medium opacity-60">/mo</span>
+                                    </p>
                                 </div>
-                                <div className="w-px h-10 bg-white/20 hidden md:block mx-4" />
+                                <div className="w-px h-12 bg-border/40" />
                                 <Button 
-                                    variant="outline" 
-                                    className="bg-white border-none text-primary hover:bg-white/90 rounded-xl h-10 px-6 font-bold shadow-none"
+                                    className="bg-primary text-white hover:bg-primary/90 transition-all rounded-xl h-12 px-8 font-bold uppercase tracking-widest text-[11px] shadow-lg shadow-primary/10 active:scale-95"
                                     onClick={() => setShowReceipt(true)}
                                 >
-                                    View Receipt
+                                    <Printer className="h-3.5 w-3.5 mr-2" /> Retrieve Receipt
                                 </Button>
                             </div>
                         </CardContent>
                     </Card>
 
                     <div className="lg:col-span-2 space-y-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <Card className="apple-card border-none bg-white shadow-sm p-6 space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Card className="premium-card bg-white p-6 space-y-5">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-blue-50 rounded-xl">
-                                        <Building className="w-5 h-5 text-blue-500" />
+                                    <div className="p-2 bg-secondary/50 rounded-lg text-primary">
+                                        <Building className="w-4 h-4" />
                                     </div>
-                                    <h3 className="font-bold text-foreground">Hostel Information</h3>
+                                    <h3 className="text-[14px] font-semibold text-foreground">Hostel Info</h3>
                                 </div>
                                 <div className="space-y-4">
                                     <div className="flex items-start gap-3">
-                                        <MapPin className="w-4 h-4 text-muted-foreground mt-1" />
+                                        <MapPin className="w-3.5 h-3.5 text-muted-foreground mt-1" />
                                         <div>
-                                            <p className="text-sm font-bold text-foreground">{user.hostelName || 'Boys Premium Hostel'}</p>
-                                            <p className="text-xs text-muted-foreground">{user.hostelBlock || 'Block-A, North Wing'}</p>
+                                            <p className="text-[13px] font-semibold text-foreground">{user.hostelName || 'Boys Premium Hostel'}</p>
+                                            <p className="text-[11px] text-muted-foreground">{user.hostelBlock || 'Block-A, North Wing'}</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-start gap-3">
-                                        <ShieldCheck className="w-4 h-4 text-muted-foreground mt-1" />
-                                        <div>
-                                            <p className="text-sm font-bold text-foreground">Warden On Duty</p>
-                                            <p className="text-xs text-muted-foreground">Mr. Rajesh Sharma (+91 98XXX XXX00)</p>
+                                    <div className="flex items-center justify-between p-4 bg-secondary/5 rounded-2xl border border-border/40 group hover:border-primary/30 transition-all">
+                                        <div className="flex items-start gap-4">
+                                            <div className="p-2.5 bg-white rounded-xl border border-border/50 text-muted-foreground group-hover:text-primary transition-colors">
+                                                <ShieldCheck className="w-4.5 h-4.5" />
+                                            </div>
+                                            <div>
+                                                <p className="text-[13px] font-bold text-foreground">Hostel Warden</p>
+                                                <p className="text-[11px] font-medium text-muted-foreground">Mr. Sharma (+91 98XXX XXX00)</p>
+                                            </div>
                                         </div>
+                                        <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-lg hover:bg-primary/10 hover:text-primary">
+                                            <MessageSquare className="h-4 w-4" />
+                                        </Button>
                                     </div>
                                 </div>
                             </Card>
 
-                            <Card className="apple-card border-none bg-white shadow-sm p-6 space-y-6">
+                            <Card className="premium-card bg-white p-6 space-y-5">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-purple-50 rounded-xl">
-                                        <UserIcon className="w-5 h-5 text-purple-500" />
+                                    <div className="p-2 bg-secondary/50 rounded-lg text-primary">
+                                        <UserIcon className="w-4 h-4" />
                                     </div>
-                                    <h3 className="font-bold text-foreground">Resident Profile</h3>
+                                    <h3 className="text-[14px] font-semibold text-foreground">Resident Access</h3>
                                 </div>
                                 <div className="space-y-3">
-                                    <DetailRow label="Department" value={user.department || 'Computer Science'} />
-                                    <DetailRow label="ID Number" value={user.studentId || 'STU-2024-001'} />
-                                    <DetailRow label="Check-in" value="Mar 2024" />
+                                    <DetailRow label="Department" value={user.department || 'CS Engineering'} />
+                                    <DetailRow label="Student ID" value={user.studentId || 'STU-2024-001'} />
+                                    <DetailRow label="Joined" value="Mar 2024" />
                                 </div>
                             </Card>
                         </div>
 
-                        <Card className="apple-card border-none bg-white shadow-sm overflow-hidden text-center p-10">
+                        <Card className="premium-card bg-white text-center p-12">
                             <div className="max-w-xs mx-auto space-y-4">
-                                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto opacity-50">
-                                    <Users className="w-8 h-8 text-muted-foreground" />
+                                <div className="w-12 h-12 bg-secondary/50 rounded-xl flex items-center justify-center mx-auto text-primary">
+                                    <Users className="w-5 h-5" />
                                 </div>
-                                <h3 className="text-lg font-bold text-foreground">Seeking Roommates</h3>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                    Your room is currently set for single occupancy. New roommates will appear here once allocated.
+                                <h3 className="text-[15px] font-semibold text-foreground">Seeking Roommates</h3>
+                                <p className="text-[12px] text-muted-foreground leading-relaxed">
+                                    Your room is currently set for single occupancy. New roommates will appear here once allocated by admin.
                                 </p>
                             </div>
                         </Card>
                     </div>
 
-                    <div className="space-y-8">
-                        <Card className="apple-card border-none bg-white shadow-sm p-6">
-                            <h3 className="font-bold text-foreground mb-4">Payment Breakdown</h3>
+                    <div className="space-y-6">
+                        <Card className="premium-card bg-white p-6">
+                            <h3 className="text-[14px] font-semibold text-foreground mb-4">Allocation Details</h3>
                             <div className="space-y-4">
-                                <div className="p-4 rounded-xl bg-green-50 flex items-center justify-between border border-green-100">
+                                <div className="p-4 rounded-xl bg-emerald-50/50 flex items-center justify-between border border-emerald-100/50">
                                     <div>
-                                        <p className="text-[10px] text-green-600 font-bold uppercase tracking-widest">Fee Status</p>
-                                        <p className="text-lg font-bold text-foreground">Fully Paid</p>
+                                        <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">Fee Token</p>
+                                        <p className="text-[15px] font-bold text-foreground">Active & Paid</p>
                                     </div>
-                                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                                        <CheckCircle2 className="w-5 h-5 text-white" />
+                                    <div className="w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center text-white">
+                                        <CheckCircle2 className="w-4 h-4" />
                                     </div>
                                 </div>
-                                <div className="space-y-2 px-2">
-                                    <div className="flex justify-between text-xs">
-                                        <span className="text-muted-foreground">Base Allocation</span>
-                                        <span className="font-medium">₹5,000.00</span>
+                                <div className="space-y-2.5 px-0.5">
+                                    <div className="flex justify-between text-[12px]">
+                                        <span className="text-muted-foreground">Standard Rent</span>
+                                        <span className="font-semibold text-foreground">₹5,000.00</span>
                                     </div>
                                     {user.hostelBlock?.includes('AC') && (
-                                        <div className="flex justify-between text-xs">
-                                            <span className="text-muted-foreground">AC Surcharge</span>
-                                            <span className="font-medium">₹3,000.00</span>
+                                        <div className="flex justify-between text-[12px]">
+                                            <span className="text-muted-foreground">Premium AC Fee</span>
+                                            <span className="font-semibold text-foreground">₹3,000.00</span>
                                         </div>
                                     )}
-                                    <div className="pt-2 border-t border-dashed flex justify-between text-sm font-bold">
-                                        <span>Total</span>
+                                    <div className="pt-3 mt-1 border-t border-dashed border-border flex justify-between text-[14px] font-bold">
+                                        <span>Subtotal</span>
                                         <span className="text-primary">₹{user.hostelBlock?.includes('AC') ? '8,000.00' : '5,000.00'}</span>
                                     </div>
                                 </div>
                             </div>
                         </Card>
 
-                        <Card className="apple-card border-none bg-muted/30 p-6">
-                            <div className="flex items-center gap-2 mb-4 text-muted-foreground">
+                        <div className="premium-card bg-secondary/20 p-5">
+                            <div className="flex items-center gap-2 mb-3 text-primary">
                                 <Info className="w-4 h-4" />
-                                <span className="text-xs font-bold uppercase tracking-widest">Stay Policy</span>
+                                <span className="text-[11px] font-bold uppercase tracking-wider">Residence Policy</span>
                             </div>
-                            <ul className="space-y-3">
+                            <ul className="space-y-2.5">
                                 <li className="text-[11px] leading-relaxed text-muted-foreground flex gap-2">
-                                    <span className="w-1 h-1 bg-muted-foreground rounded-full mt-1.5 shrink-0" />
-                                    Checkout must be processed at least 48 hours before session end.
+                                    <div className="w-1 h-1 bg-primary/40 rounded-full mt-1.5 shrink-0" />
+                                    Formal checkout is mandatory before room vacation.
                                 </li>
                                 <li className="text-[11px] leading-relaxed text-muted-foreground flex gap-2">
-                                    <span className="w-1 h-1 bg-muted-foreground rounded-full mt-1.5 shrink-0" />
-                                    Damages to room inventory will be billed to account.
+                                    <div className="w-1 h-1 bg-primary/40 rounded-full mt-1.5 shrink-0" />
+                                    Inventory damage will be billed to scholar account.
                                 </li>
                             </ul>
-                        </Card>
+                        </div>
                     </div>
                 </div>
             )}
@@ -252,27 +272,52 @@ const RoomAllotment = () => {
             <div className="space-y-6 pt-10">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h2 className="text-2xl font-bold tracking-tight text-foreground">Available Rooms</h2>
-                        <p className="text-sm text-muted-foreground">Select a room that fits your preference.</p>
+                        <h2 
+                            className="text-xl font-semibold text-foreground tracking-tight cursor-pointer hover:text-primary transition-colors flex items-center gap-2 group"
+                            onClick={() => setShowAllAvailable(!showAllAvailable)}
+                        >
+                            Available Residences
+                            <ArrowRight className={`w-4 h-4 transition-transform duration-300 ${showAllAvailable ? 'rotate-90' : 'group-hover:translate-x-1'}`} />
+                        </h2>
+                        <p className="text-sm text-muted-foreground">Explore and reserve your preferred room unit.</p>
                     </div>
                     {!user?.roomNumber && loadingRooms && (
-                        <div className="flex items-center gap-2">
-                            <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
-                            <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Refreshing...</span>
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary/50 rounded-lg">
+                            <div className="animate-spin h-3 w-3 border-2 border-primary border-t-transparent rounded-full" />
+                            <span className="text-[10px] text-primary font-bold uppercase tracking-wider">Syncing</span>
                         </div>
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {!showAllAvailable && !user?.roomNumber && (
+                    <div 
+                        className="py-12 border-2 border-dashed border-border/60 rounded-3xl bg-secondary/5 flex flex-col items-center justify-center text-center space-y-4 hover:border-primary/30 transition-all cursor-pointer group"
+                        onClick={() => setShowAllAvailable(true)}
+                    >
+                        <div className="p-4 bg-white rounded-2xl shadow-sm border border-border/40 group-hover:scale-105 transition-transform">
+                            <BedDouble className="w-8 h-8 text-primary/40 group-hover:text-primary transition-colors" />
+                        </div>
+                        <div className="space-y-1">
+                            <h3 className="text-[15px] font-bold text-foreground">Discover Open Units</h3>
+                            <p className="text-[12px] text-muted-foreground max-w-[240px]">Navigate through all currently unallotted premises in the institutional sector.</p>
+                        </div>
+                        <Button variant="outline" className="h-10 rounded-xl px-6 font-bold uppercase tracking-widest text-[10px] mt-2 group-hover:bg-primary group-hover:text-white transition-all">
+                            View All Units
+                        </Button>
+                    </div>
+                )}
+
+                {showAllAvailable && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in slide-in-from-top-4 duration-500">
                     {loadingRooms ? (
                         Array.from({ length: 3 }).map((_, i) => (
-                            <div key={i} className="h-64 rounded-3xl bg-muted animate-pulse" />
+                            <div key={i} className="h-56 rounded-2xl bg-muted animate-pulse border border-border/50" />
                         ))
                     ) : error ? (
-                        <div className="col-span-full py-12 text-center apple-card border-none bg-red-50">
-                            <p className="text-red-600 font-bold mb-4">Connection Failed: {error}</p>
-                            <Button variant="outline" onClick={fetchRooms} className="rounded-xl border-red-200 text-red-600 hover:bg-red-100">
-                                Try Reconnecting
+                        <div className="col-span-full py-16 text-center premium-card bg-red-50/50 border-red-100">
+                            <p className="text-red-600 font-semibold mb-4 text-sm">System Connection Unavailable: {error}</p>
+                            <Button variant="outline" onClick={fetchRooms} className="rounded-xl border-red-200 text-red-600 hover:bg-red-100 text-[12px] h-9">
+                                Retry Connection
                             </Button>
                         </div>
                     ) : rooms.length > 0 ? (
@@ -281,54 +326,56 @@ const RoomAllotment = () => {
                             const isFull = (room.occupants?.length || 0) >= room.capacity;
 
                             return (
-                                <Card key={room._id} className={`apple-card border-none shadow-sm h-full group ${isMyRoom ? 'ring-2 ring-primary bg-primary/5' : 'bg-white'}`}>
-                                    <CardHeader className="pb-4">
+                                <Card key={room._id} className={`premium-card h-full transition-all group ${isMyRoom ? 'border-primary bg-primary/5' : 'bg-white'}`}>
+                                    <CardHeader className="p-6 pb-4">
                                         <div className="flex justify-between items-start">
                                             <div>
-                                                <CardTitle className="text-xl font-bold">Room {room.roomNumber}</CardTitle>
-                                                <CardDescription className="text-xs font-medium uppercase tracking-widest mt-1">Floor {room.floor} • Wing {room.roomNumber.charAt(0)}</CardDescription>
+                                                <CardTitle className="text-lg font-bold">Room {room.roomNumber}</CardTitle>
+                                                <CardDescription className="text-[11px] font-semibold uppercase tracking-wider mt-0.5 text-muted-foreground">
+                                                    Floor {room.floor} • Sector {room.roomNumber.charAt(0)}
+                                                </CardDescription>
                                             </div>
-                                            <Badge className={`rounded-xl px-3 py-1 font-bold ${room.type === 'AC' ? 'bg-blue-50 text-blue-600' : 'bg-neutral-50 text-neutral-600'} border-none`}>
+                                            <Badge className={`rounded-lg px-2.5 py-1 text-[10px] font-bold ${room.type === 'AC' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'} border-none uppercase tracking-wider`}>
                                                 {room.type}
                                             </Badge>
                                         </div>
                                     </CardHeader>
-                                    <CardContent className="space-y-6">
+                                    <CardContent className="p-6 pt-2 space-y-6">
                                         <div className="flex justify-between items-end">
                                             <div className="space-y-1">
-                                                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-none">Occupancy</p>
-                                                <div className="flex items-center gap-2 font-bold text-foreground">
-                                                    <Users className="w-4 h-4 text-muted-foreground" />
+                                                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Occupancy</p>
+                                                <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                                                    <Users className="w-3.5 h-3.5 text-muted-foreground" />
                                                     {room.occupants?.length || 0} / {room.capacity}
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-none">Monthly Fee</p>
-                                                <p className="text-2xl font-black text-primary italic leading-none mt-1">₹{room.type === 'AC' ? '8000' : '5000'}</p>
+                                                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Per Month</p>
+                                                <p className="text-xl font-bold text-primary italic">₹{room.type === 'AC' ? '8K' : '5K'}</p>
                                             </div>
                                         </div>
                                         
                                         {isMyRoom ? (
                                             <Button 
-                                                className="w-full h-12 text-sm font-bold bg-green-50 text-green-600 border border-green-100 rounded-2xl shadow-none cursor-default"
+                                                className="w-full h-11 text-[13px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl shadow-none cursor-default"
                                                 disabled
                                             >
                                                 <CheckCircle2 className="w-4 h-4 mr-2" />
-                                                Your Residence
+                                                Active Residence
                                             </Button>
                                         ) : isFull ? (
                                             <Button 
-                                                className="w-full h-12 text-sm font-bold bg-muted text-muted-foreground rounded-2xl shadow-none cursor-not-allowed"
+                                                className="w-full h-11 text-[13px] font-semibold bg-muted text-muted-foreground rounded-xl shadow-none cursor-not-allowed border border-border/50"
                                                 disabled
                                             >
-                                                Capacity Full
+                                                Capacity Reached
                                             </Button>
                                         ) : (
                                             <Button 
-                                                className="w-full h-12 text-sm font-bold rounded-2xl transition-all shadow-none hover:shadow-lg hover:shadow-primary/20" 
+                                                className="w-full h-11 text-[13px] font-semibold btn-primary rounded-xl" 
                                                 onClick={() => handleBookRoom(room)}
                                             >
-                                                {user?.roomNumber ? "Request Switch" : "Proceed with Booking"}
+                                                {user?.roomNumber ? "Request Transfer" : "Reserve Room"}
                                             </Button>
                                         )}
                                     </CardContent>
@@ -336,58 +383,59 @@ const RoomAllotment = () => {
                             )
                         })
                     ) : (
-                        <div className="col-span-full py-20 text-center apple-card border-dashed border-2 m-4 bg-muted/10 opacity-60">
-                            <BedDouble className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                            <h3 className="text-lg font-bold text-foreground">No Vacant Rooms</h3>
-                            <p className="text-sm text-muted-foreground">Please contact administration for offline availability.</p>
+                        <div className="col-span-full py-20 text-center premium-card border-dashed border-2 m-4 bg-secondary/10">
+                            <BedDouble className="w-10 h-10 text-muted-foreground mx-auto mb-4 opacity-50" />
+                            <h3 className="text-[15px] font-semibold text-foreground">No Units Available</h3>
+                            <p className="text-[12px] text-muted-foreground">Please contact administration for offline waitlist availability.</p>
                         </div>
                     )}
                 </div>
+                )}
             </div>
 
             {/* Receipt Modal */}
             <Dialog open={showReceipt} onOpenChange={setShowReceipt}>
-                <DialogContent className="sm:max-w-md bg-white border-none p-0 overflow-hidden rounded-[2rem]">
-                    <div className="p-8 space-y-8 animate-in zoom-in-95 duration-300">
+                <DialogContent className="sm:max-w-md bg-white border-none p-0 overflow-hidden rounded-2xl shadow-2xl">
+                    <div className="p-8 space-y-8">
                         <div className="text-center space-y-2">
-                            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto">
-                                <CheckCircle className="w-10 h-10 text-primary" />
+                            <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto text-emerald-600">
+                                <CheckCircle className="w-7 h-7" />
                             </div>
-                            <h2 className="text-2xl font-black tracking-tight mt-4">Transaction Official</h2>
-                            <p className="text-muted-foreground text-xs font-bold uppercase tracking-[0.2em]">Validated Payment Receipt</p>
+                            <h2 className="text-xl font-bold tracking-tight mt-4">Transaction Confirmed</h2>
+                            <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest leading-none">Official Residence Receipt</p>
                         </div>
 
-                        <div className="space-y-4 px-4">
-                            <div className="flex justify-between items-center py-3 border-b border-border">
-                                <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Resident</span>
-                                <span className="text-sm font-bold text-foreground uppercase">{user.name}</span>
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center py-2.5 border-b border-border">
+                                <span className="text-[11px] text-muted-foreground font-semibold uppercase">Resident</span>
+                                <span className="text-[13px] font-bold text-foreground">{user.name}</span>
                             </div>
-                            <div className="flex justify-between items-center py-3 border-b border-border">
-                                <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Room Alloted</span>
-                                <span className="text-sm font-bold text-foreground">Room {user.roomNumber}</span>
+                            <div className="flex justify-between items-center py-2.5 border-b border-border">
+                                <span className="text-[11px] text-muted-foreground font-semibold uppercase">Allocated Unit</span>
+                                <span className="text-[13px] font-bold text-foreground">Room {user.roomNumber}</span>
                             </div>
-                            <div className="flex justify-between items-center py-3 border-b border-border">
-                                <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Reference</span>
-                                <span className="text-sm font-mono truncate max-w-[100px]">{Math.random().toString(36).substring(7).toUpperCase()}</span>
+                            <div className="flex justify-between items-center py-2.5 border-b border-border">
+                                <span className="text-[11px] text-muted-foreground font-semibold uppercase">ID Ref</span>
+                                <span className="text-[11px] font-mono text-muted-foreground">{user._id}</span>
                             </div>
-                            <div className="py-6 flex flex-col items-center">
-                                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Total Amount Cleared</p>
-                                <p className="text-4xl font-black text-primary italic tracking-tight">
+                            <div className="py-8 flex flex-col items-center bg-secondary/20 rounded-2xl mt-4">
+                                <p className="text-[10px] text-primary font-bold uppercase tracking-wider mb-2">Total Amount Paid</p>
+                                <p className="text-4xl font-bold text-primary italic tracking-tight">
                                     ₹{user.hostelBlock?.includes('AC') ? '8,000.00' : '5,000.00'}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex gap-3 px-4 pb-4">
+                        <div className="grid grid-cols-2 gap-3 pb-2">
                             <Button 
                                 variant="outline" 
-                                className="flex-1 h-12 rounded-2xl border-border hover:bg-muted font-bold gap-2 text-xs uppercase"
+                                className="h-11 rounded-xl border-border hover:bg-muted font-bold gap-2 text-[12px]"
                                 onClick={() => window.print()}
                             >
                                 <Printer className="w-4 h-4" /> Print
                             </Button>
-                            <Button className="flex-1 h-12 rounded-2xl bg-primary hover:bg-primary/90 text-white font-bold gap-2 text-xs uppercase">
-                                <Download className="w-4 h-4" /> Download
+                            <Button className="h-11 rounded-xl btn-primary font-bold gap-2 text-[12px]">
+                                <Download className="w-4 h-4" /> Export
                             </Button>
                         </div>
                     </div>
@@ -398,9 +446,9 @@ const RoomAllotment = () => {
 };
 
 const DetailRow = ({ label, value }) => (
-    <div className="flex justify-between items-center py-2 text-sm">
+    <div className="flex justify-between items-center py-0.5 text-[12px]">
         <span className="text-muted-foreground font-medium">{label}</span>
-        <span className="font-bold text-foreground">{value}</span>
+        <span className="font-semibold text-foreground">{value}</span>
     </div>
 );
 

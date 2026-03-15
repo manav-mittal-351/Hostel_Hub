@@ -39,6 +39,7 @@ const AdminRoomManagement = () => {
             await axios.post('http://localhost:5000/api/rooms', newRoom, config);
             setNewRoom({ roomNumber: '', capacity: 3, floor: 1, type: 'Non-AC' });
             fetchRooms();
+            alert("Room created successfully");
         } catch (error) {
             console.error("Error creating room", error);
             alert("Error creating room");
@@ -60,23 +61,28 @@ const AdminRoomManagement = () => {
     };
 
     return (
-        <div className="space-y-10 animate-in fade-in duration-700">
+        <div className="space-y-10 animate-in fade-in duration-1000">
+            <header className="border-b border-border/50 pb-2">
+                <h1 className="section-title">Residential Unit Engineering</h1>
+                <p className="section-subtitle">Initialize inventory parameters and manage resident environmental assignments.</p>
+            </header>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Create Room Card */}
-                <Card className="apple-card border-none bg-white shadow-sm overflow-hidden">
-                    <CardHeader className="bg-[#1D1D1F] text-white p-8">
-                        <CardTitle className="flex items-center gap-2">
-                            <Plus className="h-5 w-5" /> Initialize New Room
+                <Card className="premium-card bg-white p-0 overflow-hidden">
+                    <CardHeader className="px-7 py-6 border-b border-border bg-secondary/30">
+                        <CardTitle className="text-[15px] font-semibold flex items-center gap-2">
+                            <Plus className="h-4 w-4 text-primary" /> Initialize Room Unit
                         </CardTitle>
-                        <CardDescription className="text-white/60">Register a new room unit into the registry.</CardDescription>
+                        <CardDescription className="text-[12px]">Register a new room into the central registry.</CardDescription>
                     </CardHeader>
-                    <CardContent className="p-8">
+                    <CardContent className="p-7">
                         <form onSubmit={handleCreateRoom} className="space-y-6">
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Room No</Label>
+                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Room Number</Label>
                                     <Input 
-                                        className="bg-[#F5F5F7] border-none rounded-xl h-12 focus:ring-2 focus:ring-primary/20"
+                                        className="h-11 px-4 text-[13px] bg-secondary/20 border-border/50 focus:bg-white transition-all rounded-xl"
                                         placeholder="E.g. 101"
                                         value={newRoom.roomNumber} 
                                         onChange={(e) => setNewRoom({ ...newRoom, roomNumber: e.target.value })} 
@@ -84,30 +90,30 @@ const AdminRoomManagement = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Capacity</Label>
+                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Max Capacity</Label>
                                     <Input 
                                         type="number"
-                                        className="bg-[#F5F5F7] border-none rounded-xl h-12 focus:ring-2 focus:ring-primary/20"
+                                        className="h-11 px-4 text-[13px] bg-secondary/20 border-border/50 focus:bg-white transition-all rounded-xl"
                                         value={newRoom.capacity} 
                                         onChange={(e) => setNewRoom({ ...newRoom, capacity: e.target.value })} 
                                         required 
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Floor</Label>
+                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Floor Level</Label>
                                     <Input 
                                         type="number"
-                                        className="bg-[#F5F5F7] border-none rounded-xl h-12 focus:ring-2 focus:ring-primary/20"
+                                        className="h-11 px-4 text-[13px] bg-secondary/20 border-border/50 focus:bg-white transition-all rounded-xl"
                                         value={newRoom.floor} 
                                         onChange={(e) => setNewRoom({ ...newRoom, floor: e.target.value })} 
                                         required 
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Type</Label>
-                                    <div className="flex gap-4 mt-2">
+                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Environment</Label>
+                                    <div className="flex gap-2 mt-1">
                                         {['Non-AC', 'AC'].map((type) => (
-                                            <label key={type} className="flex items-center gap-2 cursor-pointer group">
+                                            <label key={type} className="flex-1 cursor-pointer group">
                                                 <input 
                                                     type="radio" 
                                                     name="type"
@@ -116,8 +122,8 @@ const AdminRoomManagement = () => {
                                                     checked={newRoom.type === type} 
                                                     onChange={(e) => setNewRoom({ ...newRoom, type: e.target.value })} 
                                                 />
-                                                <div className={`px-4 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-widest transition-all ${
-                                                    newRoom.type === type ? 'bg-primary/10 border-primary text-primary' : 'bg-muted/30 border-transparent text-muted-foreground group-hover:bg-muted/50'
+                                                <div className={`h-11 flex items-center justify-center rounded-xl border text-[12px] font-semibold transition-all ${
+                                                    newRoom.type === type ? 'bg-primary/5 border-primary text-primary shadow-sm' : 'bg-white border-border/50 text-muted-foreground hover:bg-secondary/50'
                                                 }`}>
                                                     {type}
                                                 </div>
@@ -126,100 +132,100 @@ const AdminRoomManagement = () => {
                                     </div>
                                 </div>
                             </div>
-                            <Button type="submit" className="w-full h-12 rounded-xl bg-primary hover:bg-black transition-all font-bold">Register Room</Button>
+                            <Button type="submit" className="w-full h-11 btn-primary text-[13px] font-semibold">Register Unit</Button>
                         </form>
                     </CardContent>
                 </Card>
 
                 {/* Allocation Card */}
-                <Card className="apple-card border-none bg-white shadow-sm overflow-hidden">
-                    <CardHeader className="bg-primary text-white p-8">
-                        <CardTitle className="flex items-center gap-2">
-                            <ShieldPlus className="h-5 w-5" /> Direct Allocation
+                <Card className="premium-card bg-white p-0 overflow-hidden">
+                    <CardHeader className="px-7 py-6 border-b border-border bg-secondary/30">
+                        <CardTitle className="text-[15px] font-semibold flex items-center gap-2">
+                            <ShieldPlus className="h-4 w-4 text-primary" /> Direct Allocation
                         </CardTitle>
-                        <CardDescription className="text-white/60">Manually assign a student to a specific room.</CardDescription>
+                        <CardDescription className="text-[12px]">Manually assign resident to a specific room unit.</CardDescription>
                     </CardHeader>
-                    <CardContent className="p-8">
+                    <CardContent className="p-7">
                         <form onSubmit={handleAllocate} className="space-y-6">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Select Room</Label>
+                                <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Choose Room Unit</Label>
                                 <select
-                                    className="w-full bg-[#F5F5F7] border-none rounded-xl h-12 px-4 text-sm focus:ring-2 focus:ring-primary/20 outline-none appearance-none"
+                                    className="w-full h-11 px-4 text-[13px] bg-secondary/20 border border-border/50 rounded-xl focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary/20 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%20fill%3D%22none%22%20xmlns%3D%220%200%2010%206%22%3E%3Cpath%20d%3D%22M1%201L5%205L9%201%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-[length:10px] bg-[right_1rem_center] bg-no-repeat"
                                     value={allocateData.roomId}
                                     onChange={(e) => setAllocateData({ ...allocateData, roomId: e.target.value })}
                                     required
                                 >
-                                    <option value="">Choose available room...</option>
+                                    <option value="">Select available unit...</option>
                                     {rooms.filter(r => r.occupants.length < r.capacity).map(r => (
-                                        <option key={r._id} value={r._id}>Room {r.roomNumber} ({r.type}) - {r.capacity - r.occupants.length} slots left</option>
+                                        <option key={r._id} value={r._id}>Room {r.roomNumber} ({r.type}) — {r.capacity - r.occupants.length} slots available</option>
                                     ))}
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Student MongoDB ID</Label>
+                                <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Student System ID</Label>
                                 <Input
-                                    className="bg-[#F5F5F7] border-none rounded-xl h-12 focus:ring-2 focus:ring-primary/20"
-                                    placeholder="Enter full database ID"
+                                    className="h-11 px-4 text-[13px] bg-secondary/20 border-border/50 focus:bg-white transition-all rounded-xl"
+                                    placeholder="Paste database reference ID"
                                     value={allocateData.studentId}
                                     onChange={(e) => setAllocateData({ ...allocateData, studentId: e.target.value })}
                                     required
                                 />
-                                <p className="text-[10px] text-muted-foreground italic pl-1">ID can be found in the global user registry.</p>
+                                <p className="text-[10px] text-muted-foreground pl-1 italic">Reference ID can be found in the global records registry.</p>
                             </div>
-                            <Button type="submit" className="w-full h-12 rounded-xl bg-[#1D1D1F] hover:bg-black transition-all font-bold mt-4 shadow-xl shadow-black/10">Authorize Allocation</Button>
+                            <Button type="submit" className="w-full h-11 btn-primary text-[13px] font-semibold mt-4">Execute Allocation</Button>
                         </form>
                     </CardContent>
                 </Card>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-6 pt-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h2 className="text-2xl font-bold tracking-tight text-[#1D1D1F]">Global Registry</h2>
-                        <p className="text-sm text-[#86868B] font-medium">Monitoring {rooms.length} room units across {new Set(rooms.map(r => r.floor)).size} floors.</p>
+                        <h2 className="text-[17px] font-semibold text-foreground tracking-tight">Active Room Inventory</h2>
+                        <p className="text-sm text-muted-foreground font-medium">Monitoring {rooms.length} units across {new Set(rooms.map(r => r.floor)).size} floor levels.</p>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {loading ? (
                         Array.from({ length: 4 }).map((_, i) => (
-                            <div key={i} className="h-48 rounded-[2rem] bg-muted/30 animate-pulse" />
+                            <div key={i} className="h-48 rounded-2xl bg-muted/30 animate-pulse border border-border/50" />
                         ))
                     ) : rooms.map(room => (
-                        <Card key={room._id} className="apple-card border-none bg-white shadow-sm group hover:shadow-md transition-all overflow-hidden">
-                            <div className={`h-1.5 w-full ${room.occupants.length >= room.capacity ? 'bg-red-500' : 'bg-green-500'}`} />
-                            <CardHeader className="p-6 pb-2">
+                        <Card key={room._id} className="premium-card bg-white group hover:border-primary/30 transition-all overflow-hidden p-0">
+                            <div className={`h-1 w-full ${room.occupants.length >= room.capacity ? 'bg-red-400' : 'bg-emerald-400'}`} />
+                            <CardHeader className="p-5 pb-2">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <CardTitle className="text-lg font-bold">Room {room.roomNumber}</CardTitle>
-                                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Floor {room.floor}</p>
+                                        <CardTitle className="text-[15px] font-bold">Room {room.roomNumber}</CardTitle>
+                                        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Level {room.floor}</p>
                                     </div>
-                                    <Badge className={`${room.type === 'AC' ? 'bg-blue-50 text-blue-600' : 'bg-neutral-50 text-neutral-600'} border-none text-[9px] font-black uppercase tracking-[0.1em]`}>
+                                    <Badge className={`${room.type === 'AC' ? 'bg-primary/5 text-primary' : 'bg-muted text-muted-foreground'} border-none text-[9px] font-bold uppercase`}>
                                         {room.type}
                                     </Badge>
                                 </div>
                             </CardHeader>
-                            <CardContent className="p-6 pt-0 space-y-4">
-                                <div className="flex items-center justify-between text-sm py-3 border-b border-[#F5F5F7]">
-                                    <span className="text-muted-foreground font-medium flex items-center gap-2">
-                                        <Users className="h-3 w-3" /> Occupancy
+                            <CardContent className="p-5 pt-0 space-y-4">
+                                <div className="flex items-center justify-between text-[12px] py-2.5 border-b border-border/50">
+                                    <span className="text-muted-foreground font-medium flex items-center gap-1.5">
+                                        <Users className="h-3 w-3" /> Status
                                     </span>
-                                    <span className={`font-black italic ${room.occupants.length >= room.capacity ? 'text-red-500' : 'text-green-500'}`}>
-                                        {room.occupants.length}/{room.capacity}
+                                    <span className={`font-bold ${room.occupants.length >= room.capacity ? 'text-red-500' : 'text-emerald-600'}`}>
+                                        {room.occupants.length}/{room.capacity} Full
                                     </span>
                                 </div>
                                 <div className="space-y-2">
-                                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest pl-1">Residents</p>
+                                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Residents</p>
                                     <div className="space-y-1.5 min-h-[40px]">
                                         {room.occupants.length > 0 ? (
                                             room.occupants.map(occ => (
-                                                <div key={occ._id} className="text-[11px] font-bold text-[#1D1D1F] flex items-center gap-2">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                                <div key={occ._id} className="text-[11px] font-medium text-foreground flex items-center gap-2">
+                                                    <div className="w-1 h-1 rounded-full bg-primary/40" />
                                                     {occ.name}
                                                 </div>
                                             ))
                                         ) : (
-                                            <p className="text-[11px] text-muted-foreground/50 italic">Room is currently vacant</p>
+                                            <p className="text-[11px] text-muted-foreground/50 italic py-1">Unit is currently vacant</p>
                                         )}
                                     </div>
                                 </div>

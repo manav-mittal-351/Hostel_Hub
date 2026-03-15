@@ -35,15 +35,15 @@ const Navbar = () => {
 
     return (
         <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${
-            scrolled ? "bg-white/80 backdrop-blur-xl border-[#D2D2D7]/50 py-3" : "bg-transparent border-transparent py-5"
+            scrolled ? "bg-white/90 backdrop-blur-xl border-border/50 py-3 shadow-sm" : "bg-transparent border-transparent py-5"
         }`}>
             <div className="container max-w-7xl mx-auto px-6 flex items-center justify-between">
-                <Link to="/" className="flex items-center gap-2 group">
+                <Link to="/" className="flex items-center gap-3 group">
                     <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/20 rotate-[-5deg] group-hover:rotate-0 transition-all duration-300">
                         <Users className="h-5 w-5 text-white" />
                     </div>
-                    <span className="text-xl font-black text-[#1D1D1F] tracking-tight">
-                        HostelHUB
+                    <span className="text-xl font-bold text-foreground tracking-tighter">
+                        Hostel<span className="text-primary italic">HUB</span>
                     </span>
                 </Link>
 
@@ -55,34 +55,34 @@ const Navbar = () => {
                                 <Link
                                     key={link.path}
                                     to={link.path}
-                                    className="px-4 py-2 text-[13px] font-bold text-[#86868B] hover:text-[#1D1D1F] transition-colors"
+                                    className="px-4 py-2 text-[13px] font-semibold text-muted-foreground hover:text-foreground transition-all rounded-lg hover:bg-secondary/20"
                                 >
                                     {link.label}
                                 </Link>
                             ))}
-                            <div className="h-4 w-px bg-[#D2D2D7] mx-2" />
-                            <Link to="/profile" className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-[#F5F5F7] transition-all">
-                                <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center">
-                                    <UserIcon className="h-4 w-4 text-primary" />
+                            <div className="h-4 w-px bg-border mx-2" />
+                            <Link to="/profile" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-secondary/30 transition-all border border-transparent hover:border-border/50">
+                                <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+                                    <UserIcon className="h-4 w-4 text-white" />
                                 </div>
-                                <span className="text-[13px] font-bold text-[#1D1D1F]">{user.name.split(' ')[0]}</span>
+                                <span className="text-[13px] font-bold text-foreground tracking-tight">{user.name.split(' ')[0]}</span>
                             </Link>
                             <Button
                                 variant="ghost"
                                 size="icon"
                                 onClick={handleLogout}
-                                className="text-red-500 hover:text-red-600 hover:bg-red-50 rounded-full"
+                                className="text-red-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors ml-1"
                             >
                                 <LogOut className="h-4 w-4" />
                             </Button>
                         </>
                     ) : (
-                        <div className="flex items-center gap-6">
-                            <Link to="/login" className="text-sm font-bold text-[#1D1D1F] hover:text-primary transition-colors">
+                        <div className="flex items-center gap-8">
+                            <Link to="/login" className="text-[11px] font-bold uppercase tracking-[0.2em] text-foreground hover:text-primary transition-colors">
                                 Sign In
                             </Link>
                             <Link to="/register">
-                                <Button className="bg-[#1D1D1F] hover:bg-black text-white h-10 px-6 rounded-full font-bold text-sm shadow-xl shadow-black/10">
+                                <Button className="bg-primary hover:bg-primary/90 text-white h-11 px-8 rounded-xl font-bold text-[12px] uppercase tracking-widest shadow-lg shadow-primary/10 transition-all active:scale-95">
                                     Get Started
                                 </Button>
                             </Link>
@@ -92,7 +92,7 @@ const Navbar = () => {
 
                 {/* Mobile Menu Button */}
                 <div className="md:hidden">
-                    <Button variant="ghost" size="icon" onClick={toggleMenu} className="hover:bg-[#F5F5F7]">
+                    <Button variant="ghost" size="icon" onClick={toggleMenu} className="hover:bg-secondary/40 rounded-xl">
                         {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                     </Button>
                 </div>
@@ -100,34 +100,37 @@ const Navbar = () => {
 
             {/* Mobile Menu */}
             {isOpen && (
-                <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-[#D2D2D7] p-6 animate-in slide-in-from-top-2">
+                <div className="md:hidden absolute top-full left-4 right-4 bg-white border border-border mt-3 rounded-2xl shadow-2xl p-6 animate-in slide-in-from-top-4">
                     <div className="flex flex-col gap-4">
                         {user ? (
                             <>
                                 {navLinks.map((link) => (
-                                    <Link key={link.path} to={link.path} onClick={() => setIsOpen(false)} className="text-lg font-bold text-[#1D1D1F]">
+                                    <Link key={link.path} to={link.path} onClick={() => setIsOpen(false)} className="text-md font-bold text-foreground flex items-center gap-3 p-3 rounded-xl hover:bg-secondary/20">
+                                        <link.icon className="h-5 w-5 text-primary" />
                                         {link.label}
                                     </Link>
                                 ))}
-                                <div className="h-px bg-[#D2D2D7] my-2" />
-                                <Link to="/profile" onClick={() => setIsOpen(false)} className="text-lg font-bold text-[#1D1D1F]">
+                                <div className="h-px bg-border my-2" />
+                                <Link to="/profile" onClick={() => setIsOpen(false)} className="text-md font-bold text-foreground flex items-center gap-3 p-3 rounded-xl hover:bg-secondary/20">
+                                    <UserIcon className="h-5 w-5 text-primary" />
                                     My Profile
                                 </Link>
                                 <Button
                                     variant="ghost"
                                     onClick={handleLogout}
-                                    className="justify-start text-red-500 font-bold p-0 h-auto hover:bg-transparent"
+                                    className="justify-start text-red-500 font-bold p-3 h-auto hover:bg-red-50 rounded-xl"
                                 >
+                                    <LogOut className="h-5 w-5 mr-3" />
                                     Logout
                                 </Button>
                             </>
                         ) : (
                             <div className="flex flex-col gap-4">
-                                <Link to="/login" onClick={() => setIsOpen(false)} className="text-lg font-bold text-[#1D1D1F]">
+                                <Link to="/login" onClick={() => setIsOpen(false)} className="p-3 text-center text-sm font-bold uppercase tracking-widest text-foreground hover:bg-secondary/20 rounded-xl">
                                     Sign In
                                 </Link>
                                 <Link to="/register" onClick={() => setIsOpen(false)}>
-                                    <Button className="w-full bg-[#1D1D1F] h-12 rounded-2xl font-bold">Get Started</Button>
+                                    <Button className="w-full bg-primary h-14 rounded-2xl font-bold uppercase tracking-widest text-sm shadow-lg shadow-primary/10">Get Started</Button>
                                 </Link>
                             </div>
                         )}

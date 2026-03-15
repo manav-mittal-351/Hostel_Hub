@@ -6,79 +6,138 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    --background: 210 10% 97%; /* #f6f7f8 */
+    --foreground: 0 0% 10%; /* #1a1a1a */
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 0 0% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 0 0% 10%;
 
-    --primary: 221 83% 53%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 163 32% 28%; /* #2f5d50 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222 47% 11.2%;
+    --secondary: 163 20% 87%; /* #d9e5e2 */
+    --secondary-foreground: 163 32% 28%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 10% 97%;
+    --muted-foreground: 220 9% 46%; /* #6b7280 */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222 47% 11.2%;
+    --accent: 163 20% 87%;
+    --accent-foreground: 163 32% 28%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 163 32% 28%;
 
     --radius: 1rem;
   }
 
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Global Input & Select Improvements */
+  input, select, textarea {
+    border: 1px solid hsl(var(--border));
+    background-color: white;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.875rem;
+    padding: 0.625rem 1rem;
+    border-radius: 0.75rem;
+    color: hsl(var(--foreground));
+    width: 100%;
+  }
+
+  input::placeholder {
+    color: hsl(var(--muted-foreground)) / 0.6;
+    font-weight: 400;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: hsl(var(--primary) / 0.4);
+    box-shadow: 0 0 0 4px hsla(var(--primary), 0.08);
+    outline: none;
+    background-color: white;
+  }
+
+  select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+  }
+
+  label {
+    font-size: 11px;
+    font-weight: 700;
+    color: hsl(var(--muted-foreground));
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    opacity: 0.8;
   }
 }
 
 @layer utilities {
-  .apple-card {
-    @apply bg-card border border-border shadow-sm rounded-2xl transition-all duration-300;
+  .premium-card {
+    @apply bg-card border border-border/80 shadow-[0_2px_8px_rgba(0,0,0,0.02),0_1px_0_rgba(0,0,0,0.01)] rounded-2xl transition-all duration-300;
   }
 
-  .apple-card:hover {
-    @apply shadow-md;
+  .premium-card:hover {
+    @apply shadow-[0_12px_32px_rgba(0,0,0,0.04),0_1px_0_rgba(0,0,0,0.01)] -translate-y-0.5 border-primary/10;
   }
 
   .glass-panel {
-    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm;
+    @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-sm;
   }
 
   .sidebar-link {
-    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200;
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200;
   }
 
   .sidebar-link-active {
-    @apply bg-primary text-primary-foreground shadow-lg shadow-primary/20;
+    @apply bg-primary text-primary-foreground shadow-sm;
   }
 
   .sidebar-link-inactive {
-    @apply text-muted-foreground hover:bg-muted hover:text-foreground;
+    @apply text-muted-foreground hover:bg-secondary/50 hover:text-primary;
   }
 
   .section-title {
-    @apply text-2xl font-bold tracking-tight text-foreground mb-6;
+    @apply text-2xl font-semibold tracking-tight text-foreground mb-1;
+  }
+
+  .section-subtitle {
+    @apply text-sm text-muted-foreground mb-8;
   }
 
   .stats-card {
-    @apply apple-card p-6 flex items-start justify-between;
+    @apply premium-card p-6;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 transition-all active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply bg-white border border-border text-foreground px-4 py-2 rounded-xl text-sm font-medium hover:bg-muted transition-all active:scale-[0.98];
   }
 }
 

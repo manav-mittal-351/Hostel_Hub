@@ -14,37 +14,39 @@ const Header = ({ onMenuClick }) => {
     };
 
     return (
-        <header className="h-16 border-b border-border bg-white/80 backdrop-blur-md sticky top-0 z-30 px-6 flex items-center justify-between">
+        <header className="h-16 border-b border-border bg-white/70 backdrop-blur-xl sticky top-0 z-30 px-6 flex items-center justify-between">
             <div className="flex items-center gap-4 flex-1">
-                <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenuClick}>
-                    <Menu className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className="lg:hidden rounded-lg" onClick={onMenuClick}>
+                    <Menu className="h-5 w-5 text-muted-foreground" />
                 </Button>
                 
-                <div className="relative max-w-md w-full hidden md:block">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <div className="relative max-w-sm w-full hidden md:block group">
+                    <div className="absolute left-5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-10">
+                        <Search className="h-4 w-4 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
+                    </div>
                     <input 
                         type="text" 
-                        placeholder="Search anything..." 
-                        className="w-full bg-muted/50 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                        placeholder="Search records..." 
+                        className="w-full bg-secondary/15 border border-border/40 hover:border-border/60 focus:bg-white focus:border-primary/30 rounded-xl py-2.5 pl-14 pr-4 text-[13px] transition-all outline-none placeholder:text-muted-foreground/40 shadow-none border-dashed hover:border-solid hover:bg-secondary/10"
                     />
                 </div>
             </div>
 
-            <div className="flex items-center gap-3">
-                <Button variant="ghost" size="icon" className="relative rounded-full hover:bg-muted">
-                    <Bell className="h-5 w-5 text-muted-foreground" />
-                    <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full border-2 border-white" />
+            <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-secondary/50 transition-colors">
+                    <Bell className="h-4 w-4 text-muted-foreground" />
+                    <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white" />
                 </Button>
                 
-                <div className="h-8 w-px bg-border mx-2" />
+                <div className="h-4 w-px bg-border mx-2" />
 
                 <Button 
                     variant="ghost" 
                     size="sm" 
                     onClick={handleLogout}
-                    className="text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-full px-4 gap-2 font-medium"
+                    className="text-muted-foreground hover:text-red-600 hover:bg-red-50 transition-colors rounded-xl px-3 gap-2 text-[13px] font-medium"
                 >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut className="h-3.5 w-3.5" />
                     <span className="hidden sm:inline">Logout</span>
                 </Button>
             </div>
