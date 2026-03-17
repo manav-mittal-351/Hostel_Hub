@@ -59,7 +59,7 @@ export function EditProfileDialog() {
                 },
             };
             const { data } = await axios.put(
-                "http://localhost:5000/api/auth/profile",
+                "/api/auth/profile",
                 formData,
                 config
             );

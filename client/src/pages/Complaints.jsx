@@ -37,7 +37,7 @@ const Complaints = () => {
     const fetchComplaints = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get("http://localhost:5000/api/complaints/my", config);
+            const { data } = await axios.get("/api/complaints/my", config);
             setComplaints(data);
         } catch (error) {
             console.error("Error fetching complaints:", error);
@@ -50,7 +50,7 @@ const Complaints = () => {
         e.preventDefault();
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post("http://localhost:5000/api/complaints", formData, config);
+            await axios.post("/api/complaints", formData, config);
             alert("Complaint submitted successfully!");
             setFormData({ title: "", description: "", category: "General" });
             fetchComplaints();

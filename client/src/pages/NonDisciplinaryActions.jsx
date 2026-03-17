@@ -83,7 +83,7 @@ const NonDisciplinaryActions = () => {
         e.preventDefault();
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.post("http://localhost:5000/api/non-disciplinary", formData, config);
+            const { data } = await axios.post("/api/non-disciplinary", formData, config);
             setRecords([data, ...records]);
             setIsAddModalOpen(false);
             setFormData({ studentId: "", actionType: "Damage", description: "", amount: "", status: "Pending" });
@@ -96,7 +96,7 @@ const NonDisciplinaryActions = () => {
     const handleUpdateStatus = async (id, newStatus) => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.put(`http://localhost:5000/api/non-disciplinary/${id}`, { status: newStatus }, config);
+            const { data } = await axios.put(`/api/non-disciplinary/${id}`, { status: newStatus }, config);
             setRecords(records.map(r => r._id === id ? data : r));
             toast.success(`Status updated to ${newStatus}`);
         } catch (error) {
@@ -108,7 +108,7 @@ const NonDisciplinaryActions = () => {
         if (!confirm("Are you sure you want to delete this record?")) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`http://localhost:5000/api/non-disciplinary/${id}`, config);
+            await axios.delete(`/api/non-disciplinary/${id}`, config);
             setRecords(records.filter(r => r._id !== id));
             toast.success("Record deleted");
         } catch (error) {

@@ -15,7 +15,7 @@ const StudentDashboard = () => {
             try {
                 if (!user?.token) return;
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                const { data } = await axios.get("http://localhost:5000/api/complaints/my", config);
+                const { data } = await axios.get("/api/complaints/my", config);
                 
                 const stats = data.reduce((acc, curr) => {
                     if (curr.status === 'pending') acc.pending++;

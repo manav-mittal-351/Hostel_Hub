@@ -30,7 +30,7 @@ const RoomAllotment = () => {
         setError(null);
         try {
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const { data } = await axios.get("http://localhost:5000/api/rooms", config);
+            const { data } = await axios.get("/api/rooms", config);
             setRooms(data);
         } catch (error) {
             console.error("Error fetching rooms:", error);
@@ -52,7 +52,7 @@ const RoomAllotment = () => {
 
         try {
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const { data } = await axios.post("http://localhost:5000/api/rooms/book", {
+            const { data } = await axios.post("/api/rooms/book", {
                 roomId: room._id,
                 amount: price,
                 paymentType: 'hostel_fee'
@@ -74,7 +74,7 @@ const RoomAllotment = () => {
 
         try {
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const { data } = await axios.post("http://localhost:5000/api/rooms/checkout", {}, config);
+            const { data } = await axios.post("/api/rooms/checkout", {}, config);
 
             alert("Checked out successfully!");
             if (data.user) {

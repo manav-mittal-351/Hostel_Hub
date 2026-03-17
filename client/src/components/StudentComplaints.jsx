@@ -24,7 +24,7 @@ const StudentComplaints = () => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-            const { data } = await axios.get('http://localhost:5000/api/complaints/my', config);
+            const { data } = await axios.get('/api/complaints/my', config);
             setComplaints(data);
         } catch (error) {
             console.error("Error fetching complaints", error);
@@ -41,7 +41,7 @@ const StudentComplaints = () => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-            await axios.post('http://localhost:5000/api/complaints', { title, description }, config);
+            await axios.post('/api/complaints', { title, description }, config);
             setTitle('');
             setDescription('');
             fetchComplaints();

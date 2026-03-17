@@ -19,7 +19,7 @@ const AdminDashboard = () => {
         const fetchStats = async () => {
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                const { data } = await axios.get("http://localhost:5000/api/admin/stats", config);
+                const { data } = await axios.get("/api/admin/stats", config);
                 setStats(data);
             } catch (error) {
                 console.error("Error fetching stats:", error);

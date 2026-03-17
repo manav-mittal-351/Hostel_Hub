@@ -20,7 +20,7 @@ const AdminGatePass = () => {
             setLoading(true);
             const token = user?.token;
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const { data } = await axios.get("http://localhost:5000/api/gate-pass", config);
+            const { data } = await axios.get("/api/gate-pass", config);
             setRequests(data);
         } catch (error) {
             console.error("Error fetching requests:", error);
@@ -33,7 +33,7 @@ const AdminGatePass = () => {
         try {
             const token = user?.token;
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.put(`http://localhost:5000/api/gate-pass/${id}/status`, { status }, config);
+            await axios.put(`/api/gate-pass/${id}/status`, { status }, config);
             fetchRequests();
         } catch (error) {
             console.error("Error updating status:", error);

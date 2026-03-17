@@ -23,7 +23,7 @@ const AdminRoomManagement = () => {
         try {
             setLoading(true);
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/rooms', config);
+            const { data } = await axios.get('/api/rooms', config);
             setRooms(data);
         } catch (error) {
             console.error("Error fetching rooms", error);
@@ -36,7 +36,7 @@ const AdminRoomManagement = () => {
         e.preventDefault(); 
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post('http://localhost:5000/api/rooms', newRoom, config);
+            await axios.post('/api/rooms', newRoom, config);
             setNewRoom({ roomNumber: '', capacity: 3, floor: 1, type: 'Non-AC' });
             fetchRooms();
             alert("Room created successfully");
@@ -50,7 +50,7 @@ const AdminRoomManagement = () => {
         e.preventDefault();
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/rooms/${allocateData.roomId}/allocate`, { studentId: allocateData.studentId }, config);
+            await axios.put(`/api/rooms/${allocateData.roomId}/allocate`, { studentId: allocateData.studentId }, config);
             setAllocateData({ roomId: '', studentId: '' });
             fetchRooms();
             alert("Room allocated successfully");

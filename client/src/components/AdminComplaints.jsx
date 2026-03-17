@@ -19,7 +19,7 @@ const AdminComplaints = () => {
         try {
             setLoading(true);
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/complaints', config);
+            const { data } = await axios.get('/api/complaints', config);
             setComplaints(data);
         } catch (error) {
             console.error("Error fetching complaints", error);
@@ -31,7 +31,7 @@ const AdminComplaints = () => {
     const resolveComplaint = async (id) => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/complaints/${id}/resolve`, {}, config);
+            await axios.put(`/api/complaints/${id}/resolve`, {}, config);
             fetchComplaints();
         } catch (error) {
             console.error("Error resolving complaint", error);

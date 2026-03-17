@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
                             Authorization: `Bearer ${parsedUser.token}`
                         }
                     };
-                    const { data } = await axios.get('http://localhost:5000/api/auth/profile', config);
+                    const { data } = await axios.get('/api/auth/profile', config);
                     const updatedUser = { ...parsedUser, ...data };
                     setUser(updatedUser);
                     localStorage.setItem('userInfo', JSON.stringify(updatedUser));
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
                     'Content-Type': 'application/json',
                 },
             };
-            const { data } = await axios.post('http://localhost:5000/api/auth/login', { email, password }, config);
+            const { data } = await axios.post('/api/auth/login', { email, password }, config);
 
             setUser(data);
             localStorage.setItem('userInfo', JSON.stringify(data));
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
                     'Content-Type': 'application/json',
                 },
             };
-            const { data } = await axios.post('http://localhost:5000/api/auth/register', { name, email, password, role }, config);
+            const { data } = await axios.post('/api/auth/register', { name, email, password, role }, config);
 
             setUser(data);
             localStorage.setItem('userInfo', JSON.stringify(data));

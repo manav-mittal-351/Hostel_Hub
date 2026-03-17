@@ -30,7 +30,7 @@ const GatePass = () => {
     const fetchRequests = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get("http://localhost:5000/api/gate-pass/my-passes", config);
+            const { data } = await axios.get("/api/gate-pass/my-passes", config);
             setRequests(data);
         } catch (error) {
             console.error("Error fetching requests:", error);
@@ -46,7 +46,7 @@ const GatePass = () => {
         setLoading(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post("http://localhost:5000/api/gate-pass", formData, config);
+            await axios.post("/api/gate-pass", formData, config);
             fetchRequests();
             setFormData({ type: 'Outing', outDate: '', inDate: '', reason: '', destination: '' });
             alert("Request submitted successfully!");
