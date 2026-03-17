@@ -91,6 +91,7 @@ const Register = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
+                                    autoComplete="email"
                                     className="h-12 px-5 bg-secondary/10 border-border/40 focus:bg-white rounded-xl font-medium"
                                 />
                             </div>
@@ -104,6 +105,7 @@ const Register = () => {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
+                                        autoComplete="new-password"
                                         className="h-12 px-5 pr-12 bg-secondary/10 border-border/40 focus:bg-white rounded-xl font-medium"
                                     />
                                     <button
