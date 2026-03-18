@@ -31,17 +31,18 @@ const seedData = async () => {
         console.log('🏢 Rooms seeded successfully');
 
         // 2. Seed Default Admin (if doesn't exist)
-        const adminEmail = 'admin@hostelhub.com';
+        const adminEmail = process.env.ADMIN_EMAIL || 'admin@hostelhub.com';
+        const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
         const adminExists = await User.findOne({ email: adminEmail });
         
         if (!adminExists) {
             await User.create({
                 name: 'System Admin',
                 email: adminEmail,
-                password: 'admin123', // This will be hashed by the User model's pre-save middleware
+                password: adminPassword, // This will be hashed by the User model's pre-save middleware
                 role: 'admin'
             });
-            console.log('👤 Default Admin created (Email: admin@hostelhub.com, Password: admin123)');
+            console.log(`👤 Default Admin created (Email: ${adminEmail}, Password: ${adminPassword})`);
         } else {
             console.log('ℹ️  Admin user already exists');
         }
