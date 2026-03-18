@@ -25,13 +25,32 @@ const Navbar = () => {
 
     const toggleMenu = () => setIsOpen(!isOpen);
 
-    const navLinks = [
+    const studentLinks = [
         { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-        { path: "/room-allotment", icon: BedDouble, label: "Rooms" },
+        { path: "/room-allotment", icon: BedDouble, label: "My Room" },
         { path: "/payments", icon: CreditCard, label: "Payments" },
         { path: "/gate-pass", icon: FileText, label: "Gatepass" },
         { path: "/complaints", icon: AlertCircle, label: "Support" },
     ];
+
+    const adminLinks = [
+        { path: "/dashboard", icon: LayoutDashboard, label: "Sys Overview" },
+        { path: "/room-allotment", icon: BedDouble, label: "Inventory" },
+        { path: "/payments", icon: CreditCard, label: "Financials" },
+        { path: "/gate-pass", icon: FileText, label: "Access Control" },
+        { path: "/complaints", icon: AlertCircle, label: "Petitions" },
+    ];
+
+    const wardenLinks = [
+        { path: "/dashboard", icon: LayoutDashboard, label: "Warden Overview" },
+        { path: "/room-allotment", icon: BedDouble, label: "Rooms Status" },
+        { path: "/gate-pass", icon: FileText, label: "Gate Passes" },
+        { path: "/complaints", icon: AlertCircle, label: "Complaints" },
+    ];
+
+    let navLinks = studentLinks;
+    if (user?.role === 'admin') navLinks = adminLinks;
+    if (user?.role === 'warden') navLinks = wardenLinks;
 
     return (
         <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${
@@ -43,10 +62,10 @@ const Navbar = () => {
                         <Users className="h-5 w-5 text-white" />
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-2xl font-black text-foreground tracking-[ -0.05em] uppercase leading-none">
+                        <span className="text-3xl font-black text-foreground tracking-[-0.05em] uppercase leading-none">
                             Hostel<span className="text-primary italic">HUB</span>
                         </span>
-                        <span className="text-[9px] font-bold text-muted-foreground/50 tracking-[0.3em] uppercase mt-1">Management Portal</span>
+                        <span className="text-[10px] font-bold text-muted-foreground/50 tracking-[0.3em] uppercase mt-1">Management Portal</span>
                     </div>
                 </Link>
 

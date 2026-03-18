@@ -31,6 +31,7 @@ const Sidebar = () => {
         { path: "/dashboard", icon: LayoutDashboard, label: "Warden Overview" },
         { path: "/room-allotment", icon: BedDouble, label: "Room Status" },
         { path: "/gate-pass", icon: FileText, label: "Gate Passes" },
+        { path: "/non-disciplinary", icon: ShieldAlert, label: "Student Records" },
         { path: "/complaints", icon: AlertCircle, label: "Student Complaints" },
         { path: "/profile", icon: UserIcon, label: "Profile" },
     ];
@@ -56,7 +57,7 @@ const Sidebar = () => {
                     <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/20 group-hover:bg-primary/90 transition-all duration-300 rotate-[-4deg] group-hover:rotate-0">
                         <Users className="h-5 w-5 text-white" />
                     </div>
-                    <span className="text-xl font-black text-foreground tracking-tighter uppercase italic">
+                    <span className="text-2xl font-black text-foreground tracking-tighter uppercase italic">
                         Hostel<span className="text-primary not-italic">Hub</span>
                     </span>
                 </Link>

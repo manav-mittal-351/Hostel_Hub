@@ -12,6 +12,7 @@ const Register = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [role, setRole] = useState("student");
     const { register, user } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -29,7 +30,7 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-        const res = await register(name, email, password);
+        const res = await register(name, email, password, role);
         if (res.success) {
             navigate("/dashboard");
         } else {
@@ -116,6 +117,19 @@ const Register = () => {
                                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </button>
                                 </div>
+                            </div>
+                            <div className="space-y-2.5">
+                                <Label htmlFor="role" className="ml-1">Account Role</Label>
+                                <select
+                                    id="role"
+                                    value={role}
+                                    onChange={(e) => setRole(e.target.value)}
+                                    className="w-full h-12 px-4 bg-secondary/10 border border-border/40 focus:bg-white rounded-xl font-medium outline-none transition-all appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%20fill%3D%22none%22%20xmlns%3D%220%200%2010%206%22%3E%3Cpath%20d%3D%22M1%201L5%205L9%201%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-[length:10px] bg-[right_1rem_center] bg-no-repeat"
+                                >
+                                    <option value="student">Student Account</option>
+                                    <option value="warden">Hostel Warden</option>
+                                    <option value="admin">System Admin</option>
+                                </select>
                             </div>
                             <Button type="submit" className="w-full h-14 bg-primary text-white hover:bg-primary/90 rounded-2xl text-[12px] font-bold uppercase tracking-[0.2em] shadow-xl shadow-primary/10 mt-6 active:scale-95 transition-all" disabled={loading}>
                                 {loading ? "Recording Data..." : "Generate Identity"}

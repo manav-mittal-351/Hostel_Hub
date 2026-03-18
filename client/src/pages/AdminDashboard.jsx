@@ -26,7 +26,7 @@ const AdminDashboard = () => {
             }
         };
 
-        if (user?.role === 'admin' && user?.token) {
+        if ((user?.role === 'admin' || user?.role === 'warden') && user?.token) {
             fetchStats();
         }
     }, [user]);

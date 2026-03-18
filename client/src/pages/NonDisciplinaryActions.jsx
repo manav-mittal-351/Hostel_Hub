@@ -68,8 +68,8 @@ const NonDisciplinaryActions = () => {
         setLoading(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const endpoint = user.role === 'admin' ? '/api/non-disciplinary' : '/api/non-disciplinary/my';
-            const { data } = await axios.get(`http://localhost:5000${endpoint}`, config);
+            const endpoint = (user.role === 'admin' || user.role === 'warden') ? '/api/non-disciplinary' : '/api/non-disciplinary/my';
+            const { data } = await axios.get(endpoint, config);
             setRecords(data);
         } catch (error) {
             console.error("Error fetching records:", error);
@@ -142,7 +142,7 @@ const NonDisciplinaryActions = () => {
                     <h1 className="section-title">Student Records</h1>
                     <p className="section-subtitle">Comprehensive administrative summary and institutional history log.</p>
                 </div>
-                {user?.role === 'admin' && (
+                {(user?.role === 'admin' || user?.role === 'warden') && (
                     <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
                         <DialogTrigger asChild>
                             <Button className="btn-primary h-11 px-8 font-bold uppercase tracking-widest text-[11px] flex items-center gap-2 active:scale-95 shadow-lg shadow-primary/20">
@@ -300,7 +300,7 @@ const NonDisciplinaryActions = () => {
                                 <th className="px-7 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] w-1/5">Event Category</th>
                                 <th className="px-7 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] w-1/3">Record Narrative</th>
                                 <th className="px-7 py-5 text-center text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Record Status</th>
-                                {user?.role === 'admin' && <th className="px-7 py-5 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Compliance</th>}
+                                {(user?.role === 'admin' || user?.role === 'warden') && <th className="px-7 py-5 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Compliance</th>}
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border/40">
@@ -383,7 +383,7 @@ const NonDisciplinaryActions = () => {
                                                  record.status === 'Paid' ? 'Audited' : 'Archived'}
                                             </Badge>
                                         </td>
-                                        {user?.role === 'admin' && (
+                                        {(user?.role === 'admin' || user?.role === 'warden') && (
                                             <td className="px-7 py-5">
                                                 <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
                                                     {record.status === 'Pending' && (
