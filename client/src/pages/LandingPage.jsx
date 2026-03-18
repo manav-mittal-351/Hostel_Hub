@@ -217,14 +217,14 @@ const LandingPage = () => {
             {/* Footer */}
             <footer className="py-12 border-t border-border mt-12">
                 <div className="container max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/10">
+                    <Link to="/" className="flex items-center gap-3 group">
+                        <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/10 group-hover:bg-primary/90 transition-all duration-300 rotate-[-5deg] group-hover:rotate-0">
                             <Users className="h-5 w-5 text-white" />
                         </div>
-                        <span className="text-lg font-bold text-foreground tracking-tighter">
-                            Hostel<span className="text-primary italic">HUB</span>
+                        <span className="text-xl font-black text-foreground tracking-tighter uppercase italic">
+                            Hostel<span className="text-primary not-italic">Hub</span>
                         </span>
-                    </div>
+                    </Link>
                     
                     <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-widest">
                         © 2026 HostelHub Institutional Services — Protocol v2.4.1

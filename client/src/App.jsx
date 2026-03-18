@@ -16,6 +16,8 @@ import LandingPage from "@/pages/LandingPage";
 
 import { Toaster } from "@/components/ui/sonner";
 
+import { NotificationProvider } from "@/context/NotificationContext";
+
 function App() {
     const { user, loading } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -29,7 +31,7 @@ function App() {
     }
 
     return (
-        <>
+        <NotificationProvider>
             <Routes>
                 <Route path="/" element={
                     !user ? (
@@ -51,7 +53,7 @@ function App() {
                 </Route>
             </Routes>
             <Toaster />
-        </>
+        </NotificationProvider>
     );
 }
 

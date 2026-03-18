@@ -10,14 +10,16 @@ import {
     Dialog,
     DialogContent,
 } from "@/components/ui/dialog";
+import { useNotifications } from "@/context/NotificationContext";
 
 const RoomAllotment = () => {
     const { user, updateUser } = useContext(AuthContext);
+    const { addNotification } = useNotifications();
     const [rooms, setRooms] = useState([]);
     const [loadingRooms, setLoadingRooms] = useState(false);
     const [error, setError] = useState(null);
     const [showReceipt, setShowReceipt] = useState(false);
-    const [showAllAvailable, setShowAllAvailable] = useState(false);
+    const [showAllAvailable, setShowAllAvailable] = useState(true);
     const token = user?.token;
 
     if (user?.role === 'admin') {
@@ -58,6 +60,12 @@ const RoomAllotment = () => {
                 paymentType: 'hostel_fee'
             }, config);
 
+            addNotification({
+                title: "Booking Successful",
+                message: `Unit ${room.roomNumber} (${room.type}) has been allotted to you. Welcome!`,
+                type: "success"
+            });
+
             alert("Room Booked Successfully! Welcome to your new home.");
             if (data.user) {
                 updateUser(data.user);
@@ -76,6 +84,12 @@ const RoomAllotment = () => {
             const config = { headers: { Authorization: `Bearer ${token}` } };
             const { data } = await axios.post("/api/rooms/checkout", {}, config);
 
+            addNotification({
+                title: "Checkout Complete",
+                message: "Your residential allotment has been successfully terminated.",
+                type: "warning"
+            });
+
             alert("Checked out successfully!");
             if (data.user) {
                 updateUser(data.user);
@@ -89,7 +103,7 @@ const RoomAllotment = () => {
 
     return (
         <div className="space-y-10 animate-in fade-in duration-1000">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-4">
                 <div>
                     <h1 className="section-title">
                         Residential <span className="text-primary">{user?.roomNumber ? "Confirmation" : "Selection"}</span>
@@ -99,7 +113,7 @@ const RoomAllotment = () => {
                 {user?.roomNumber && (
                     <Button 
                         variant="ghost" 
-                        className="text-red-500 hover:text-red-600 hover:bg-red-50 px-6 h-10 rounded-xl font-bold text-[11px] uppercase tracking-widest flex items-center gap-2 transition-all border border-red-100/50 active:scale-95"
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50 px-6 h-12 rounded-2xl font-bold text-[11px] uppercase tracking-widest flex items-center gap-2 transition-all border border-red-100/50 active:scale-95"
                         onClick={handleCheckout}
                     >
                         <LogOut className="w-3.5 h-3.5" />
@@ -273,13 +287,12 @@ const RoomAllotment = () => {
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 
-                            className="text-xl font-semibold text-foreground tracking-tight cursor-pointer hover:text-primary transition-colors flex items-center gap-2 group"
-                            onClick={() => setShowAllAvailable(!showAllAvailable)}
+                            className="text-xl font-bold text-foreground tracking-tight flex items-center gap-3"
                         >
+                            <div className="w-1.5 h-8 bg-primary rounded-full" />
                             Available Residences
-                            <ArrowRight className={`w-4 h-4 transition-transform duration-300 ${showAllAvailable ? 'rotate-90' : 'group-hover:translate-x-1'}`} />
                         </h2>
-                        <p className="text-sm text-muted-foreground">Explore and reserve your preferred room unit.</p>
+                        <p className="text-sm text-muted-foreground ml-4">Explore and reserve your preferred room unit in the institutional sector.</p>
                     </div>
                     {!user?.roomNumber && loadingRooms && (
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary/50 rounded-lg">
@@ -289,26 +302,8 @@ const RoomAllotment = () => {
                     )}
                 </div>
 
-                {!showAllAvailable && !user?.roomNumber && (
-                    <div 
-                        className="py-12 border-2 border-dashed border-border/60 rounded-3xl bg-secondary/5 flex flex-col items-center justify-center text-center space-y-4 hover:border-primary/30 transition-all cursor-pointer group"
-                        onClick={() => setShowAllAvailable(true)}
-                    >
-                        <div className="p-4 bg-white rounded-2xl shadow-sm border border-border/40 group-hover:scale-105 transition-transform">
-                            <BedDouble className="w-8 h-8 text-primary/40 group-hover:text-primary transition-colors" />
-                        </div>
-                        <div className="space-y-1">
-                            <h3 className="text-[15px] font-bold text-foreground">Discover Open Units</h3>
-                            <p className="text-[12px] text-muted-foreground max-w-[240px]">Navigate through all currently unallotted premises in the institutional sector.</p>
-                        </div>
-                        <Button variant="outline" className="h-10 rounded-xl px-6 font-bold uppercase tracking-widest text-[10px] mt-2 group-hover:bg-primary group-hover:text-white transition-all">
-                            View All Units
-                        </Button>
-                    </div>
-                )}
-
                 {showAllAvailable && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in slide-in-from-top-4 duration-500">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in slide-in-from-bottom-4 duration-700">
                     {loadingRooms ? (
                         Array.from({ length: 3 }).map((_, i) => (
                             <div key={i} className="h-56 rounded-2xl bg-muted animate-pulse border border-border/50" />

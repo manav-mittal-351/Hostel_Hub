@@ -41,20 +41,20 @@ const Sidebar = () => {
 
     return (
         <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-border z-40 hidden lg:flex flex-col">
-            <div className="px-7 py-6">
-                <Link to="/" className="flex items-center gap-2 group">
-                    <div className="bg-primary p-1.5 rounded-lg shadow-sm group-hover:bg-primary/90 transition-all duration-300">
+            <div className="px-7 py-8">
+                <Link to="/" className="flex items-center gap-3 group">
+                    <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/20 group-hover:bg-primary/90 transition-all duration-300 rotate-[-4deg] group-hover:rotate-0">
                         <Users className="h-5 w-5 text-white" />
                     </div>
-                    <span className="text-lg font-bold text-foreground tracking-tight">
-                        HostelHub
+                    <span className="text-xl font-black text-foreground tracking-tighter uppercase italic">
+                        Hostel<span className="text-primary not-italic">Hub</span>
                     </span>
                 </Link>
             </div>
 
             <nav className="flex-1 px-4 space-y-1">
-                <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-4 mb-3 mt-4">
-                    Product
+                <div className="text-[11px] font-bold text-muted-foreground/50 uppercase tracking-[0.2em] px-4 mb-4 mt-2">
+                    Main Menu
                 </div>
                 {links.map((link) => {
                     const isActive = location.pathname === link.path;
@@ -71,22 +71,23 @@ const Sidebar = () => {
                             }`}
                         >
                             <Icon className={`h-4 w-4 ${isActive ? "text-white" : "text-muted-foreground group-hover:text-primary"}`} />
-                            <span>{link.label}</span>
+                            <span className="font-semibold tracking-tight">{link.label}</span>
                         </Link>
                     );
                 })}
             </nav>
 
             <div className="p-4 mt-auto">
-                <div className="premium-card p-3 border-none bg-secondary/30 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                <Link to="/profile" className="premium-card p-3 border border-transparent hover:border-primary/20 hover:bg-white hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 flex items-center gap-3 group">
+                    <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white text-[13px] font-bold shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
                         {user?.name?.charAt(0).toUpperCase()}
                     </div>
-                    <div className="overflow-hidden">
-                        <p className="text-[13px] font-semibold text-foreground truncate">{user?.name}</p>
-                        <p className="text-[10px] text-muted-foreground/80 truncate uppercase font-medium">{user?.role}</p>
+                    <div className="overflow-hidden flex-1">
+                        <p className="text-[14px] font-bold text-foreground truncate leading-none mb-1 group-hover:text-primary transition-colors">{user?.name}</p>
+                        <p className="text-[10px] text-muted-foreground/60 truncate uppercase font-bold tracking-widest">{user?.role} Account</p>
                     </div>
-                </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
+                </Link>
             </div>
         </aside>
     );

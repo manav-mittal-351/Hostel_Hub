@@ -39,12 +39,15 @@ const Navbar = () => {
         }`}>
             <div className="container max-w-7xl mx-auto px-6 flex items-center justify-between">
                 <Link to="/" className="flex items-center gap-3 group">
-                    <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/20 rotate-[-5deg] group-hover:rotate-0 transition-all duration-300">
+                    <div className="bg-primary p-2.5 rounded-2xl shadow-xl shadow-primary/20 rotate-[-8deg] group-hover:rotate-0 transition-all duration-500 scale-110 group-hover:scale-125">
                         <Users className="h-5 w-5 text-white" />
                     </div>
-                    <span className="text-xl font-bold text-foreground tracking-tighter">
-                        Hostel<span className="text-primary italic">HUB</span>
-                    </span>
+                    <div className="flex flex-col">
+                        <span className="text-2xl font-black text-foreground tracking-[ -0.05em] uppercase leading-none">
+                            Hostel<span className="text-primary italic">HUB</span>
+                        </span>
+                        <span className="text-[9px] font-bold text-muted-foreground/50 tracking-[0.3em] uppercase mt-1">Management Portal</span>
+                    </div>
                 </Link>
 
                 {/* Desktop Menu */}
