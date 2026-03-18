@@ -8,9 +8,17 @@ dns.setServers(["8.8.8.8","8.8.4.4"]);
 
 dotenv.config();
 
-connectDB();
-
 const app = express();
+
+// Database connection middleware for serverless architecture
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        res.status(503).json({ message: 'HostelHub Database Unavailable. Re-attempting connection...' });
+    }
+});
 
 // Configure CORS for your Vercel frontend
 app.use(cors({
