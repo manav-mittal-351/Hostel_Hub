@@ -6,7 +6,7 @@ import AdminDashboard from "./AdminDashboard";
 const Dashboard = () => {
     const { user } = useContext(AuthContext);
 
-    if (user?.role === 'admin') {
+    if (user?.role === 'admin' || user?.role === 'warden') {
         return <AdminDashboard />;
     }
 

@@ -59,7 +59,7 @@ const Complaints = () => {
         }
     };
 
-    if (user?.role === 'admin') {
+    if (user?.role === 'admin' || user?.role === 'warden') {
         return <AdminComplaints />;
     }
 

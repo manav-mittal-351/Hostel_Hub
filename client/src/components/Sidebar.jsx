@@ -27,17 +27,27 @@ const Sidebar = () => {
         { path: "/profile", icon: UserIcon, label: "Profile" },
     ];
 
-    const adminLinks = [
-        { path: "/dashboard", icon: LayoutDashboard, label: "Overview" },
-        { path: "/room-allotment", icon: BedDouble, label: "Manage Rooms" },
-        { path: "/payments", icon: CreditCard, label: "Fee Records" },
-        { path: "/gate-pass", icon: FileText, label: "Gate Authorization" },
-        { path: "/non-disciplinary", icon: ShieldAlert, label: "Student Records" },
-        { path: "/complaints", icon: AlertCircle, label: "Complaints" },
-        { path: "/profile", icon: UserIcon, label: "Account" },
+    const wardenLinks = [
+        { path: "/dashboard", icon: LayoutDashboard, label: "Warden Overview" },
+        { path: "/room-allotment", icon: BedDouble, label: "Room Status" },
+        { path: "/gate-pass", icon: FileText, label: "Gate Passes" },
+        { path: "/complaints", icon: AlertCircle, label: "Student Complaints" },
+        { path: "/profile", icon: UserIcon, label: "Profile" },
     ];
 
-    const links = user?.role === 'admin' ? adminLinks : studentLinks;
+    const adminLinks = [
+        { path: "/dashboard", icon: LayoutDashboard, label: "System Admin" },
+        { path: "/room-allotment", icon: BedDouble, label: "Inventory" },
+        { path: "/payments", icon: CreditCard, label: "Financials" },
+        { path: "/gate-pass", icon: FileText, label: "Access Control" },
+        { path: "/non-disciplinary", icon: ShieldAlert, label: "Records" },
+        { path: "/complaints", icon: AlertCircle, label: "Petitions" },
+        { path: "/profile", icon: UserIcon, label: "Config" },
+    ];
+
+    let links = studentLinks;
+    if (user?.role === 'admin') links = adminLinks;
+    if (user?.role === 'warden') links = wardenLinks;
 
     return (
         <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-border z-40 hidden lg:flex flex-col">
@@ -79,12 +89,12 @@ const Sidebar = () => {
 
             <div className="p-4 mt-auto">
                 <Link to="/profile" className="premium-card p-3 border border-transparent hover:border-primary/20 hover:bg-white hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 flex items-center gap-3 group">
-                    <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white text-[13px] font-bold shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white text-[13px] font-bold shadow-lg transition-transform group-hover:scale-105 ${user?.role === 'admin' ? 'bg-primary shadow-primary/20' : user?.role === 'warden' ? 'bg-amber-600 shadow-amber-600/20' : 'bg-primary shadow-primary/20'}`}>
                         {user?.name?.charAt(0).toUpperCase()}
                     </div>
                     <div className="overflow-hidden flex-1">
                         <p className="text-[14px] font-bold text-foreground truncate leading-none mb-1 group-hover:text-primary transition-colors">{user?.name}</p>
-                        <p className="text-[10px] text-muted-foreground/60 truncate uppercase font-bold tracking-widest">{user?.role} Account</p>
+                        <p className={`text-[10px] truncate uppercase font-bold tracking-widest ${user?.role === 'warden' ? 'text-amber-600/80' : 'text-muted-foreground/60'}`}>{user?.role} Account</p>
                     </div>
                     <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
                 </Link>

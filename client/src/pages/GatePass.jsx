@@ -58,7 +58,7 @@ const GatePass = () => {
         }
     };
 
-    if (user?.role === 'admin') {
+    if (user?.role === 'admin' || user?.role === 'warden') {
         return (
             <div className="space-y-8 animate-in fade-in duration-700">
                 <header>

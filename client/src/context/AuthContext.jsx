@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (name, email, password, role) => {
+    const register = async (name, email, password, role = 'student') => {
         try {
             const config = {
                 headers: {

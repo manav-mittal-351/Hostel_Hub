@@ -22,7 +22,7 @@ const RoomAllotment = () => {
     const [showAllAvailable, setShowAllAvailable] = useState(true);
     const token = user?.token;
 
-    if (user?.role === 'admin') {
+    if (user?.role === 'admin' || user?.role === 'warden') {
         return <AdminRoomManagement />;
     }
 
@@ -283,7 +283,7 @@ const RoomAllotment = () => {
                 </div>
             )}
 
-            <div className="space-y-6 pt-10">
+            <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 
