@@ -128,10 +128,12 @@ const AdminDashboard = () => {
                             </div>
                         </CardHeader>
                         <div className="p-7 space-y-7 relative h-[calc(400px-110px)] overflow-y-auto">
-                            <ActivityItem text="New resident synchronized in Block A, Unit 102" time="2 mins ago" />
-                            <ActivityItem text="Maintenance ticket ref #402 finalized" time="15 mins ago" />
-                            <ActivityItem text="Night verification sequence complete" time="1 hour ago" />
-                            <ActivityItem text="Access request identified from Resident #284" time="3 hours ago" />
+                            <ActivityItem text={`System synchronized with ${stats.totalStudents} active resident records.`} time="Registry Live" />
+                            <ActivityItem text={`Residential inventory optimized (${stats.occupancy.occupied}/${stats.occupancy.capacity} units).`} time="Strategic Overview" />
+                            {stats.pendingComplaints > 0 && (
+                                <ActivityItem text={`URGENT: ${stats.pendingComplaints} petitions awaiting administrative resolution.`} time="Action Required" />
+                            )}
+                            <ActivityItem text={`Financial ledger synchronized (Current Flow: ₹${stats.monthlyRevenue.toLocaleString()}).`} time="Audit Sync" />
                             
                             <Button variant="ghost" className="w-full mt-2 text-muted-foreground hover:text-primary font-bold text-[10px] uppercase tracking-widest gap-2 rounded-xl transition-all border border-transparent hover:border-border/60 bg-secondary/5">
                                 Audit Ledger <ArrowRight className="h-3.5 w-3.5" />

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useContext, useState, useEffect } from "react";
 import AuthContext from "@/context/AuthContext";
 import axios from "axios";
-import { BedDouble, CreditCard, AlertCircle, ArrowRight, FileText, CheckCircle2, ShieldCheck, MessageSquare } from "lucide-react";
+import { BedDouble, CreditCard, AlertCircle, ArrowRight, FileText, CheckCircle2, ShieldCheck, MessageSquare, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -97,29 +97,38 @@ const StudentDashboard = () => {
                             <CheckCircle2 className="h-5 w-5 text-primary/50" />
                         </div>
                     </CardHeader>
-                    <div className="divide-y divide-border/40">
-                        {[
-                            { title: "Financial Settlement Logged", date: "2 hours ago", type: "payment" },
-                            { title: "Support Petition Resolved (#124)", date: "Yesterday", type: "complaint" },
-                            { title: "Exit Authorization Synchronized", date: "Oct 12, 2023", type: "gatepass" }
-                        ].map((activity, i) => (
-                            <div key={i} className="px-8 py-5 flex items-center justify-between hover:bg-secondary/20 transition-all cursor-default group">
-                                <div className="flex gap-5 items-center">
-                                    <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center border border-border/50 text-muted-foreground group-hover:text-primary transition-colors shadow-sm">
-                                        {activity.type === 'payment' && <CreditCard className="h-4.5 w-4.5" />}
-                                        {activity.type === 'complaint' && <AlertCircle className="h-4.5 w-4.5" />}
-                                        {activity.type === 'gatepass' && <FileText className="h-4.5 w-4.5" />}
-                                    </div>
-                                    <div className="space-y-0.5">
-                                        <p className="text-[14px] font-bold text-foreground tracking-tight">{activity.title}</p>
-                                        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">{activity.date}</p>
-                                    </div>
-                                </div>
-                                <div className="p-2 rounded-lg bg-secondary/50 opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
-                                    <ArrowRight className="h-3.5 w-3.5 text-primary" />
-                                </div>
+                    <div className="divide-y divide-border/40 max-h-[300px] overflow-y-auto">
+                        {complaintStats.active + complaintStats.resolved > 0 ? (
+                            // Showing recent complaints as activity
+                            <div className="space-y-0">
+                                {complaintStats.active > 0 && (
+                                    <ActivityRow 
+                                        title={`${complaintStats.active} Pending Petitions`}
+                                        date="Requires Action"
+                                        type="complaint"
+                                    />
+                                )}
+                                {complaintStats.resolved > 0 && (
+                                    <ActivityRow 
+                                        title={`${complaintStats.resolved} Applications Resolved`}
+                                        date="Archive Updated"
+                                        type="complaint"
+                                    />
+                                )}
+                                <ActivityRow 
+                                    title="System Synchronization"
+                                    date="Real-time"
+                                    type="gatepass"
+                                />
                             </div>
-                        ))}
+                        ) : (
+                            <div className="p-10 text-center space-y-3">
+                                <div className="w-10 h-10 bg-secondary/30 rounded-full flex items-center justify-center mx-auto">
+                                    <Clock className="w-5 h-5 text-muted-foreground/50" />
+                                </div>
+                                <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-widest">No Recent Operational Logs</p>
+                            </div>
+                        )}
                     </div>
                 </Card>
 
@@ -200,5 +209,24 @@ const StatsCard = ({ title, value, subtitle, icon: Icon, link, linkText }) => {
         </Card>
     );
 };
+
+const ActivityRow = ({ title, date, type }) => (
+    <div className="px-8 py-5 flex items-center justify-between hover:bg-secondary/20 transition-all cursor-default group">
+        <div className="flex gap-5 items-center">
+            <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center border border-border/50 text-muted-foreground group-hover:text-primary transition-colors shadow-sm">
+                {type === 'payment' && <CreditCard className="h-4.5 w-4.5" />}
+                {type === 'complaint' && <AlertCircle className="h-4.5 w-4.5" />}
+                {type === 'gatepass' && <FileText className="h-4.5 w-4.5" />}
+            </div>
+            <div className="space-y-0.5">
+                <p className="text-[14px] font-bold text-foreground tracking-tight">{title}</p>
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">{date}</p>
+            </div>
+        </div>
+        <div className="p-2 rounded-lg bg-secondary/50 opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0">
+            <ArrowRight className="h-3.5 w-3.5 text-primary" />
+        </div>
+    </div>
+);
 
 export default StudentDashboard;

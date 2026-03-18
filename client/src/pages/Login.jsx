@@ -115,8 +115,9 @@ const Login = () => {
                         </form>
                     </Card>
 
-                    <p className="text-center mt-10 text-[13px] text-muted-foreground font-medium">
-                        Not registered yet? <Link to="/register" className="text-primary hover:text-primary/80 font-bold transition-colors underline underline-offset-4">Initialize Identity</Link>
+                    <p className="text-center mt-10 text-[13px] text-muted-foreground font-medium opacity-60">
+                        Institutional accounts are professionally provisioned. 
+                        <br/>Contact administrative services for registry synchronization.
                     </p>
                 </div>
             </div>

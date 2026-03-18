@@ -15,24 +15,30 @@ const Register = () => {
     const [role, setRole] = useState("student");
     const { register, user } = useContext(AuthContext);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (user) {
-            navigate("/dashboard");
-        }
-    }, [user, navigate]);
-
     const [error, setError] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
+
+    useEffect(() => {
+        if (user && user.role !== 'admin') {
+            navigate("/dashboard");
+        }
+    }, [user, navigate]);
 
     const handleRegister = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setSuccess(false);
         const res = await register(name, email, password, role);
         if (res.success) {
-            navigate("/dashboard");
+            setSuccess(true);
+            setName("");
+            setEmail("");
+            setPassword("");
+            setRole("student");
+            setLoading(false);
         } else {
             setError(res.message);
             setLoading(false);
@@ -60,14 +66,19 @@ const Register = () => {
                                 Hostel<span className="text-primary italic">HUB</span>
                             </span>
                         </Link>
-                        <h1 className="text-4xl font-bold text-foreground tracking-tighter mb-3">Initialize Identity</h1>
-                        <p className="text-muted-foreground text-sm font-semibold uppercase tracking-widest opacity-60">Create your secure resident profile.</p>
+                        <h1 className="text-4xl font-bold text-foreground tracking-tighter mb-3">Institutional Enrollment</h1>
+                        <p className="text-muted-foreground text-sm font-semibold uppercase tracking-widest opacity-60">Provision secure access for new academic members.</p>
                     </div>
 
                     <Card className="premium-card p-10 border-border/60 shadow-2xl shadow-primary/5 bg-white rounded-[2.5rem]">
                         {error && (
                             <div className="bg-red-50 border border-red-100 text-red-600 text-[11px] font-bold p-4 rounded-xl mb-8 text-center animate-in shake duration-300 uppercase tracking-wider">
                                 {error}
+                            </div>
+                        )}
+                        {success && (
+                            <div className="bg-emerald-50 border border-emerald-100 text-emerald-600 text-[11px] font-bold p-4 rounded-xl mb-8 text-center animate-in slide-in-from-top-4 duration-300 uppercase tracking-widest">
+                                Profile Synchronized Successfully
                             </div>
                         )}
                         <form onSubmit={handleRegister} className="space-y-5">
@@ -137,8 +148,8 @@ const Register = () => {
                         </form>
                     </Card>
 
-                    <p className="text-center mt-10 text-[13px] text-muted-foreground font-medium">
-                        Already have an identity? <Link to="/login" className="text-primary hover:text-primary/80 font-bold transition-colors underline underline-offset-4">Sign In</Link>
+                    <p className="text-center mt-10 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-[0.2em] animate-pulse">
+                        Administrator Access Only — Registry Update in Progress
                     </p>
                 </div>
             </div>

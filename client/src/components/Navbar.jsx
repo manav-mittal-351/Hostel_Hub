@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useContext, useState, useEffect } from "react";
 import AuthContext from "@/context/AuthContext";
-import { LogOut, Menu, X, Users, LayoutDashboard, BedDouble, CreditCard, FileText, AlertCircle, User as UserIcon } from "lucide-react";
+import { LogOut, Menu, X, Users, LayoutDashboard, BedDouble, CreditCard, FileText, AlertCircle, User as UserIcon, UserPlus } from "lucide-react";
 
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
@@ -38,6 +38,7 @@ const Navbar = () => {
         { path: "/room-allotment", icon: BedDouble, label: "Inventory" },
         { path: "/payments", icon: CreditCard, label: "Financials" },
         { path: "/gate-pass", icon: FileText, label: "Access Control" },
+        { path: "/register", icon: UserPlus, label: "Enrollment" },
         { path: "/complaints", icon: AlertCircle, label: "Petitions" },
     ];
 
@@ -100,12 +101,9 @@ const Navbar = () => {
                         </>
                     ) : (
                         <div className="flex items-center gap-8">
-                            <Link to="/login" className="text-[11px] font-bold uppercase tracking-[0.2em] text-foreground hover:text-primary transition-colors">
-                                Sign In
-                            </Link>
-                            <Link to="/register">
-                                <Button className="bg-primary hover:bg-primary/90 text-white h-11 px-8 rounded-xl font-bold text-[12px] uppercase tracking-widest shadow-lg shadow-primary/10 transition-all active:scale-95">
-                                    Get Started
+                            <Link to="/login">
+                                <Button className="bg-primary hover:bg-primary/90 text-white h-11 px-10 rounded-xl font-bold text-[12px] uppercase tracking-widest shadow-lg shadow-primary/10 transition-all active:scale-95">
+                                    Sign In
                                 </Button>
                             </Link>
                         </div>
@@ -148,11 +146,8 @@ const Navbar = () => {
                             </>
                         ) : (
                             <div className="flex flex-col gap-4">
-                                <Link to="/login" onClick={() => setIsOpen(false)} className="p-3 text-center text-sm font-bold uppercase tracking-widest text-foreground hover:bg-secondary/20 rounded-xl">
-                                    Sign In
-                                </Link>
-                                <Link to="/register" onClick={() => setIsOpen(false)}>
-                                    <Button className="w-full bg-primary h-14 rounded-2xl font-bold uppercase tracking-widest text-sm shadow-lg shadow-primary/10">Get Started</Button>
+                                <Link to="/login" onClick={() => setIsOpen(false)}>
+                                    <Button className="w-full bg-primary h-14 rounded-2xl font-bold uppercase tracking-widest text-sm shadow-lg shadow-primary/10">Sign In</Button>
                                 </Link>
                             </div>
                         )}

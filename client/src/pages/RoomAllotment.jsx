@@ -185,8 +185,8 @@ const RoomAllotment = () => {
                                     <div className="flex items-start gap-3">
                                         <MapPin className="w-3.5 h-3.5 text-muted-foreground mt-1" />
                                         <div>
-                                            <p className="text-[13px] font-semibold text-foreground">{user.hostelName || 'Boys Premium Hostel'}</p>
-                                            <p className="text-[11px] text-muted-foreground">{user.hostelBlock || 'Block-A, North Wing'}</p>
+                                            <p className="text-[13px] font-semibold text-foreground">{user.hostelName || 'HostelHub Residence'}</p>
+                                            <p className="text-[11px] text-muted-foreground">{user.hostelBlock || 'Allocation Pending'}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between p-4 bg-secondary/5 rounded-2xl border border-border/40 group hover:border-primary/30 transition-all">
@@ -196,7 +196,7 @@ const RoomAllotment = () => {
                                             </div>
                                             <div>
                                                 <p className="text-[13px] font-bold text-foreground">Hostel Warden</p>
-                                                <p className="text-[11px] font-medium text-muted-foreground">Mr. Sharma (+91 98XXX XXX00)</p>
+                                                <p className="text-[11px] font-medium text-muted-foreground">Administrative Desk (+91 Institutional)</p>
                                             </div>
                                         </div>
                                         <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-lg hover:bg-primary/10 hover:text-primary">
@@ -214,9 +214,9 @@ const RoomAllotment = () => {
                                     <h3 className="text-[14px] font-semibold text-foreground">Resident Access</h3>
                                 </div>
                                 <div className="space-y-3">
-                                    <DetailRow label="Department" value={user.department || 'CS Engineering'} />
-                                    <DetailRow label="Student ID" value={user.studentId || 'STU-2024-001'} />
-                                    <DetailRow label="Joined" value="Mar 2024" />
+                                    <DetailRow label="Department" value={user.department || 'General Registry'} />
+                                    <DetailRow label="Student ID" value={user.studentId || 'UNASSIGNED'} />
+                                    <DetailRow label="Joined" value={new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} />
                                 </div>
                             </Card>
                         </div>
