@@ -48,10 +48,19 @@ const allocateRoom = async (req, res) => {
 
     try {
         const room = await Room.findById(req.params.id);
-        const student = await User.findById(studentId);
+        let student;
+        
+        // Try searching by _id first, then by studentId property
+        if (mongoose.Types.ObjectId.isValid(studentId)) {
+            student = await User.findById(studentId);
+        }
+        
+        if (!student) {
+            student = await User.findOne({ studentId: studentId });
+        }
 
         if (!room || !student) {
-            return res.status(404).json({ message: 'Room or Student not found' });
+            return res.status(404).json({ message: 'Room or Student not found. Please ensure you are using a valid Student ID (e.g., STU-001) or System Reference ID.' });
         }
 
         if (room.occupants.length >= room.capacity) {
@@ -85,37 +94,24 @@ const allocateRoom = async (req, res) => {
 // @desc    Book a room with payment
 // @route   POST /api/rooms/book
 // @access  Private (Student)
-const bookRoom = async (req, res, next) => {
+const bookRoom = async (req, res) => {
     const { roomId, amount, paymentType } = req.body;
     const userId = req.user._id;
 
     console.log(`Booking attempt by user ${userId} for room ${roomId}`);
 
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
     try {
-        const room = await Room.findById(roomId).session(session);
-        const student = await User.findById(userId).session(session);
+        const room = await Room.findById(roomId);
+        const student = await User.findById(userId);
 
-        if (!room) {
-            throw new Error('Room not found');
-        }
-
-        if (room.occupants.length >= room.capacity) {
-            throw new Error('Room is full');
-        }
-
-        if (room.occupants.includes(userId)) {
-            throw new Error('You are already in this room');
-        }
-
-        if (student.roomNumber) {
-            throw new Error('You already have a room allotted');
-        }
+        if (!room) return res.status(404).json({ message: 'Room not found' });
+        if (!student) return res.status(404).json({ message: 'Student not found' });
+        if (room.occupants.length >= room.capacity) return res.status(400).json({ message: 'Room is full' });
+        if (room.occupants.includes(userId)) return res.status(400).json({ message: 'You are already in this room' });
+        if (student.roomNumber) return res.status(400).json({ message: 'You already have a room allotted' });
 
         // 1. Create Payment Record
-        const paymentData = {
+        await Payment.create({
             student: userId,
             type: paymentType || 'hostel_fee',
             amount: amount,
@@ -123,94 +119,63 @@ const bookRoom = async (req, res, next) => {
             dueDate: new Date(),
             paymentDate: new Date(),
             description: `Room Booking: Room ${room.roomNumber}`
-        };
-        
-        const payment = await Payment.create([paymentData], { session });
+        });
 
         // 2. Allocate Room
         room.occupants.push(userId);
-        await room.save({ session });
+        await room.save();
 
         // 3. Update User Profile
         student.roomNumber = room.roomNumber;
         student.hostelBlock = room.type === 'AC' ? 'Main Block (AC)' : 'Main Block (Non-AC)';
         student.hostelName = 'Boys Hostel';
-        
-        await student.save({ session });
+        await student.save();
 
-        await session.commitTransaction();
         console.log(`Booking successful for user ${userId}`);
-        
-        // Return updated user data
+
         const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : '';
-        const updatedUser = {
-            ...student.toObject(),
-            token: token
-        };
+        const updatedUser = { ...student.toObject(), token };
         delete updatedUser.password;
 
-        res.status(200).json({ 
-            message: 'Room booked successfully', 
-            room, 
-            payment: payment[0],
-            user: updatedUser
-        });
+        res.status(200).json({ message: 'Room booked successfully', room, user: updatedUser });
 
     } catch (error) {
-        console.error('Room booking transaction error:', error);
-        await session.abortTransaction();
+        console.error('Room booking error:', error);
         res.status(400).json({ message: error.message || 'Room booking failed' });
-    } finally {
-        session.endSession();
     }
 };
 
 // @desc    Checkout from room
 // @route   POST /api/rooms/checkout
 // @access  Private (Student)
-const checkoutRoom = async (req, res, next) => {
+const checkoutRoom = async (req, res) => {
     const userId = req.user._id;
 
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
     try {
-        const student = await User.findById(userId).session(session);
-        if (!student.roomNumber) {
-            throw new Error('You do not have a room allotted');
-        }
+        const student = await User.findById(userId);
+        if (!student) return res.status(404).json({ message: 'Student not found' });
+        if (!student.roomNumber) return res.status(400).json({ message: 'You do not have a room allotted' });
 
-        const room = await Room.findOne({ roomNumber: student.roomNumber }).session(session);
+        const room = await Room.findOne({ roomNumber: student.roomNumber });
         if (room) {
             room.occupants = room.occupants.filter(id => id.toString() !== userId.toString());
-            await room.save({ session });
+            await room.save();
         }
 
         student.roomNumber = undefined;
         student.hostelBlock = undefined;
         student.hostelName = undefined;
-        await student.save({ session });
+        await student.save();
 
-        await session.commitTransaction();
-        
-        // Return updated user data
         const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : '';
-        const updatedUser = {
-            ...student.toObject(),
-            token: token
-        };
+        const updatedUser = { ...student.toObject(), token };
         delete updatedUser.password;
 
-        res.status(200).json({ 
-            message: 'Checked out successfully', 
-            user: updatedUser
-        });
+        res.status(200).json({ message: 'Checked out successfully', user: updatedUser });
 
     } catch (error) {
-        await session.abortTransaction();
+        console.error('Checkout error:', error);
         res.status(400).json({ message: error.message || 'Checkout failed' });
-    } finally {
-        session.endSession();
     }
 };
 

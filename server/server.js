@@ -3,24 +3,19 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
-const dns=require('dns')
-dns.setServers(["8.8.8.8","8.8.4.4"]);
+const dns = require('dns');
 
+// 1. Load env variables FIRST
 dotenv.config();
+
+// 2. Set custom DNS after env is loaded
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
+// 3. Connect to DB once at startup
+connectDB();
 
 const app = express();
 
-// Database connection middleware for serverless architecture
-app.use(async (req, res, next) => {
-    try {
-        await connectDB();
-        next();
-    } catch (error) {
-        res.status(503).json({ message: 'HostelHub Database Unavailable. Re-attempting connection...' });
-    }
-});
-
-// Configure CORS for your Vercel frontend
 app.use(cors({
     origin: '*', // For now allow all, can be restricted to 'https://hostel-hub-hb.vercel.app' later
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

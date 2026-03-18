@@ -13,6 +13,7 @@ const Payments = () => {
 
     useEffect(() => {
         const fetchPayments = async () => {
+            if (!user?.token) return;
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
                 const { data } = await axios.get("/api/payments/my-payments", config);

@@ -19,12 +19,8 @@ const RoomAllotment = () => {
     const [loadingRooms, setLoadingRooms] = useState(false);
     const [error, setError] = useState(null);
     const [showReceipt, setShowReceipt] = useState(false);
-    const [showAllAvailable, setShowAllAvailable] = useState(true);
+    const [showAllAvailable, setShowAllAvailable] = useState(!user?.roomNumber);
     const token = user?.token;
-
-    if (user?.role === 'admin' || user?.role === 'warden') {
-        return <AdminRoomManagement />;
-    }
 
     const fetchRooms = async () => {
         if (!token) return;
@@ -45,8 +41,15 @@ const RoomAllotment = () => {
     useEffect(() => {
         if (user?.role === 'student') {
             fetchRooms();
+            if (!user.roomNumber) {
+                setShowAllAvailable(true);
+            }
         }
     }, [user, token]);
+
+    if (user?.role === 'admin' || user?.role === 'warden') {
+        return <AdminRoomManagement />;
+    }
 
     const handleBookRoom = async (room) => {
         const price = room.type === 'AC' ? 8000 : 5000;
@@ -294,12 +297,23 @@ const RoomAllotment = () => {
                         </h2>
                         <p className="text-sm text-muted-foreground ml-4">Explore and reserve your preferred room unit in the institutional sector.</p>
                     </div>
-                    {!user?.roomNumber && loadingRooms && (
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary/50 rounded-lg">
-                            <div className="animate-spin h-3 w-3 border-2 border-primary border-t-transparent rounded-full" />
-                            <span className="text-[10px] text-primary font-bold uppercase tracking-wider">Syncing</span>
-                        </div>
-                    )}
+                    <div className="flex items-center gap-4">
+                        {user?.roomNumber && (
+                            <Button 
+                                variant="outline" 
+                                onClick={() => setShowAllAvailable(!showAllAvailable)}
+                                className="h-10 px-5 rounded-xl text-[11px] font-bold uppercase tracking-widest border-border/60 hover:bg-secondary/20 transition-all active:scale-95"
+                            >
+                                {showAllAvailable ? "Hide All Units" : "View Other Units"}
+                            </Button>
+                        )}
+                        {!user?.roomNumber && loadingRooms && (
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary/50 rounded-lg">
+                                <div className="animate-spin h-3 w-3 border-2 border-primary border-t-transparent rounded-full" />
+                                <span className="text-[10px] text-primary font-bold uppercase tracking-wider">Syncing</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {showAllAvailable && (
