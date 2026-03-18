@@ -13,22 +13,26 @@ const Register = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("student");
-    const { register, user } = useContext(AuthContext);
+    const { register, user, loading: authLoading } = useContext(AuthContext);
     const navigate = useNavigate();
     const [error, setError] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [registerLoading, setRegisterLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
-        if (user && user.role !== 'admin') {
-            navigate("/dashboard");
+        if (!authLoading) {
+            if (!user) {
+                navigate("/login");
+            } else if (user.role !== 'admin') {
+                navigate("/dashboard");
+            }
         }
-    }, [user, navigate]);
+    }, [user, authLoading, navigate]);
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        setRegisterLoading(true);
         setError(null);
         setSuccess(false);
         const res = await register(name, email, password, role);
@@ -38,10 +42,10 @@ const Register = () => {
             setEmail("");
             setPassword("");
             setRole("student");
-            setLoading(false);
+            setRegisterLoading(false);
         } else {
             setError(res.message);
-            setLoading(false);
+            setRegisterLoading(false);
         }
     };
 
@@ -142,8 +146,8 @@ const Register = () => {
                                     <option value="admin">System Admin</option>
                                 </select>
                             </div>
-                            <Button type="submit" className="w-full h-14 bg-primary text-white hover:bg-primary/90 rounded-2xl text-[12px] font-bold uppercase tracking-[0.2em] shadow-xl shadow-primary/10 mt-6 active:scale-95 transition-all" disabled={loading}>
-                                {loading ? "Recording Data..." : "Generate Identity"}
+                            <Button type="submit" className="w-full h-14 bg-primary text-white hover:bg-primary/90 rounded-2xl text-[12px] font-bold uppercase tracking-[0.2em] shadow-xl shadow-primary/10 mt-6 active:scale-95 transition-all" disabled={registerLoading}>
+                                {registerLoading ? "Recording Data..." : "Generate Identity"}
                             </Button>
                         </form>
                     </Card>

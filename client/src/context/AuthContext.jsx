@@ -62,15 +62,17 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (name, email, password, role = 'student') => {
         try {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
             const config = {
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${userInfo.token}`
                 },
             };
-            const { data } = await axios.post('/api/auth/register', { name, email, password, role }, config);
+            await axios.post('/api/auth/register', { name, email, password, role }, config);
 
-            setUser(data);
-            localStorage.setItem('userInfo', JSON.stringify(data));
+            // Since only admins can register, we don't want to log in as the newly registered user
+            // We just return success and let the component handle notification
             return { success: true };
         } catch (error) {
             return {
