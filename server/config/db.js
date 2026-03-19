@@ -44,13 +44,13 @@ const seedAdmin = async () => {
         const adminPassword = process.env.ADMIN_PASSWORD;
 
         if (!adminEmail || !adminPassword) {
-            console.warn('⚠️  Skipping admin seeding: ADMIN_EMAIL or ADMIN_PASSWORD not defined in environment.');
+            console.warn('⚠️  Skipping admin seeding/sync: ADMIN_EMAIL or ADMIN_PASSWORD not defined in environment.');
             return;
         }
 
-        const adminExists = await User.findOne({ email: adminEmail });
+        const admin = await User.findOne({ email: adminEmail });
         
-        if (!adminExists) {
+        if (!admin) {
             console.log('Seeding initial administrative user...');
             await User.create({
                 name: 'System Admin',
@@ -60,7 +60,12 @@ const seedAdmin = async () => {
             });
             console.log('Admin user seeded successfully.');
         } else {
-            console.log('Admin user already exists.');
+            // Sync/Update admin password and name if needed
+            admin.name = 'System Admin';
+            admin.password = adminPassword; // This will trigger re-hashing in pre-save middleware
+            admin.role = 'admin'; // Ensure role is correct
+            await admin.save();
+            console.log('Admin user credentials synchronized with environment variables.');
         }
     } catch (error) {
         console.error(`Admin Seeding Failure: ${error.message}`);
