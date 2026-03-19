@@ -5,14 +5,7 @@ const User = require('./models/User');
 
 dotenv.config();
 
-const rooms = [
-    { roomNumber: '101', capacity: 3, floor: 1, type: 'Non-AC' },
-    { roomNumber: '102', capacity: 3, floor: 1, type: 'Non-AC' },
-    { roomNumber: '103', capacity: 2, floor: 1, type: 'AC' },
-    { roomNumber: '201', capacity: 3, floor: 2, type: 'Non-AC' },
-    { roomNumber: '202', capacity: 2, floor: 2, type: 'AC' },
-    { roomNumber: '301', capacity: 1, floor: 3, type: 'AC' },
-];
+const rooms = require('./config/initialRooms.json');
 
 const seedData = async () => {
     try {
@@ -30,21 +23,26 @@ const seedData = async () => {
         await Room.insertMany(rooms);
         console.log('🏢 Rooms seeded successfully');
 
-        // 2. Seed Default Admin (if doesn't exist)
-        const adminEmail = process.env.ADMIN_EMAIL || 'admin@hostelhub.com';
-        const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
-        const adminExists = await User.findOne({ email: adminEmail });
+        // 2. Seed Default Admin (if defined in env)
+        const adminEmail = process.env.ADMIN_EMAIL;
+        const adminPassword = process.env.ADMIN_PASSWORD;
         
-        if (!adminExists) {
-            await User.create({
-                name: 'System Admin',
-                email: adminEmail,
-                password: adminPassword, // This will be hashed by the User model's pre-save middleware
-                role: 'admin'
-            });
-            console.log(`👤 Default Admin created (Email: ${adminEmail}, Password: ${adminPassword})`);
+        if (adminEmail && adminPassword) {
+            const adminExists = await User.findOne({ email: adminEmail });
+            
+            if (!adminExists) {
+                await User.create({
+                    name: 'System Admin',
+                    email: adminEmail,
+                    password: adminPassword,
+                    role: 'admin'
+                });
+                console.log(`👤 Default Admin created (Email: ${adminEmail})`);
+            } else {
+                console.log('ℹ️  Admin user already exists');
+            }
         } else {
-            console.log('ℹ️  Admin user already exists');
+            console.warn('⚠️  Skipping admin seeding in script: ADMIN_EMAIL or ADMIN_PASSWORD not defined.');
         }
 
         console.log('\n✨ Database seeding complete! You can now log in.');

@@ -8,8 +8,12 @@ const dns = require('dns');
 // 1. Load env variables FIRST
 dotenv.config();
 
-// 2. Set custom DNS after env is loaded
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
+// 2. Set custom DNS after env is loaded (Optional: Should ideally be configurable)
+if (process.env.DNS_SERVERS) {
+    dns.setServers(process.env.DNS_SERVERS.split(','));
+} else {
+    dns.setServers(["8.8.8.8", "8.8.4.4"]);
+}
 
 // 3. Connect to DB once at startup
 connectDB();
@@ -17,7 +21,7 @@ connectDB();
 const app = express();
 
 app.use(cors({
-    origin: '*', // For now allow all, can be restricted to 'https://hostel-hub-hb.vercel.app' later
+    origin: process.env.CORS_ORIGIN || '*', 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));

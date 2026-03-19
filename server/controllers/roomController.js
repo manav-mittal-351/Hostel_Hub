@@ -82,7 +82,8 @@ const allocateRoom = async (req, res) => {
         await room.save();
 
         student.roomNumber = room.roomNumber;
-        student.hostelBlock = 'Main Block'; // Default or dynamic
+        student.hostelBlock = room.hostelBlock || 'Main Block';
+        student.hostelName = room.hostelName || 'Boys Hostel';
         await student.save();
 
         res.json(room);
@@ -127,8 +128,8 @@ const bookRoom = async (req, res) => {
 
         // 3. Update User Profile
         student.roomNumber = room.roomNumber;
-        student.hostelBlock = room.type === 'AC' ? 'Main Block (AC)' : 'Main Block (Non-AC)';
-        student.hostelName = 'Boys Hostel';
+        student.hostelBlock = room.hostelBlock;
+        student.hostelName = room.hostelName;
         await student.save();
 
         console.log(`Booking successful for user ${userId}`);

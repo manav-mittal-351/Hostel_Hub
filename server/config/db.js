@@ -40,8 +40,13 @@ const seedAdmin = async () => {
     try {
         // Use dynamic import to avoid circular dependency if any
         const User = require('../models/User');
-        const adminEmail = process.env.ADMIN_EMAIL || 'admin@hostelhub.com';
-        const adminPassword = process.env.ADMIN_PASSWORD || 'admin@4565';
+        const adminEmail = process.env.ADMIN_EMAIL;
+        const adminPassword = process.env.ADMIN_PASSWORD;
+
+        if (!adminEmail || !adminPassword) {
+            console.warn('⚠️  Skipping admin seeding: ADMIN_EMAIL or ADMIN_PASSWORD not defined in environment.');
+            return;
+        }
 
         const adminExists = await User.findOne({ email: adminEmail });
         

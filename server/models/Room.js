@@ -23,6 +23,14 @@ const roomSchema = new mongoose.Schema({
         type: String,
         enum: ['AC', 'Non-AC'],
         default: 'Non-AC',
+    },
+    hostelBlock: {
+        type: String,
+        default: 'Main Block',
+    },
+    hostelName: {
+        type: String,
+        default: 'Boys Hostel',
     }
 }, {
     timestamps: true,
