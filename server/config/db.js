@@ -25,11 +25,40 @@ const connectDB = async () => {
 
         isConnected = !!db.connections[0].readyState;
         console.log(`MongoDB Connected: ${db.connection.host}`);
+        
+        // Seed initial admin user if database is empty
+        await seedAdmin();
     } catch (error) {
         console.error(`Database Connection Failure: ${error.message}`);
         // For serverless, we don't want to exit, but we need to mark as disconnected
         isConnected = false;
         throw error;
+    }
+};
+
+const seedAdmin = async () => {
+    try {
+        // Use dynamic import to avoid circular dependency if any
+        const User = require('../models/User');
+        const adminEmail = process.env.ADMIN_EMAIL || 'admin@hostelhub.com';
+        const adminPassword = process.env.ADMIN_PASSWORD || 'admin@4565';
+
+        const adminExists = await User.findOne({ email: adminEmail });
+        
+        if (!adminExists) {
+            console.log('Seeding initial administrative user...');
+            await User.create({
+                name: 'System Admin',
+                email: adminEmail,
+                password: adminPassword,
+                role: 'admin'
+            });
+            console.log('Admin user seeded successfully.');
+        } else {
+            console.log('Admin user already exists.');
+        }
+    } catch (error) {
+        console.error(`Admin Seeding Failure: ${error.message}`);
     }
 };
 
