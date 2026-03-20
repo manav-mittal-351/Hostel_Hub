@@ -14,8 +14,8 @@ const Profile = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             <header>
-                <h1 className="section-title">Security & Identity</h1>
-                <p className="section-subtitle">Manage your institutional profile and security configurations.</p>
+                <h1 className="section-title">My Profile</h1>
+                <p className="section-subtitle">Manage your personal information and account settings.</p>
             </header>
 
             {/* Profile Hero Section */}
@@ -73,17 +73,17 @@ const Profile = () => {
                 {/* Personal Information */}
                 <Card className="premium-card lg:col-span-8 bg-white overflow-hidden p-0 border-border/60">
                     <CardHeader className="px-8 py-7 border-b border-border bg-secondary/10">
-                        <CardTitle className="text-[17px] font-bold tracking-tight">Core Repository</CardTitle>
-                        <CardDescription className="text-[12px] font-medium">Primary identification and communication parameters.</CardDescription>
+                        <CardTitle className="text-[17px] font-bold tracking-tight">Personal Information</CardTitle>
+                        <CardDescription className="text-[12px] font-medium">Your primary contact and hostel details.</CardDescription>
                     </CardHeader>
                     <CardContent className="p-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <InfoItem icon={User} label="Subject Identity" value={user.name} />
-                            <InfoItem icon={Mail} label="Access Pipeline" value={user.email} />
-                            <InfoItem icon={Shield} label="Identifier Status" value={user.studentId || "UNSPECIFIED"} />
-                            <InfoItem icon={Building} label="Sector Affiliation" value={user.department || "General Registry"} />
-                            <InfoItem icon={MapPin} label="Installation Unit" value={user.hostelName ? `${user.hostelName} (Block ${user.hostelBlock || 'Global'})` : "Pending Allotment"} />
-                            <InfoItem icon={Calendar} label="Quarters Assigned" value={user.roomNumber ? `Station #${user.roomNumber}` : "IN-PROCESS"} />
+                            <InfoItem icon={User} label="Full Name" value={user.name} />
+                            <InfoItem icon={Mail} label="Email Address" value={user.email} />
+                            <InfoItem icon={Shield} label="Student ID" value={user.studentId || "NOT SET"} />
+                            <InfoItem icon={Building} label="Department" value={user.department || "General"} />
+                            <InfoItem icon={MapPin} label="Hostel & Block" value={user.hostelName ? `${user.hostelName} (Block ${user.hostelBlock || 'Global'})` : "Pending Allotment"} />
+                            <InfoItem icon={Calendar} label="Room Number" value={user.roomNumber ? `Room #${user.roomNumber}` : "NOT ALLOTTED"} />
                         </div>
                     </CardContent>
                 </Card>
@@ -92,12 +92,12 @@ const Profile = () => {
                 <div className="lg:col-span-4 space-y-8">
                     <Card className="premium-card bg-white border-border/60">
                         <CardHeader className="px-7 py-6 border-b border-border/50">
-                            <CardTitle className="text-[15px] font-bold tracking-tight">System Integrity</CardTitle>
+                            <CardTitle className="text-[15px] font-bold tracking-tight">Account Settings</CardTitle>
                         </CardHeader>
                         <CardContent className="p-7 space-y-4">
                             <Button variant="outline" className="w-full justify-between h-11 text-[12px] font-bold tracking-tight px-4 border-border/50 hover:bg-secondary/50 transition-colors rounded-xl shadow-none">
                                 <div className="flex items-center gap-3">
-                                    <Shield className="h-4 w-4 text-primary opacity-70" /> Reset Credentials
+                                    <Shield className="h-4 w-4 text-primary opacity-70" /> Reset Password
                                 </div>
                                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                             </Button>
@@ -118,9 +118,9 @@ const Profile = () => {
                             <Shield className="h-7 w-7 text-white/90" />
                         </div>
                         <div className="space-y-2 relative z-10">
-                            <h3 className="text-xl font-bold tracking-tight">Verified Protocol</h3>
+                            <h3 className="text-xl font-bold tracking-tight">Verified Account</h3>
                             <p className="text-[13px] text-primary-foreground/80 leading-relaxed font-medium">
-                                Your identity is fully authenticated within the HostelHub network. You have read/write permissions for all assigned modules.
+                                Your identity is fully verified within the HostelHub network. You have full access to your assigned modules.
                             </p>
                         </div>
                     </Card>

@@ -35,16 +35,16 @@ const AdminDashboard = () => {
         <div className="space-y-10 animate-in fade-in duration-1000">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
                 <div>
-                    <h1 className="section-title">Institutional Oversight</h1>
-                    <p className="section-subtitle">Real-time performance indicators and strategic administrative telemetry.</p>
+                    <h1 className="section-title">Admin Dashboard</h1>
+                    <p className="section-subtitle">Overview of hostel activity and key stats.</p>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" className="h-10 px-5 text-[11px] font-bold uppercase tracking-widest border-border/60 bg-white hover:bg-secondary/50 rounded-xl flex items-center gap-2 transition-all">
-                        <Settings className="h-3.5 w-3.5" /> Registry Config
+                        <Settings className="h-3.5 w-3.5" /> Dashboard Config
                     </Button>
                     <Link to="/register">
                         <Button className="btn-primary h-10 px-8 text-[11px] font-bold uppercase tracking-widest active:scale-95 shadow-lg shadow-primary/10 flex items-center gap-2">
-                            <Plus className="h-4 w-4" /> Enroll Resident
+                            <Plus className="h-4 w-4" /> Add Student
                         </Button>
                     </Link>
                 </div>
@@ -52,28 +52,28 @@ const AdminDashboard = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <AdminStatsCard 
-                    title="Active Cohort" 
+                    title="Total Residents" 
                     value={stats.totalStudents} 
                     icon={Users} 
-                    trend="+12% Sector Growth"
+                    trend="+12% since last month"
                 />
                 <AdminStatsCard 
-                    title="Synthetic Occupancy" 
+                    title="Occupancy Rate" 
                     value={`${stats.occupancy.rate}%`} 
                     icon={BedDouble} 
-                    trend={`${stats.occupancy.occupied} Units Active`}
+                    trend={`${stats.occupancy.occupied} Rooms Occupied`}
                 />
                 <AdminStatsCard 
-                    title="Unresolved Petitions" 
+                    title="Active Complaints" 
                     value={stats.pendingComplaints} 
                     icon={AlertCircle} 
-                    trend="Requires Protocol Action"
+                    trend="Needs your attention"
                 />
                 <AdminStatsCard 
-                    title="Monthly Revenue" 
+                    title="Monthly Income" 
                     value={`₹${(stats.monthlyRevenue / 1000).toFixed(1)}K`} 
                     icon={TrendingUp} 
-                    trend="Target Performance"
+                    trend="Financial Overview"
                 />
             </div>
 
@@ -82,34 +82,34 @@ const AdminDashboard = () => {
                     <Card className="premium-card bg-white p-0 overflow-hidden border-border/60 shadow-sm">
                         <CardHeader className="p-7 border-b border-border bg-secondary/10">
                             <div>
-                                <CardTitle className="text-[17px] font-bold text-foreground">Operational Protocols</CardTitle>
-                                <CardDescription className="text-[12px] font-medium">Global shortcuts for high-frequency administrative tasks.</CardDescription>
+                                <CardTitle className="text-[17px] font-bold text-foreground">Management Console</CardTitle>
+                                <CardDescription className="text-[12px] font-medium">Quick access to common administrative tasks.</CardDescription>
                             </div>
                         </CardHeader>
                         <div className="p-7 grid grid-cols-1 md:grid-cols-2 gap-6 bg-white">
                             <ManagementGridLink 
                                 to="/room-allotment" 
                                 icon={BedDouble} 
-                                title="Unit Allocation" 
-                                description="Coordinate residential inventory"
+                                title="Room Allocation" 
+                                description="Manage and assign rooms to students"
                             />
                             <ManagementGridLink 
                                 to="/complaints" 
                                 icon={AlertCircle} 
-                                title="Petition Resolution" 
-                                description="Audit student support tickets"
+                                title="Complaint Resolution" 
+                                description="View and resolve student complaints"
                             />
                             <ManagementGridLink 
                                 to="/gate-pass" 
                                 icon={FileText} 
-                                title="Logbook Control" 
-                                description="Synchronize entry & exit data"
+                                title="Entry & Exit Log" 
+                                description="Track student in/out records"
                             />
                             <ManagementGridLink 
                                 to="/register" 
                                 icon={UserPlus} 
-                                title="Resident Onboarding" 
-                                description="Index new academic members"
+                                title="Add New Student" 
+                                description="Register a new student to the hostel"
                             />
                         </div>
                     </Card>
@@ -119,24 +119,24 @@ const AdminDashboard = () => {
                     <Card className="premium-card bg-white p-0 overflow-hidden border-border/60 shadow-sm h-[400px]">
                         <CardHeader className="p-7 border-b border-border bg-secondary/10 flex flex-row items-center justify-between space-y-0">
                             <div>
-                                <CardTitle className="text-[17px] font-bold text-foreground">Registry Stream</CardTitle>
-                                <CardDescription className="text-[12px] font-medium">Real-time system synchronization.</CardDescription>
+                                <CardTitle className="text-[17px] font-bold text-foreground">Live Activity Feed</CardTitle>
+                                <CardDescription className="text-[12px] font-medium">Live updates from the hostel system.</CardDescription>
                             </div>
                             <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg border border-emerald-100">
                                 <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-[9px] font-bold uppercase tracking-widest">Active</span>
+                                <span className="text-[9px] font-bold uppercase tracking-widest">Live</span>
                             </div>
                         </CardHeader>
                         <div className="p-7 space-y-7 relative h-[calc(400px-110px)] overflow-y-auto">
-                            <ActivityItem text={`System synchronized with ${stats.totalStudents} active resident records.`} time="Registry Live" />
-                            <ActivityItem text={`Residential inventory optimized (${stats.occupancy.occupied}/${stats.occupancy.capacity} units).`} time="Strategic Overview" />
+                            <ActivityItem text={`${stats.totalStudents} student is currently registered in the hostel.`} time="Registry Live" />
+                            <ActivityItem text={`${stats.occupancy.occupied} out of ${stats.occupancy.capacity} rooms are currently occupied.`} time="Dashboard Overview" />
                             {stats.pendingComplaints > 0 && (
-                                <ActivityItem text={`URGENT: ${stats.pendingComplaints} petitions awaiting administrative resolution.`} time="Action Required" />
+                                <ActivityItem text={`Attention: ${stats.pendingComplaints} complaints awaiting resolution.`} time="Needs Attention" />
                             )}
-                            <ActivityItem text={`Financial ledger synchronized (Current Flow: ₹${stats.monthlyRevenue.toLocaleString()}).`} time="Audit Sync" />
+                            <ActivityItem text={`Financial records are up to date (Total income this month: ₹${stats.monthlyRevenue.toLocaleString()}).`} time="Audit Sync" />
                             
                             <Button variant="ghost" className="w-full mt-2 text-muted-foreground hover:text-primary font-bold text-[10px] uppercase tracking-widest gap-2 rounded-xl transition-all border border-transparent hover:border-border/60 bg-secondary/5">
-                                Audit Ledger <ArrowRight className="h-3.5 w-3.5" />
+                                View Records <ArrowRight className="h-3.5 w-3.5" />
                             </Button>
                         </div>
                     </Card>

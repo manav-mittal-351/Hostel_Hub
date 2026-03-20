@@ -34,12 +34,12 @@ const Navbar = () => {
     ];
 
     const adminLinks = [
-        { path: "/dashboard", icon: LayoutDashboard, label: "Sys Overview" },
-        { path: "/room-allotment", icon: BedDouble, label: "Inventory" },
-        { path: "/payments", icon: CreditCard, label: "Financials" },
-        { path: "/gate-pass", icon: FileText, label: "Access Control" },
-        { path: "/register", icon: UserPlus, label: "Enrollment" },
-        { path: "/complaints", icon: AlertCircle, label: "Petitions" },
+        { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+        { path: "/room-allotment", icon: BedDouble, label: "Rooms" },
+        { path: "/payments", icon: CreditCard, label: "Payments" },
+        { path: "/gate-pass", icon: FileText, label: "Gatepass" },
+        { path: "/register", icon: UserPlus, label: "Add Student" },
+        { path: "/complaints", icon: AlertCircle, label: "Complaints" },
     ];
 
     const wardenLinks = [

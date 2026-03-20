@@ -42,12 +42,12 @@ const AdminComplaints = () => {
         <div className="space-y-8 animate-in fade-in duration-700">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="section-title">Global Ticket Registry</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Found {complaints.filter(c => c.status === 'pending').length} active tickets requiring administrative resolution.</p>
+                    <h1 className="section-title">Complaint Resolution</h1>
+                    <p className="text-sm text-muted-foreground mt-1">There are {complaints.filter(c => c.status === 'pending').length} active complaints that need your attention.</p>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" className="h-10 px-4 text-[12px] font-semibold border-border/50 bg-white hover:bg-secondary/50 rounded-xl flex items-center gap-2">
-                        <Filter className="h-3.5 w-3.5" /> Advance Filtering
+                        <Filter className="h-3.5 w-3.5" /> Filter Complaints
                     </Button>
                 </div>
             </header>
@@ -60,8 +60,8 @@ const AdminComplaints = () => {
                 ) : complaints.length === 0 ? (
                     <div className="py-24 text-center rounded-3xl border border-dashed border-border/60 bg-secondary/10 flex flex-col items-center justify-center space-y-3 grayscale opacity-60">
                         <MessageSquare className="h-10 w-10 mb-2 text-muted-foreground" />
-                        <h3 className="text-[17px] font-semibold text-foreground tracking-tight">Zero Inbox Status</h3>
-                        <p className="text-[13px] text-muted-foreground font-medium">All student communications have been processed successfully.</p>
+                        <h3 className="text-[17px] font-semibold text-foreground tracking-tight">No active complaints</h3>
+                        <p className="text-[13px] text-muted-foreground font-medium">All student complaints have been resolved.</p>
                     </div>
                 ) : (
                     complaints.map((complaint) => (
@@ -103,11 +103,11 @@ const AdminComplaints = () => {
                                     ) : (
                                         <div className="flex flex-col items-center gap-2 text-emerald-600 animate-in zoom-in duration-500">
                                             <CheckCircle2 className="h-7 w-7" />
-                                            <span className="text-[10px] font-bold uppercase tracking-widest">Entry Closed</span>
+                                            <span className="text-[10px] font-bold uppercase tracking-widest">Resolved</span>
                                         </div>
                                     )}
                                     <Button variant="ghost" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors h-auto p-0">
-                                        Audit History
+                                        View Details
                                     </Button>
                                 </div>
                             </div>

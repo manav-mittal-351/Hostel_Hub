@@ -62,7 +62,7 @@ const GatePass = () => {
         return (
             <div className="space-y-8 animate-in fade-in duration-700">
                 <header>
-                    <h1 className="section-title">Gate Authorization Center</h1>
+                    <h1 className="section-title">Gatepass Management</h1>
                     <p className="section-subtitle">Monitor and approve student exit and entry permissions.</p>
                 </header>
                 <AdminGatePass />
@@ -73,8 +73,8 @@ const GatePass = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             <header>
-                <h1 className="section-title">Digital GatePass System</h1>
-                <p className="section-subtitle">Secure outing and leave authorization for residents.</p>
+                <h1 className="section-title">Gatepass Request</h1>
+                <p className="section-subtitle">Apply for a gatepass for outing or leave authorization.</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -83,14 +83,14 @@ const GatePass = () => {
                     <Card className="premium-card bg-white p-0 overflow-hidden">
                         <CardHeader className="px-7 py-6 border-b border-border bg-secondary/30">
                             <CardTitle className="text-[15px] font-semibold flex items-center gap-2">
-                                <FileText className="h-4 w-4 text-primary" /> Authorization Request
+                                <FileText className="h-4 w-4 text-primary" /> New Gatepass Request
                             </CardTitle>
-                            <CardDescription className="text-[12px]">Please provide accurate timeline and destination details.</CardDescription>
+                            <CardDescription className="text-[12px]">Please fill in your outing or leave details.</CardDescription>
                         </CardHeader>
                         <CardContent className="p-7">
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="space-y-3">
-                                    <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Permit Classification</Label>
+                                    <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Gatepass Type</Label>
                                     <div className="grid grid-cols-2 gap-4">
                                         <button 
                                             type="button"
@@ -147,7 +147,7 @@ const GatePass = () => {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Reason for Authorization</Label>
+                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Reason for Gatepass</Label>
                                     <textarea 
                                         id="reason"
                                         rows="3"
@@ -168,8 +168,8 @@ const GatePass = () => {
 
                     <div className="space-y-4">
                         <div className="flex items-center justify-between px-1">
-                            <h2 className="text-[17px] font-semibold text-foreground tracking-tight">Personal Permit History</h2>
-                            <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-widest opacity-60">Total {requests.length} entries</p>
+                            <h2 className="text-[17px] font-semibold text-foreground tracking-tight">My Gatepass History</h2>
+                            <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-widest opacity-60">Total {requests.length} passes</p>
                         </div>
                         <div className="grid gap-4">
                             {requests.length > 0 ? (
@@ -223,16 +223,16 @@ const GatePass = () => {
                         </div>
                         <div className="space-y-3">
                             <Badge className="bg-emerald-50 text-emerald-600 border-none px-3 py-1 rounded-md text-[10px] uppercase font-bold tracking-widest mx-auto block w-fit">
-                                Authenticator Internal
+                                Status Tracking
                             </Badge>
-                            <h3 className="text-[17px] font-bold text-foreground tracking-tight">Authorization Status</h3>
+                            <h3 className="text-[17px] font-bold text-foreground tracking-tight">Approval Status</h3>
                             <p className="text-[12px] text-muted-foreground font-medium px-4 leading-relaxed">
                                 Once approved, your dynamic QR identity will activate for gate authentication.
                             </p>
                         </div>
                         
                         <div className="pt-6 border-t border-border/50 text-left space-y-4">
-                            <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Protocols & Guidelines</h4>
+                            <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Rules & Guidelines</h4>
                             <ul className="space-y-4">
                                 {[
                                     "Biometric or QR authentication at gate",

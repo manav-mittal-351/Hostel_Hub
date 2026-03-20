@@ -10,35 +10,35 @@ const LandingPage = () => {
     const features = [
         {
             icon: BedDouble,
-            title: "Smart Room Selection",
-            description: "Explore available residences and reserve your preferred room with a single click. Real-time availability tracking.",
+            title: "Quick Room Booking",
+            description: "Browse available rooms and book your bed with a single click. Real-time availability tracking.",
             color: "bg-emerald-50 text-emerald-600"
         },
         {
             icon: CreditCard,
-            title: "Digital Payments",
-            description: "Securely settle your hostel dues, track transaction history, and retrieve digital receipts instantly.",
+            title: "Online Rent Payments",
+            description: "Securely pay your hostel rent, track payment history, and download receipts instantly.",
             color: "bg-blue-50 text-blue-600"
         },
         {
             icon: MessageSquare,
-            title: "Support Console",
-            description: "Submit maintenance requests or report issues directly to the administration. Real-time status monitoring.",
+            title: "Help & Support",
+            description: "Submit maintenance requests or report issues directly to the hostel admin. Track resolution status in real-time.",
             color: "bg-amber-50 text-amber-600"
         },
         {
             icon: ShieldCheck,
-            title: "Gatepass Authority",
-            description: "Digital authorization for outings and leaves. Secure QR-based authentication for campus exit and entry.",
+            title: "Gatepass System",
+            description: "Digital requests for outings and leaves. Secure QR-based verification for gate entry and exit.",
             color: "bg-primary/10 text-primary"
         }
     ];
 
     const stats = [
-        { label: "Active Residents", value: "2,500+", icon: Users },
-        { label: "Residential Units", value: "1,200+", icon: Building },
-        { label: "Support Resolution", value: "99.9%", icon: CheckCircle2 },
-        { label: "Sync Latency", value: "< 200ms", icon: Clock }
+        { label: "Active Students", value: "2,500+", icon: Users },
+        { label: "Total Rooms", value: "1,200+", icon: Building },
+        { label: "Complaint Resolution", value: "99.9%", icon: CheckCircle2 },
+        { label: "Fast Performance", value: "100%", icon: Clock }
     ];
 
     return (
@@ -56,7 +56,7 @@ const LandingPage = () => {
                     <div className="container max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10">
                         <div className="space-y-10 animate-in fade-in slide-in-from-left-8 duration-1000">
                             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/50 border border-primary/10 text-primary text-[11px] font-bold uppercase tracking-[0.2em]">
-                                Modern Residency Management
+                                Modern Hostel Management
                             </div>
                             
                             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-foreground leading-[0.95]">
@@ -65,7 +65,7 @@ const LandingPage = () => {
                             </h1>
                             
                             <p className="text-lg md:text-xl text-muted-foreground font-medium leading-relaxed max-w-xl">
-                                A premium, high-performance ecosystem for modern student housing. Book units, settle dues, and manage permissions with absolute precision.
+                                A simple, high-performance system for modern student housing. Book rooms, pay rent, and manage gatepasses with ease.
                             </p>
                             
                             <div className="flex flex-wrap gap-4 pt-4">
@@ -73,7 +73,7 @@ const LandingPage = () => {
                                     onClick={() => navigate('/register')}
                                     className="h-14 px-10 bg-primary text-white hover:bg-primary/90 rounded-2xl font-bold text-sm uppercase tracking-widest shadow-xl shadow-primary/10 flex items-center gap-3 transition-all active:scale-95"
                                 >
-                                    Initialize Identity
+                                    Create Account
                                     <ArrowRight className="w-4 h-4" />
                                 </Button>
                                 <Button 
@@ -97,7 +97,7 @@ const LandingPage = () => {
                                     </div>
                                 </div>
                                 <p className="text-[12px] text-muted-foreground font-semibold uppercase tracking-wider">
-                                    Trusted by <span className="text-foreground">2,500+</span> residents
+                                    Trusted by <span className="text-foreground">2,500+</span> students
                                 </p>
                             </div>
                         </div>
@@ -113,9 +113,9 @@ const LandingPage = () => {
                                     />
                                     <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/80 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl space-y-2">
                                         <Badge className="bg-primary text-white border-none text-[9px] uppercase font-bold tracking-widest px-2 py-0.5">Premium Standard</Badge>
-                                        <h3 className="text-xl font-bold text-foreground tracking-tight">Executive Wing — Sector A</h3>
+                                        <h3 className="text-xl font-bold text-foreground tracking-tight">Main Wing — Block A</h3>
                                         <div className="flex items-center justify-between">
-                                            <p className="text-[12px] text-muted-foreground font-medium">98% Allotted • Registry Active</p>
+                                            <p className="text-[12px] text-muted-foreground font-medium">98% Occupied • Booking Open</p>
                                             <div className="flex gap-1">
                                                 {[1, 2, 3, 4, 5].map(i => <div key={i} className="w-1 h-1 rounded-full bg-primary" />)}
                                             </div>
@@ -192,7 +192,7 @@ const LandingPage = () => {
                             Ready to Transform Your <br /> Hostel Experience?
                         </h2>
                         <p className="text-primary-foreground/70 text-lg md:text-xl max-w-2xl mx-auto relative z-10 font-medium leading-relaxed">
-                            Join thousands of residents using HostelHub to navigate their campus life with absolute ease. Initialize your account today.
+                            Join thousands of students using HostelHub to manage their campus life with absolute ease. Create your account today.
                         </p>
                         
                         <div className="flex flex-wrap items-center justify-center gap-4 relative z-10 pt-4">
@@ -207,7 +207,7 @@ const LandingPage = () => {
                                 onClick={() => navigate('/login')}
                                 className="h-14 px-12 bg-transparent border-white/20 text-white hover:bg-white/10 transition-all rounded-2xl font-bold text-sm uppercase tracking-widest active:scale-95"
                             >
-                                Account Access
+                                Login
                             </Button>
                         </div>
                     </div>
@@ -227,7 +227,7 @@ const LandingPage = () => {
                     </Link>
                     
                     <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-widest">
-                        © 2026 HostelHub Institutional Services — Protocol v2.4.1
+                        © 2026 HostelHub Management System
                     </p>
                     
                     <div className="flex items-center gap-8">

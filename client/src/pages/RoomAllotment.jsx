@@ -109,9 +109,9 @@ const RoomAllotment = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-4">
                 <div>
                     <h1 className="section-title">
-                        Residential <span className="text-primary">{user?.roomNumber ? "Confirmation" : "Selection"}</span>
+                        Room <span className="text-primary">{user?.roomNumber ? "Confirmation" : "Selection"}</span>
                     </h1>
-                    <p className="section-subtitle">Coordinate your academic residency and manage your allotted premises.</p>
+                    <p className="section-subtitle">View your room details or select a new room for the semester.</p>
                 </div>
                 {user?.roomNumber && (
                     <Button 
@@ -136,16 +136,16 @@ const RoomAllotment = () => {
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-3">
                                         <Badge className="bg-emerald-500 text-white border-none px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm shadow-emerald-500/10">
-                                            Registry Confirmed
+                                            Booking Confirmed
                                         </Badge>
                                         <div className="flex items-center gap-1.5 px-2.5 py-1 bg-secondary/30 rounded-lg border border-border/40">
                                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Active</span>
                                         </div>
                                     </div>
-                                    <h2 className="text-4xl font-bold tracking-tight text-foreground">Unit {user.roomNumber}</h2>
+                                    <h2 className="text-4xl font-bold tracking-tight text-foreground">Room {user.roomNumber}</h2>
                                     <div className="flex items-center gap-3 text-muted-foreground">
-                                        <p className="text-[11px] font-bold uppercase tracking-[0.1em]">Allocation ID</p>
+                                        <p className="text-[11px] font-bold uppercase tracking-[0.1em]">Booking ID</p>
                                         <div className="px-2 py-0.5 bg-secondary/50 rounded font-mono text-[10px] border border-border/50 uppercase tracking-tighter">
                                             {user._id?.slice(-12)}
                                         </div>
@@ -154,7 +154,7 @@ const RoomAllotment = () => {
                             </div>
                             <div className="p-10 flex items-center gap-12 bg-secondary/10 relative z-10 min-w-[320px]">
                                 <div className="text-right space-y-1">
-                                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Institutional Billing</p>
+                                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Monthly Rent</p>
                                     <p className="text-3xl font-bold tracking-tighter text-foreground italic flex items-baseline justify-end gap-1">
                                         <span className="text-lg translate-y-[-2px]">₹</span>
                                         {user.hostelBlock?.includes('AC') && !user.hostelBlock?.includes('Non-AC') ? '8,000' : '5,000'}
@@ -179,7 +179,7 @@ const RoomAllotment = () => {
                                     <div className="p-2 bg-secondary/50 rounded-lg text-primary">
                                         <Building className="w-4 h-4" />
                                     </div>
-                                    <h3 className="text-[14px] font-semibold text-foreground">Hostel Info</h3>
+                                    <h3 className="text-[14px] font-semibold text-foreground">Hostel Details</h3>
                                 </div>
                                 <div className="space-y-4">
                                     <div className="flex items-start gap-3">
@@ -211,7 +211,7 @@ const RoomAllotment = () => {
                                     <div className="p-2 bg-secondary/50 rounded-lg text-primary">
                                         <UserIcon className="w-4 h-4" />
                                     </div>
-                                    <h3 className="text-[14px] font-semibold text-foreground">Resident Access</h3>
+                                    <h3 className="text-[14px] font-semibold text-foreground">Student Details</h3>
                                 </div>
                                 <div className="space-y-3">
                                     <DetailRow label="Department" value={user.department || 'General Registry'} />
@@ -236,7 +236,7 @@ const RoomAllotment = () => {
 
                     <div className="space-y-6">
                         <Card className="premium-card bg-white p-6">
-                            <h3 className="text-[14px] font-semibold text-foreground mb-4">Allocation Details</h3>
+                            <h3 className="text-[14px] font-semibold text-foreground mb-4">Rent Summary</h3>
                             <div className="space-y-4">
                                 <div className="p-4 rounded-xl bg-emerald-50/50 flex items-center justify-between border border-emerald-100/50">
                                     <div>
@@ -293,9 +293,9 @@ const RoomAllotment = () => {
                             className="text-xl font-bold text-foreground tracking-tight flex items-center gap-3"
                         >
                             <div className="w-1.5 h-8 bg-primary rounded-full" />
-                            Available Residences
+                            Available Rooms
                         </h2>
-                        <p className="text-sm text-muted-foreground ml-4">Explore and reserve your preferred room unit in the institutional sector.</p>
+                        <p className="text-sm text-muted-foreground ml-4">Browse and book available rooms in the hostel.</p>
                     </div>
                     <div className="flex items-center gap-4">
                         {user?.roomNumber && (
@@ -304,7 +304,7 @@ const RoomAllotment = () => {
                                 onClick={() => setShowAllAvailable(!showAllAvailable)}
                                 className="h-10 px-5 rounded-xl text-[11px] font-bold uppercase tracking-widest border-border/60 hover:bg-secondary/20 transition-all active:scale-95"
                             >
-                                {showAllAvailable ? "Hide All Units" : "View Other Units"}
+                                {showAllAvailable ? "Hide Rooms" : "View Other Rooms"}
                             </Button>
                         )}
                         {!user?.roomNumber && loadingRooms && (
@@ -394,7 +394,7 @@ const RoomAllotment = () => {
                     ) : (
                         <div className="col-span-full py-20 text-center premium-card border-dashed border-2 m-4 bg-secondary/10">
                             <BedDouble className="w-10 h-10 text-muted-foreground mx-auto mb-4 opacity-50" />
-                            <h3 className="text-[15px] font-semibold text-foreground">No Units Available</h3>
+                            <h3 className="text-[15px] font-semibold text-foreground">No Rooms Available</h3>
                             <p className="text-[12px] text-muted-foreground">Please contact administration for offline waitlist availability.</p>
                         </div>
                     )}

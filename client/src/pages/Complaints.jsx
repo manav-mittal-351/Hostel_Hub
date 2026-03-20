@@ -66,8 +66,8 @@ const Complaints = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             <header>
-                <h1 className="section-title">Support & Assistance</h1>
-                <p className="text-sm text-muted-foreground mt-1">Submit maintenance requests or report issues to the hostel administration.</p>
+                <h1 className="section-title">Complaints & Support</h1>
+                <p className="text-sm text-muted-foreground mt-1">Submit a complaint or request maintenance from the hostel administration.</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -76,14 +76,14 @@ const Complaints = () => {
                     <Card className="premium-card bg-white p-0 overflow-hidden sticky top-8">
                         <CardHeader className="px-7 py-6 border-b border-border bg-secondary/30">
                             <CardTitle className="text-[15px] font-semibold flex items-center gap-2">
-                                <Plus className="h-4 w-4 text-primary" /> New Support Ticket
+                                <Plus className="h-4 w-4 text-primary" /> Raise a Complaint
                             </CardTitle>
-                            <CardDescription className="text-[12px]">Briefly describe the issue you're facing.</CardDescription>
+                            <CardDescription className="text-[12px]">Provide details about the issue you're facing.</CardDescription>
                         </CardHeader>
                         <CardContent className="p-7">
                             <form onSubmit={handleSubmit} className="space-y-5">
                                 <div className="space-y-2">
-                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Classification</Label>
+                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Category</Label>
                                     <select 
                                         className="w-full h-11 px-4 text-[13px] bg-secondary/20 border border-border/50 rounded-xl focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary/20 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%20fill%3D%22none%22%20xmlns%3D%220%200%2010%206%22%3E%3Cpath%20d%3D%22M1%201L5%205L9%201%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-[length:10px] bg-[right_1rem_center] bg-no-repeat"
                                         value={formData.category}
@@ -97,7 +97,7 @@ const Complaints = () => {
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Issue Title</Label>
+                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Complaint Title</Label>
                                     <Input 
                                         className="h-11 px-4 text-[13px] bg-secondary/20 border-border/50 focus:bg-white transition-all rounded-xl"
                                         placeholder="E.g. Room light not working"
@@ -107,7 +107,7 @@ const Complaints = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Context & Details</Label>
+                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Description</Label>
                                     <textarea 
                                         rows="4"
                                         className="w-full rounded-xl p-4 text-[13px] bg-secondary/20 border border-border/50 focus:bg-white transition-all outline-none resize-none min-h-[100px]"
@@ -118,7 +118,7 @@ const Complaints = () => {
                                     ></textarea>
                                 </div>
                                 <Button className="w-full h-11 btn-primary text-[13px] font-semibold gap-2">
-                                    <Send className="h-3.5 w-3.5" /> Dispatch Request
+                                    <Send className="h-3.5 w-3.5" /> Submit Complaint
                                 </Button>
                             </form>
                         </CardContent>
@@ -129,9 +129,9 @@ const Complaints = () => {
                             <Info className="h-4 w-4 text-emerald-600" />
                         </div>
                         <div>
-                            <h4 className="text-[13px] font-semibold text-emerald-900 mb-0.5">Response Protocol</h4>
+                            <h4 className="text-[13px] font-semibold text-emerald-900 mb-0.5">Note</h4>
                             <p className="text-[11px] text-emerald-800/70 leading-relaxed font-medium">
-                                Maintenance units typically respond within 24-48 hours during business cycles.
+                                Our team typically responds to complaints within 24-48 hours.
                             </p>
                         </div>
                     </div>
@@ -141,8 +141,8 @@ const Complaints = () => {
                 <div className="lg:col-span-8 space-y-6">
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2 border-b border-border/50">
                         <div>
-                            <h2 className="text-[17px] font-semibold text-foreground tracking-tight">Personal History</h2>
-                            <p className="text-[12px] text-muted-foreground font-medium">You have {complaints.length} registered tickets.</p>
+                            <h2 className="text-[17px] font-semibold text-foreground tracking-tight">My Complaints</h2>
+                            <p className="text-[12px] text-muted-foreground font-medium">You have raised {complaints.length} complaints.</p>
                         </div>
                         <div className="flex items-center gap-3 w-full sm:w-auto">
                             <div className="relative flex-1 sm:flex-none group">
@@ -207,7 +207,7 @@ const Complaints = () => {
                         ) : (
                             <div className="py-24 text-center rounded-3xl border border-dashed border-border/60 bg-secondary/10 flex flex-col items-center justify-center space-y-3 grayscale opacity-60">
                                 <AlertCircle className="h-10 w-10 text-muted-foreground" />
-                                <p className="text-[13px] font-semibold text-muted-foreground tracking-tight">Historical Record Clear</p>
+                                <p className="text-[13px] font-semibold text-muted-foreground tracking-tight">No complaints yet</p>
                             </div>
                         )}
                     </div>

@@ -63,8 +63,8 @@ const AdminRoomManagement = () => {
     return (
         <div className="space-y-10 animate-in fade-in duration-1000">
             <header className="border-b border-border/50 pb-2">
-                <h1 className="section-title">Residential Unit Engineering</h1>
-                <p className="section-subtitle">Initialize inventory parameters and manage resident environmental assignments.</p>
+                <h1 className="section-title">Room Management</h1>
+                <p className="section-subtitle">Manage hostel rooms and student room allocations.</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -72,9 +72,9 @@ const AdminRoomManagement = () => {
                 <Card className="premium-card bg-white p-0 overflow-hidden">
                     <CardHeader className="px-7 py-6 border-b border-border bg-secondary/30">
                         <CardTitle className="text-[15px] font-semibold flex items-center gap-2">
-                            <Plus className="h-4 w-4 text-primary" /> Initialize Room Unit
+                            <Plus className="h-4 w-4 text-primary" /> Add New Room
                         </CardTitle>
-                        <CardDescription className="text-[12px]">Register a new room into the central registry.</CardDescription>
+                        <CardDescription className="text-[12px]">Create a new room in the hostel system.</CardDescription>
                     </CardHeader>
                     <CardContent className="p-7">
                         <form onSubmit={handleCreateRoom} className="space-y-6">
@@ -110,7 +110,7 @@ const AdminRoomManagement = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Environment</Label>
+                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Room Type</Label>
                                     <div className="flex gap-2 mt-1">
                                         {['Non-AC', 'AC'].map((type) => (
                                             <label key={type} className="flex-1 cursor-pointer group">
@@ -132,7 +132,7 @@ const AdminRoomManagement = () => {
                                     </div>
                                 </div>
                             </div>
-                            <Button type="submit" className="w-full h-11 btn-primary text-[13px] font-semibold">Register Unit</Button>
+                            <Button type="submit" className="w-full h-11 btn-primary text-[13px] font-semibold">Add Room</Button>
                         </form>
                     </CardContent>
                 </Card>
@@ -141,9 +141,9 @@ const AdminRoomManagement = () => {
                 <Card className="premium-card bg-white p-0 overflow-hidden">
                     <CardHeader className="px-7 py-6 border-b border-border bg-secondary/30">
                         <CardTitle className="text-[15px] font-semibold flex items-center gap-2">
-                            <ShieldPlus className="h-4 w-4 text-primary" /> Direct Allocation
+                            <ShieldPlus className="h-4 w-4 text-primary" /> Room Allocation
                         </CardTitle>
-                        <CardDescription className="text-[12px]">Manually assign resident to a specific room unit.</CardDescription>
+                        <CardDescription className="text-[12px]">Manage and assign rooms to students.</CardDescription>
                     </CardHeader>
                     <CardContent className="p-7">
                         <form onSubmit={handleAllocate} className="space-y-6">
@@ -162,17 +162,17 @@ const AdminRoomManagement = () => {
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Student System ID</Label>
+                                <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Student ID</Label>
                                 <Input
                                     className="h-11 px-4 text-[13px] bg-secondary/20 border-border/50 focus:bg-white transition-all rounded-xl"
-                                    placeholder="Paste database reference ID"
+                                    placeholder="Enter student ID"
                                     value={allocateData.studentId}
                                     onChange={(e) => setAllocateData({ ...allocateData, studentId: e.target.value })}
                                     required
                                 />
-                                <p className="text-[10px] text-muted-foreground pl-1 italic">Reference ID can be found in the global records registry.</p>
+                                <p className="text-[10px] text-muted-foreground pl-1 italic">Student ID can be found in the student records.</p>
                             </div>
-                            <Button type="submit" className="w-full h-11 btn-primary text-[13px] font-semibold mt-4">Execute Allocation</Button>
+                            <Button type="submit" className="w-full h-11 btn-primary text-[13px] font-semibold mt-4">Allocate Room</Button>
                         </form>
                     </CardContent>
                 </Card>
@@ -181,8 +181,8 @@ const AdminRoomManagement = () => {
             <div className="space-y-6 pt-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h2 className="text-[17px] font-semibold text-foreground tracking-tight">Active Room Inventory</h2>
-                        <p className="text-sm text-muted-foreground font-medium">Monitoring {rooms.length} units across {new Set(rooms.map(r => r.floor)).size} floor levels.</p>
+                        <h2 className="text-[17px] font-semibold text-foreground tracking-tight">Room List</h2>
+                        <p className="text-sm text-muted-foreground font-medium">Monitoring {rooms.length} rooms across {new Set(rooms.map(r => r.floor)).size} floors.</p>
                     </div>
                 </div>
 
