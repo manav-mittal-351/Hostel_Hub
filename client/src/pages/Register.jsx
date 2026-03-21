@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Eye, EyeOff, UserPlus, Users } from "lucide-react";
-import Navbar from "@/components/Navbar";
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -51,7 +50,6 @@ const Register = () => {
 
     return (
         <div className="min-h-screen bg-white flex flex-col relative overflow-hidden">
-            <Navbar />
             
             {/* Background Decorations */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none opacity-20 z-0">

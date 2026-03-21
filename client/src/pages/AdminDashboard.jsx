@@ -127,7 +127,7 @@ const AdminDashboard = () => {
                                 <span className="text-[9px] font-bold uppercase tracking-widest">Live</span>
                             </div>
                         </CardHeader>
-                        <div className="p-7 space-y-7 relative h-[calc(400px-110px)] overflow-y-auto">
+                        <div className="p-7 space-y-7 relative h-[calc(400px-110px)] overflow-y-auto custom-scrollbar">
                             <ActivityItem text={`${stats.totalStudents} student is currently registered in the hostel.`} time="Registry Live" />
                             <ActivityItem text={`${stats.occupancy.occupied} out of ${stats.occupancy.capacity} rooms are currently occupied.`} time="Dashboard Overview" />
                             {stats.pendingComplaints > 0 && (
@@ -135,7 +135,7 @@ const AdminDashboard = () => {
                             )}
                             <ActivityItem text={`Financial records are up to date (Total income this month: ₹${stats.monthlyRevenue.toLocaleString()}).`} time="Audit Sync" />
                             
-                            <Button variant="ghost" className="w-full mt-2 text-muted-foreground hover:text-primary font-bold text-[10px] uppercase tracking-widest gap-2 rounded-xl transition-all border border-transparent hover:border-border/60 bg-secondary/5">
+                            <Button variant="ghost" className="w-full mt-2 text-muted-foreground hover:text-primary font-bold text-[10px] uppercase tracking-widest gap-2 rounded-xl transition-all border border-transparent hover:border-border/60 bg-secondary/5 h-12">
                                 View Records <ArrowRight className="h-3.5 w-3.5" />
                             </Button>
                         </div>
@@ -176,10 +176,10 @@ const ManagementGridLink = ({ to, icon: Icon, title, description }) => (
 );
 
 const ActivityItem = ({ text, time }) => (
-    <div className="flex items-start gap-4 border-l-2 border-secondary pl-4 py-0.5 group">
-        <div className="space-y-0.5">
-            <p className="text-[13px] font-medium text-foreground leading-relaxed group-hover:text-primary transition-colors">{text}</p>
-            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{time}</p>
+    <div className="flex items-start gap-4 border-l-2 border-secondary pl-4 py-1 group hover:border-primary transition-all duration-300">
+        <div className="space-y-1">
+            <p className="text-[12px] font-bold text-foreground leading-snug group-hover:text-primary transition-colors">{text}</p>
+            <p className="text-[9px] text-muted-foreground font-black uppercase tracking-[0.2em]">{time}</p>
         </div>
     </div>
 );

@@ -34,4 +34,18 @@ const createPayment = async (req, res) => {
     }
 };
 
-module.exports = { getMyPayments, createPayment };
+// @desc    Get all payments (Admin only)
+// @route   GET /api/payments/all-payments
+// @access  Private (Admin/Warden)
+const getAllPayments = async (req, res) => {
+    try {
+        const payments = await Payment.find()
+            .populate('student', 'name email roomNumber')
+            .sort({ createdAt: -1 });
+        res.json(payments);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { getMyPayments, createPayment, getAllPayments };

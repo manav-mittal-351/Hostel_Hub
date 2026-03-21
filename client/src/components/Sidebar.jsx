@@ -37,13 +37,13 @@ const Sidebar = () => {
     ];
 
     const adminLinks = [
-        { path: "/dashboard", icon: LayoutDashboard, label: "System Admin" },
-        { path: "/room-allotment", icon: BedDouble, label: "Inventory" },
-        { path: "/payments", icon: CreditCard, label: "Financials" },
-        { path: "/gate-pass", icon: FileText, label: "Access Control" },
-        { path: "/non-disciplinary", icon: ShieldAlert, label: "Records" },
-        { path: "/complaints", icon: AlertCircle, label: "Petitions" },
-        { path: "/profile", icon: UserIcon, label: "Config" },
+        { path: "/dashboard", icon: LayoutDashboard, label: "Admin Dashboard" },
+        { path: "/room-allotment", icon: BedDouble, label: "Rooms" },
+        { path: "/payments", icon: CreditCard, label: "Payments" },
+        { path: "/gate-pass", icon: FileText, label: "Gate Pass" },
+        { path: "/non-disciplinary", icon: ShieldAlert, label: "Student Records" },
+        { path: "/complaints", icon: AlertCircle, label: "Complaints" },
+        { path: "/profile", icon: UserIcon, label: "Profile" },
     ];
 
     let links = studentLinks;

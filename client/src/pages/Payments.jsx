@@ -33,35 +33,35 @@ const Payments = () => {
         <div className="space-y-8 animate-in fade-in duration-700">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
                 <div>
-                    <h1 className="section-title">Institutional Billing</h1>
-                    <p className="section-subtitle">Comprehensive tracking of your financial commitments and transaction status.</p>
+                    <h1 className="section-title">Payments & Fees</h1>
+                    <p className="section-subtitle">Track your hostel fees, payments, and dues easily.</p>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" className="h-10 px-5 text-[11px] font-bold uppercase tracking-widest border-border/60 bg-white hover:bg-secondary/50 rounded-xl flex items-center gap-2">
-                        <Printer className="h-3.5 w-3.5" /> Statement
+                        <Printer className="h-3.5 w-3.5" /> View Statement
                     </Button>
                     <Button className="btn-primary h-10 px-8 text-[11px] font-bold uppercase tracking-widest active:scale-95 shadow-lg shadow-primary/10">
-                        Initiate Payment
+                        Pay Now
                     </Button>
                 </div>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <PaymentSummaryCard 
-                    title="Settled Capital" 
+                    title="Total Paid" 
                     value={`₹${totalPaid.toLocaleString()}`} 
-                    subtitle="Lifetime processed"
+                    subtitle="Total amount paid so far"
                     icon={IndianRupee}
                 />
                 <PaymentSummaryCard 
-                    title="Interim Arrears" 
+                    title="Pending Dues" 
                     value="₹0.00" 
-                    subtitle="Registry status: Clear"
+                    subtitle="No pending dues"
                     icon={Clock}
                 />
                 <PaymentSummaryCard 
-                    title="Account Identity" 
-                    value="Authenticated" 
+                    title="Account Status" 
+                    value="Verified" 
                     subtitle="Secure payment protocol"
                     icon={CheckCircle2}
                 />
@@ -71,8 +71,8 @@ const Payments = () => {
                 <CardHeader className="p-7 border-b border-border bg-secondary/5">
                     <div className="flex items-center justify-between">
                         <div>
-                            <CardTitle className="text-[17px] font-bold text-foreground">Transaction Registry</CardTitle>
-                            <CardDescription className="text-[12px] font-medium">Historical data of all institutional financial exchanges.</CardDescription>
+                            <CardTitle className="text-[17px] font-bold text-foreground">Payment History</CardTitle>
+                            <CardDescription className="text-[12px] font-medium">View all your past payments and transactions.</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
@@ -80,11 +80,11 @@ const Payments = () => {
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-secondary/10 border-b border-border/50">
-                                <th className="px-7 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Transaction Trace</th>
-                                <th className="px-7 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Temporal Data</th>
-                                <th className="px-7 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Classification</th>
-                                <th className="px-7 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Valuation</th>
-                                <th className="px-7 py-4 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Compliance</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Transaction ID</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Date</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Type</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Amount</th>
+                                <th className="px-7 py-4 text-right text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Status</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border/30">
@@ -102,11 +102,11 @@ const Payments = () => {
                                                 <div className="p-2.5 rounded-lg bg-secondary/50 text-primary border border-border/50">
                                                     <CreditCard className="h-3.5 w-3.5" />
                                                 </div>
-                                                <p className="text-[12px] font-mono text-foreground font-bold opacity-80">#{payment._id.slice(-10).toUpperCase()}</p>
+                                                <p className="text-[12px] font-mono text-foreground font-bold">#{payment._id.slice(-10).toUpperCase()}</p>
                                             </div>
                                         </td>
                                         <td className="px-7 py-5">
-                                            <p className="text-[13px] text-muted-foreground font-semibold leading-tight">{new Date(payment.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                                            <p className="text-[13px] text-foreground/70 font-semibold leading-tight">{new Date(payment.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                                         </td>
                                         <td className="px-7 py-5">
                                             <Badge className="bg-secondary/40 text-muted-foreground border-border/50 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md">
@@ -137,13 +137,13 @@ const Payments = () => {
                             ) : (
                                 <tr>
                                     <td colSpan="5" className="px-7 py-24 text-center">
-                                        <div className="flex flex-col items-center justify-center space-y-4 opacity-30 grayscale items-center">
+                                        <div className="flex flex-col items-center justify-center space-y-4 opacity-60 grayscale items-center">
                                             <div className="p-5 rounded-full bg-secondary/40">
                                                 <CreditCard className="h-10 w-10 text-muted-foreground" />
                                             </div>
                                             <div className="space-y-1">
-                                                <p className="text-[14px] font-bold text-foreground tracking-tight">Registry Trace Empty</p>
-                                                <p className="text-[12px] text-muted-foreground font-medium">No recorded transactions were found in your sector.</p>
+                                                <p className="text-[14px] font-bold text-foreground tracking-tight">No payments yet</p>
+                                                <p className="text-[12px] text-foreground/60 font-medium">Your payment history will appear here.</p>
                                             </div>
                                         </div>
                                     </td>
@@ -167,10 +167,10 @@ const PaymentSummaryCard = ({ title, value, subtitle, icon: Icon }) => {
                 <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
             </div>
             <div className="space-y-1.5">
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] opacity-70">{title}</p>
+                <p className="text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">{title}</p>
                 <div className="flex items-baseline gap-2.5">
                     <h3 className="text-2xl font-bold text-foreground tracking-tight">{value}</h3>
-                    <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-tighter opacity-50">{subtitle}</p>
+                    <p className="text-[11px] text-foreground/60 font-bold uppercase tracking-tighter">{subtitle}</p>
                 </div>
             </div>
         </Card>

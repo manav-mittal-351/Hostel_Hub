@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useContext } from "react";
 import AuthContext from "@/context/AuthContext";
-import { User, Mail, Phone, MapPin, Building, Shield, Calendar, Edit2, LogOut, Camera, Users, Clock } from "lucide-react";
+import { User, Mail, Phone, MapPin, Building, Shield, Calendar, Edit2, LogOut, Camera, Users, Clock, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EditProfileDialog } from "@/components/EditProfileDialog";
@@ -110,20 +110,23 @@ const Profile = () => {
                         </CardContent>
                     </Card>
 
-                    <Card className="premium-card bg-primary p-8 text-primary-foreground space-y-5 border-none overflow-hidden relative">
-                        <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/5 rounded-full blur-2xl" />
-                        <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-white/5 rounded-full blur-3xl" />
+                    <div className="rounded-2xl bg-gradient-to-br from-emerald-900 to-emerald-950 p-8 text-white space-y-5 border border-emerald-800/50 shadow-2xl shadow-emerald-900/20 overflow-hidden relative">
+                        <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-400/10 rounded-full blur-2xl" />
+                        <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-emerald-400/10 rounded-full blur-3xl" />
                         
-                        <div className="p-4 bg-white/10 rounded-[1.8rem] w-fit border border-white/10 backdrop-blur-sm relative z-10">
-                            <Shield className="h-7 w-7 text-white/90" />
+                        <div className="p-4 bg-white/10 rounded-[1.8rem] w-fit border border-white/20 backdrop-blur-md relative z-10">
+                            <Shield className="h-7 w-7 text-emerald-400" />
                         </div>
                         <div className="space-y-2 relative z-10">
-                            <h3 className="text-xl font-bold tracking-tight">Verified Account</h3>
-                            <p className="text-[13px] text-primary-foreground/80 leading-relaxed font-medium">
+                            <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                                Verified Account
+                                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                            </h3>
+                            <p className="text-[13px] text-emerald-50/80 leading-relaxed font-medium">
                                 Your identity is fully verified within the HostelHub network. You have full access to your assigned modules.
                             </p>
                         </div>
-                    </Card>
+                    </div>
                 </div>
             </div>
         </div>
