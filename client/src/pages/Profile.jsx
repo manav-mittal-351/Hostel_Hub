@@ -140,7 +140,7 @@ const InfoItem = ({ icon: Icon, label, value }) => (
         </div>
         <div className="space-y-0.5">
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">{label}</p>
-            <p className="text-[14px] font-bold text-foreground tracking-tight">{value || "Repository Empty"}</p>
+            <p className="text-[14px] font-bold text-foreground tracking-tight">{value || "Not provided"}</p>
         </div>
     </div>
 );

@@ -43,7 +43,7 @@ const Header = ({ onMenuClick }) => {
                     <input 
                         type="text" 
                         placeholder="Search student records, room numbers, or transactions..." 
-                        className="w-full bg-secondary/20 border-2 border-transparent hover:bg-secondary/30 focus:bg-white focus:border-primary/20 rounded-2xl py-3.5 pl-16 pr-6 text-[14px] font-medium transition-all outline-none placeholder:text-muted-foreground/50 shadow-sm"
+                        className="w-full bg-secondary/5 backdrop-blur-sm border border-border/20 hover:bg-secondary/10 focus:bg-white/60 focus:border-primary/20 rounded-2xl py-3.5 pl-16 pr-6 text-[14px] font-medium transition-all outline-none placeholder:text-muted-foreground/50 shadow-sm"
                     />
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 px-2 py-1 bg-secondary/50 rounded-lg border border-border/50 text-[10px] font-bold text-muted-foreground/60 tracking-tighter hidden group-focus-within:block">
                         ESC
