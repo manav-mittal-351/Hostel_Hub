@@ -1,0 +1,243 @@
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useContext, useEffect, useState, useMemo } from "react";
+import AuthContext from "@/context/AuthContext";
+import axios from "axios";
+import { Users, Search, Trash2, Shield, User, Filter, AlertTriangle, ArrowUpDown, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from "@/components/ui/dialog";
+
+const StudentsList = () => {
+    const { user } = useContext(AuthContext);
+    const [students, setStudents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [studentToDelete, setStudentToDelete] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
+
+    const fetchStudents = async () => {
+        if (!user?.token) return;
+        setLoading(true);
+        try {
+            const config = { headers: { Authorization: `Bearer ${user.token}` } };
+            const { data } = await axios.get("/api/students", config);
+            console.log("Successfully fetched students:", data.length);
+            setStudents(data);
+        } catch (error) {
+            console.error("Error fetching students:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (user?.token) {
+            fetchStudents();
+        }
+    }, [user?.token]);
+
+    const filteredStudents = useMemo(() => {
+        console.log("Filtering students with query:", searchQuery);
+        return students.filter(s => 
+            (s.name?.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (s.email?.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (s.studentId?.toString().includes(searchQuery))
+        );
+    }, [students, searchQuery]);
+
+    const handleDelete = async () => {
+        if (!studentToDelete || !user?.token) return;
+        setDeleteLoading(true);
+        try {
+            const config = { headers: { Authorization: `Bearer ${user.token}` } };
+            await axios.delete(`/api/students/${studentToDelete._id}`, config);
+            setStudents(students.filter(s => s._id !== studentToDelete._id));
+            setIsDeleteDialogOpen(false);
+            setStudentToDelete(null);
+        } catch (error) {
+            console.error("Error deleting student:", error);
+            alert(error.response?.data?.message || "Failed to delete student");
+        } finally {
+            setDeleteLoading(false);
+        }
+    };
+
+    return (
+        <div className="space-y-8 animate-in fade-in duration-700">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
+                <div>
+                    <h1 className="section-title">Institutional Registry</h1>
+                    <p className="section-subtitle">Manage and monitor official student records.</p>
+                </div>
+                <div className="flex bg-secondary/10 p-1 rounded-xl border border-border/40 min-w-[320px] items-center relative group">
+                    <Search className="absolute left-4 h-4 w-4 text-muted-foreground opacity-50 group-focus-within:opacity-100 transition-opacity" />
+                    <Input 
+                        type="text" 
+                        placeholder="Search Identity Registry..." 
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="h-10 pl-11 text-[12px] font-bold bg-transparent border-none focus-visible:ring-0 placeholder:text-muted-foreground/30 shadow-none"
+                    />
+                </div>
+            </header>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                 <StudentStatCard 
+                    title="Total Enrollment" 
+                    value={students.length} 
+                    subtitle={user?.role === 'warden' ? `Block ${user.hostelBlock}` : "Direct Registry"}
+                    icon={Users}
+                />
+                <StudentStatCard 
+                    title="Identity Type" 
+                    value="Student" 
+                    subtitle="Verified Status"
+                    icon={Shield}
+                />
+                <StudentStatCard 
+                    title="Access Level" 
+                    value={user?.role.toUpperCase()} 
+                    subtitle="Management Rights"
+                    icon={ArrowUpDown}
+                />
+            </div>
+
+            <Card className="premium-card bg-white p-0 overflow-hidden border-border/60 shadow-sm">
+                <CardHeader className="p-7 border-b border-border bg-secondary/5 flex flex-row items-center justify-between space-y-0">
+                    <div>
+                        <CardTitle className="text-[17px] font-bold text-foreground">Registry Explorer</CardTitle>
+                        <CardDescription className="text-[12px] font-medium italic opacity-60">Verified Members Only</CardDescription>
+                    </div>
+                    <Badge variant="outline" className="text-[9px] font-bold uppercase tracking-widest px-3 py-1 bg-white border-border/60 text-primary">
+                        {filteredStudents.length} Records Found
+                    </Badge>
+                </CardHeader>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="bg-secondary/10 border-b border-border/50">
+                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Institutional ID</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Full Identity</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Allocation</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Block</th>
+                                <th className="px-7 py-4 text-right text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/30">
+                            {loading ? (
+                                Array.from({ length: 5 }).map((_, i) => (
+                                    <tr key={i} className="animate-pulse">
+                                        <td colSpan="5" className="px-7 py-6"><div className="h-10 bg-secondary/20 rounded-xl w-full"></div></td>
+                                    </tr>
+                                ))
+                            ) : filteredStudents.length > 0 ? (
+                                filteredStudents.map((student) => (
+                                    <tr key={student._id} className="hover:bg-secondary/5 transition-colors group">
+                                        <td className="px-7 py-5">
+                                            <p className="text-[13px] font-bold text-primary tracking-tighter">#{student.studentId || student._id.slice(-6).toUpperCase()}</p>
+                                        </td>
+                                        <td className="px-7 py-5">
+                                            <div className="flex flex-col">
+                                                <p className="text-[14px] font-bold text-foreground">{student.name}</p>
+                                                <p className="text-[11px] font-medium text-muted-foreground">{student.email}</p>
+                                            </div>
+                                        </td>
+                                        <td className="px-7 py-5">
+                                            <p className="text-[13px] font-bold text-foreground/80">{student.roomNumber || "Unassigned"}</p>
+                                        </td>
+                                        <td className="px-7 py-5">
+                                            <Badge className="bg-secondary/50 text-foreground/60 border-none px-3 py-0.5 text-[9px] font-black uppercase tracking-widest">
+                                                {student.hostelBlock || "Global"}
+                                            </Badge>
+                                        </td>
+                                        <td className="px-7 py-5 text-right">
+                                            <Button 
+                                                variant="ghost" 
+                                                size="sm" 
+                                                onClick={() => {
+                                                    setStudentToDelete(student);
+                                                    setIsDeleteDialogOpen(true);
+                                                }}
+                                                className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl px-4 text-[10px] font-bold uppercase tracking-widest gap-2 opacity-0 group-hover:opacity-100 transition-all border border-transparent hover:border-red-100"
+                                            >
+                                                <Trash2 className="h-3.5 w-3.5" /> Purge
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="5" className="px-7 py-32 text-center">
+                                        <div className="flex flex-col items-center justify-center space-y-4 opacity-30 grayscale">
+                                            <div className="p-6 rounded-full bg-secondary/40">
+                                                <Users className="h-12 w-12" />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-[15px] font-bold uppercase tracking-[0.2em]">Zero Records Encountered</p>
+                                                <p className="text-[12px] font-medium">Verify your synchronization parameters.</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </Card>
+
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogContent className="max-w-md bg-white border-none rounded-3xl p-8 shadow-2xl">
+                    <DialogHeader className="space-y-4">
+                        <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center">
+                            <AlertTriangle className="h-8 w-8 text-red-600" />
+                        </div>
+                        <div className="text-center space-y-2">
+                            <DialogTitle className="text-2xl font-black tracking-tight">Revoke Authorization?</DialogTitle>
+                            <DialogDescription className="text-[14px] font-medium px-4">
+                                This action will permanently purge <span className="text-foreground font-bold">{studentToDelete?.name}</span>'s institutional record. This process is irreversible.
+                            </DialogDescription>
+                        </div>
+                    </DialogHeader>
+                    <DialogFooter className="mt-8 flex gap-3 sm:justify-center">
+                        <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} className="h-12 px-8 text-[11px] font-bold uppercase tracking-widest border-border/60 hover:bg-secondary/50 rounded-2xl">
+                            Cancel
+                        </Button>
+                        <Button 
+                            onClick={handleDelete} 
+                            disabled={deleteLoading}
+                            className="h-12 px-10 bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold uppercase tracking-widest rounded-2xl shadow-xl shadow-red-200"
+                        >
+                            {deleteLoading ? "Initializing Purge..." : "Confirm Purge"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </div>
+    );
+};
+
+const StudentStatCard = ({ title, value, subtitle, icon: Icon }) => (
+    <Card className="premium-card p-6 bg-white flex items-center gap-6 border-border/60 shadow-none hover:border-primary/20 transition-all duration-500 group">
+        <div className="p-4 bg-secondary/40 rounded-2xl text-primary transition-all duration-500 group-hover:scale-110 group-hover:rotate-6">
+            <Icon className="h-6 w-6" />
+        </div>
+        <div className="space-y-0.5">
+            <p className="text-[11px] font-bold text-muted-foreground uppercase opacity-70 tracking-widest">{title}</p>
+            <div className="flex flex-col">
+                <h3 className="text-2xl font-black text-foreground tracking-tighter">{value}</h3>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic opacity-50">{subtitle}</p>
+            </div>
+        </div>
+    </Card>
+);
+
+export default StudentsList;

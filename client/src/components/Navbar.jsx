@@ -35,6 +35,7 @@ const Navbar = () => {
 
     const adminLinks = [
         { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+        { path: "/students", icon: Users, label: "Students" },
         { path: "/room-allotment", icon: BedDouble, label: "Rooms" },
         { path: "/payments", icon: CreditCard, label: "Payments" },
         { path: "/gate-pass", icon: FileText, label: "Gatepass" },
@@ -44,7 +45,9 @@ const Navbar = () => {
 
     const wardenLinks = [
         { path: "/dashboard", icon: LayoutDashboard, label: "Warden Overview" },
+        { path: "/students", icon: Users, label: "Students List" },
         { path: "/room-allotment", icon: BedDouble, label: "Rooms Status" },
+        { path: "/register", icon: UserPlus, label: "Add Student" },
         { path: "/gate-pass", icon: FileText, label: "Gate Passes" },
         { path: "/complaints", icon: AlertCircle, label: "Complaints" },
     ];

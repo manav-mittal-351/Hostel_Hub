@@ -111,7 +111,8 @@ export function EditProfileDialog() {
                                 id="studentId"
                                 value={formData.studentId}
                                 onChange={handleChange}
-                                className="h-11 font-medium bg-secondary/10 border-border/40 focus:bg-white focus:ring-1 focus:ring-primary/10 rounded-xl"
+                                disabled={user?.role !== 'admin'}
+                                className="h-11 font-medium bg-secondary/10 border-border/40 focus:bg-white focus:ring-1 focus:ring-primary/10 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                                 placeholder="STU-XXX-XXX"
                             />
                         </div>

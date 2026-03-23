@@ -23,8 +23,8 @@ const userSchema = new mongoose.Schema({
     hostelBlock: { // Optional, for students/wardens
         type: String,
     },
-    studentId: { // For students
-        type: String,
+    studentId: {
+        type: Number,
         unique: true,
         sparse: true,
     },

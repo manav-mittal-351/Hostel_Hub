@@ -13,6 +13,7 @@ import Profile from "@/pages/Profile";
 import GatePass from "@/pages/GatePass";
 import NonDisciplinaryActions from "@/pages/NonDisciplinaryActions";
 import LandingPage from "@/pages/LandingPage";
+import StudentsList from "@/pages/StudentsList";
 
 import { Toaster } from "@/components/ui/sonner";
 
@@ -44,6 +45,7 @@ function App() {
                 <Route element={<PrivateRoute />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/students" element={<StudentsList />} />
                     <Route path="/room-allotment" element={<RoomAllotment />} />
                     <Route path="/payments" element={<Payments />} />
                     <Route path="/complaints" element={<Complaints />} />

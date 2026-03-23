@@ -23,8 +23,13 @@ const Register = () => {
         if (!authLoading) {
             if (!user) {
                 navigate("/login");
-            } else if (user.role !== 'admin') {
+            } else if (user.role !== 'admin' && user.role !== 'warden') {
                 navigate("/dashboard");
+            }
+            
+            // If the registerer is a Warden, default the role to student
+            if (user?.role === 'warden') {
+                setRole('student');
             }
         }
     }, [user, authLoading, navigate]);
@@ -34,7 +39,11 @@ const Register = () => {
         setRegisterLoading(true);
         setError(null);
         setSuccess(false);
-        const res = await register(name, email, password, role);
+
+        // Security reinforcement: Wardens can only register students
+        const finalRole = user.role === 'warden' ? 'student' : role;
+        
+        const res = await register(name, email, password, finalRole);
         if (res.success) {
             setSuccess(true);
             setName("");
@@ -137,11 +146,16 @@ const Register = () => {
                                     id="role"
                                     value={role}
                                     onChange={(e) => setRole(e.target.value)}
-                                    className="w-full h-12 px-4 bg-secondary/10 border border-border/40 focus:bg-white rounded-xl font-medium outline-none transition-all appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%20fill%3D%22none%22%20xmlns%3D%220%200%2010%206%22%3E%3Cpath%20d%3D%22M1%201L5%205L9%201%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-[length:10px] bg-[right_1rem_center] bg-no-repeat"
+                                    disabled={user?.role === 'warden'}
+                                    className="w-full h-12 px-4 bg-secondary/10 border border-border/40 focus:bg-white rounded-xl font-medium outline-none transition-all appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%20fill%3D%22none%22%20xmlns%3D%220%200%2010%206%22%3E%3Cpath%20d%3D%22M1%201L5%205L9%201%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-[length:10px] bg-[right_1rem_center] bg-no-repeat disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <option value="student">Student Account</option>
-                                    <option value="warden">Hostel Warden</option>
-                                    <option value="admin">System Admin</option>
+                                    {user?.role === 'admin' && (
+                                        <>
+                                            <option value="warden">Hostel Warden</option>
+                                            <option value="admin">System Admin</option>
+                                        </>
+                                    )}
                                 </select>
                             </div>
                             <Button type="submit" className="w-full h-14 bg-primary text-white hover:bg-primary/90 rounded-2xl text-[12px] font-bold uppercase tracking-[0.2em] shadow-xl shadow-primary/10 mt-6 active:scale-95 transition-all" disabled={registerLoading}>

@@ -111,6 +111,12 @@ const AdminDashboard = () => {
                                 title="Add New Student" 
                                 description="Register a new student to the hostel"
                             />
+                            <ManagementGridLink 
+                                to="/students" 
+                                icon={Users} 
+                                title="Student Registry" 
+                                description="Monitor and manage all resident records"
+                            />
                         </div>
                     </Card>
                 </div>

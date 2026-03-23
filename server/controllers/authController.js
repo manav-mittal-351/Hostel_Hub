@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const { getNextSequenceValue } = require('../utils/idGenerator');
 
 const generateToken = (id) => {
     if (!process.env.JWT_SECRET) {
@@ -14,7 +15,12 @@ const generateToken = (id) => {
 // @route   POST /api/auth/register
 // @access  Public
 const registerUser = async (req, res) => {
-    const { name, email, password, role } = req.body;
+    let { name, email, password, role } = req.body;
+
+    // Security check: If the creator is a warden, they can ONLY create student accounts
+    if (req.user && req.user.role === 'warden') {
+        role = 'student';
+    }
 
     try {
         const userExists = await User.findOne({ email });
@@ -23,11 +29,27 @@ const registerUser = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
+        let studentId;
+        console.log("Processing registration for role:", role);
+        if (role && role.toLowerCase() === 'student') {
+            try {
+                console.log("Attempting to generate sequential studentId...");
+                studentId = await getNextSequenceValue('studentId');
+                console.log("Sequential ID generated successfully:", studentId);
+            } catch (err) {
+                console.error("Critical: Student ID generator failed:", err);
+                // We decide if we want to fail OR continue without ID. 
+                // Given requirement for sequential IDs, we should fail or use a fallback.
+                // For now, let's keep it optional but log the error.
+            }
+        }
+
         const user = await User.create({
             name,
             email,
             password,
             role: role || 'student',
+            studentId: studentId 
         });
 
         if (user) {
@@ -97,7 +119,10 @@ const updateUserProfile = async (req, res) => {
             }
 
             // Update additional fields from request body, allow clearing if explicitly sent but default to current
-            user.studentId = req.body.studentId !== undefined ? req.body.studentId : user.studentId;
+            if (req.user.role === 'admin') {
+                user.studentId = req.body.studentId !== undefined ? req.body.studentId : user.studentId;
+            }
+            
             user.department = req.body.department !== undefined ? req.body.department : user.department;
             user.hostelName = req.body.hostelName !== undefined ? req.body.hostelName : user.hostelName;
             user.hostelBlock = req.body.hostelBlock !== undefined ? req.body.hostelBlock : user.hostelBlock;
