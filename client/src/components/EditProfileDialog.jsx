@@ -19,6 +19,17 @@ import { Settings2, User, Save, X } from "lucide-react";
 export function EditProfileDialog() {
     const { user, updateUser } = useContext(AuthContext);
     const [open, setOpen] = useState(false);
+    const isStudent = user?.role === 'student';
+
+    // Simplified Role-based Labels
+    const labels = {
+        name: isStudent ? "Full Name" : "Full Name",
+        id: isStudent ? "Student ID" : "Staff ID",
+        dept: isStudent ? "Department" : "Role / Position",
+        hostel: isStudent ? "Hostel" : "Access Level",
+        block: isStudent ? "Block" : "Location"
+    };
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -88,15 +99,15 @@ export function EditProfileDialog() {
                                 <User className="h-5 w-5" />
                             </div>
                             <div>
-                                <DialogTitle className="text-[18px] font-bold tracking-tight text-foreground">Profile Parameters</DialogTitle>
-                                <DialogDescription className="text-[12px] font-medium text-muted-foreground">Adjust your institutional identity and contact records.</DialogDescription>
+                                <DialogTitle className="text-[18px] font-bold tracking-tight text-foreground">Profile Settings</DialogTitle>
+                                <DialogDescription className="text-[12px] font-medium text-muted-foreground">Update your profile details</DialogDescription>
                             </div>
                         </div>
                     </DialogHeader>
                     
                     <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 bg-white">
                         <div className="space-y-2">
-                            <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1 opacity-70">Resident Name</Label>
+                            <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1 opacity-70">{labels.name}</Label>
                             <Input
                                 id="name"
                                 value={formData.name}
@@ -106,44 +117,44 @@ export function EditProfileDialog() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="studentId" className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1 opacity-70">Institutional ID</Label>
+                            <Label htmlFor="studentId" className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1 opacity-70">{labels.id}</Label>
                             <Input
                                 id="studentId"
                                 value={formData.studentId}
                                 onChange={handleChange}
                                 disabled={user?.role !== 'admin'}
                                 className="h-11 font-medium bg-secondary/10 border-border/40 focus:bg-white focus:ring-1 focus:ring-primary/10 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                                placeholder="STU-XXX-XXX"
+                                placeholder={isStudent ? "STU-1001" : "STAFF-ID"}
                             />
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                            <Label htmlFor="department" className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1 opacity-70">Sector / Branch</Label>
+                            <Label htmlFor="department" className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1 opacity-70">{labels.dept}</Label>
                             <Input
                                 id="department"
                                 value={formData.department}
                                 onChange={handleChange}
                                 className="h-11 font-medium bg-secondary/10 border-border/40 focus:bg-white focus:ring-1 focus:ring-primary/10 rounded-xl"
-                                placeholder="Primary Department"
+                                placeholder={isStudent ? "E.g. Computer Science" : "E.g. Warden"}
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="hostelName" className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1 opacity-70">Primary Unit</Label>
+                            <Label htmlFor="hostelName" className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1 opacity-70">{labels.hostel}</Label>
                             <Input
                                 id="hostelName"
                                 value={formData.hostelName}
                                 onChange={handleChange}
                                 className="h-11 font-medium bg-secondary/10 border-border/40 focus:bg-white focus:ring-1 focus:ring-primary/10 rounded-xl"
-                                placeholder="Unit Name"
+                                placeholder={isStudent ? "Hostel Name" : "Access Authority"}
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="hostelBlock" className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1 opacity-70">Block Specification</Label>
+                            <Label htmlFor="hostelBlock" className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1 opacity-70">{labels.block}</Label>
                             <Input
                                 id="hostelBlock"
                                 value={formData.hostelBlock}
                                 onChange={handleChange}
                                 className="h-11 font-medium bg-secondary/10 border-border/40 focus:bg-white focus:ring-1 focus:ring-primary/10 rounded-xl"
-                                placeholder="Block ID"
+                                placeholder={isStudent ? "Block ID" : "Work Location"}
                             />
                         </div>
                     </div>
@@ -153,7 +164,7 @@ export function EditProfileDialog() {
                             Cancel
                         </Button>
                         <Button type="submit" disabled={loading} className="btn-primary h-11 px-10 text-[11px] font-bold uppercase tracking-widest active:scale-95">
-                            {loading ? "Synchronizing..." : <><Save className="h-3.5 w-3.5 mr-2" /> Commit Changes</>}
+                            {loading ? "Saving..." : <><Save className="h-3.5 w-3.5 mr-2" /> Save Changes</>}
                         </Button>
                     </DialogFooter>
                 </form>

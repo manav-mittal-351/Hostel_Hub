@@ -36,7 +36,7 @@ const getMyComplaints = async (req, res) => {
 const getAllComplaints = async (req, res) => {
     try {
         const complaints = await Complaint.find()
-            .populate('student', 'name email roomNumber')
+            .populate('student', 'name email roomNumber studentId')
             .sort({ createdAt: -1 });
         res.json(complaints);
     } catch (error) {

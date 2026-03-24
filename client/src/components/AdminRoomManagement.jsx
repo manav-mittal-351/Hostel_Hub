@@ -56,7 +56,7 @@ const AdminRoomManagement = () => {
             alert("Room allocated successfully");
         } catch (error) {
             console.error("Error allocating room", error);
-            alert("Error allocating room");
+            alert(error.response?.data?.message || "Error allocating room");
         }
     };
 

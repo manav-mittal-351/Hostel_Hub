@@ -16,6 +16,7 @@ const generateToken = (id) => {
 // @access  Public
 const registerUser = async (req, res) => {
     let { name, email, password, role } = req.body;
+    role = role || 'student';
 
     // Security check: If the creator is a warden, they can ONLY create student accounts
     if (req.user && req.user.role === 'warden') {
@@ -29,19 +30,20 @@ const registerUser = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        let studentId;
+        let generatedId;
         console.log("Processing registration for role:", role);
-        if (role && role.toLowerCase() === 'student') {
-            try {
-                console.log("Attempting to generate sequential studentId...");
-                studentId = await getNextSequenceValue('studentId');
-                console.log("Sequential ID generated successfully:", studentId);
-            } catch (err) {
-                console.error("Critical: Student ID generator failed:", err);
-                // We decide if we want to fail OR continue without ID. 
-                // Given requirement for sequential IDs, we should fail or use a fallback.
-                // For now, let's keep it optional but log the error.
+        try {
+            const roleKey = (role || 'student').toLowerCase();
+            if (roleKey === 'student') {
+                generatedId = await getNextSequenceValue('studentId', '', 1000);
+            } else if (roleKey === 'warden') {
+                generatedId = await getNextSequenceValue('wardenId', 'W', 10100);
+            } else if (roleKey === 'admin') {
+                generatedId = await getNextSequenceValue('adminId', 'A', 1250);
             }
+        } catch (err) {
+            console.error("Critical: Role ID generator failed:", err);
+            // In production, you might want to throw or return error
         }
 
         const user = await User.create({
@@ -49,7 +51,7 @@ const registerUser = async (req, res) => {
             email,
             password,
             role: role || 'student',
-            studentId: studentId 
+            studentId: generatedId 
         });
 
         if (user) {

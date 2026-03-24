@@ -45,6 +45,7 @@ const getAllRooms = async (req, res) => {
 // @access  Private (Admin)
 const allocateRoom = async (req, res) => {
     const { studentId } = req.body;
+    console.log(`Attempting allocation: Room ${req.params.id}, StudentID ${studentId}`);
 
     try {
         const room = await Room.findById(req.params.id);
@@ -56,29 +57,32 @@ const allocateRoom = async (req, res) => {
         }
         
         if (!student) {
-            student = await User.findOne({ studentId: studentId });
+            // Ensure search handles numeric studentId correctly
+            const queryId = !isNaN(studentId) ? Number(studentId) : studentId;
+            student = await User.findOne({ studentId: queryId });
         }
 
         if (!room || !student) {
-            return res.status(404).json({ message: 'Room or Student not found. Please ensure you are using a valid Student ID (e.g., STU-001) or System Reference ID.' });
+            console.log("Allocation stopped: Room or Student not found.", { roomFound: !!room, studentFound: !!student });
+            return res.status(404).json({ message: 'Target mismatch: Ensure you are using the correct numeric Student ID (e.g., 1001).' });
         }
 
         if (room.occupants.length >= room.capacity) {
-            return res.status(400).json({ message: 'Room is full' });
+            return res.status(400).json({ message: 'Unit capacity reached' });
         }
 
-        if (room.occupants.includes(studentId)) {
-            return res.status(400).json({ message: 'Student already in this room' });
+        if (room.occupants.some(id => id.toString() === student._id.toString())) {
+            return res.status(400).json({ message: 'Member already allocated to this unit' });
         }
 
-        // Check if student already has a room
-        const existingRoom = await Room.findOne({ occupants: studentId });
+        // Verify if student already has a room
+        const existingRoom = await Room.findOne({ occupants: student._id });
         if (existingRoom) {
-            // Optional: Remove from old room or throw error
-            return res.status(400).json({ message: `Student already assigned to room ${existingRoom.roomNumber}` });
+            return res.status(400).json({ message: `Member is already assigned to Unit ${existingRoom.roomNumber}` });
         }
 
-        room.occupants.push(studentId);
+        console.log(`Applying updates for ${student.name}`);
+        room.occupants.push(student._id);
         await room.save();
 
         student.roomNumber = room.roomNumber;
@@ -86,9 +90,11 @@ const allocateRoom = async (req, res) => {
         student.hostelName = room.hostelName || 'Boys Hostel';
         await student.save();
 
+        console.log("Allocation finalized.");
         res.json(room);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error("ALLOCATE_ERROR:", error);
+        res.status(500).json({ message: "Infrastructure error during allocation: " + error.message });
     }
 };
 

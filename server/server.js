@@ -42,6 +42,7 @@ app.use('/api/gate-pass', require('./routes/gatePassRoutes'));
 app.use('/api/non-disciplinary', require('./routes/nonDisciplinaryRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/students', require('./routes/studentRoutes'));
+app.use('/api/search', require('./routes/searchRoutes'));
 
 app.get('/', (req, res) => {
     res.send('API is running...');

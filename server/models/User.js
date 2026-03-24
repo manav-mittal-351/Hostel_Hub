@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
         type: String,
     },
     studentId: {
-        type: Number,
+        type: String,
         unique: true,
         sparse: true,
     },

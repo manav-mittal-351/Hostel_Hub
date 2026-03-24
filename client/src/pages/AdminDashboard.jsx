@@ -4,7 +4,7 @@ import axios from "axios";
 import AuthContext from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Users, BedDouble, AlertCircle, TrendingUp, ArrowRight, Settings, Plus, UserPlus, FileText } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
     const { user } = useContext(AuthContext);
@@ -14,6 +14,12 @@ const AdminDashboard = () => {
         pendingComplaints: 0,
         monthlyRevenue: 0
     });
+
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchCategory, setSearchCategory] = useState("all");
+    const [searchResults, setSearchResults] = useState({ students: [], rooms: [] });
+    const [isSearching, setIsSearching] = useState(false);
+    const [showResults, setShowResults] = useState(false);
 
     useEffect(() => {
         const fetchStats = async () => {

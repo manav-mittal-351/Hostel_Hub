@@ -11,6 +11,39 @@ const Profile = () => {
 
     if (!user) return null;
 
+    const isStudent = user.role === 'student';
+
+    // Role-based Label Mapping
+    const labels = {
+        id: isStudent ? "Student ID" : "Staff ID (Auto Generated)",
+        dept: isStudent ? "Department" : "Role / Position",
+        hostel: isStudent ? "Hostel & Block" : "Access Level",
+        room: isStudent ? "Room Number" : "Location",
+        status: isStudent ? "Room Status" : "Status"
+    };
+
+    // Role-based Value Formatting
+    const getHostelValue = () => {
+        if (isStudent) {
+            return user.hostelName ? `${user.hostelName} (Block ${user.hostelBlock || 'Global'})` : "Pending Allotment";
+        }
+        return user.hostelBlock ? `Block ${user.hostelBlock}` : "Global Registry";
+    };
+
+    const getRoomValue = () => {
+        if (isStudent) {
+            return user.roomNumber ? `Room #${user.roomNumber}` : "NOT ALLOTTED";
+        }
+        return user.roomNumber ? `Office #${user.roomNumber}` : "Main Wing";
+    };
+
+    const getStatusValue = () => {
+        if (isStudent) {
+            return user.roomNumber ? "Active" : "Pending";
+        }
+        return "Active";
+    };
+
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             <header>
@@ -49,7 +82,7 @@ const Profile = () => {
                                     </span>
                                     {user.studentId && (
                                         <span className="flex items-center gap-2 bg-secondary/40 px-3 py-1.5 rounded-xl border border-border/30">
-                                            <Shield className="h-3.5 w-3.5 text-primary opacity-70" /> {user.studentId}
+                                            <Shield className="h-3.5 w-3.5 text-primary opacity-70" /> {labels.id}: {user.studentId}
                                         </span>
                                     )}
                                 </div>
@@ -73,17 +106,19 @@ const Profile = () => {
                 {/* Personal Information */}
                 <Card className="premium-card lg:col-span-8 bg-white overflow-hidden p-0 border-border/60">
                     <CardHeader className="px-8 py-7 border-b border-border bg-secondary/10">
-                        <CardTitle className="text-[17px] font-bold tracking-tight">Personal Information</CardTitle>
-                        <CardDescription className="text-[12px] font-medium">Your primary contact and hostel details.</CardDescription>
+                        <CardTitle className="text-[17px] font-bold tracking-tight">Profile</CardTitle>
+                        <CardDescription className="text-[12px] font-medium">Your basic account details</CardDescription>
                     </CardHeader>
                     <CardContent className="p-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <InfoItem icon={User} label="Full Name" value={user.name} />
-                            <InfoItem icon={Mail} label="Email Address" value={user.email} />
-                            <InfoItem icon={Shield} label="Student ID" value={user.studentId || "NOT SET"} />
-                            <InfoItem icon={Building} label="Department" value={user.department || "General"} />
-                            <InfoItem icon={MapPin} label="Hostel & Block" value={user.hostelName ? `${user.hostelName} (Block ${user.hostelBlock || 'Global'})` : "Pending Allotment"} />
-                            <InfoItem icon={Calendar} label="Room Number" value={user.roomNumber ? `Room #${user.roomNumber}` : "NOT ALLOTTED"} />
+                            <InfoItem icon={Mail} label="Email" value={user.email} />
+                            <InfoItem icon={Shield} label={labels.id} value={user.studentId || "AUTO-GEN"} />
+                            <InfoItem icon={Building} label={labels.dept} value={user.department || (isStudent ? "General" : "Staff")} />
+                            <InfoItem icon={MapPin} label={labels.hostel} value={getHostelValue()} />
+                            <InfoItem icon={Calendar} label={labels.room} value={getRoomValue()} />
+                            <InfoItem icon={Clock} label={labels.status} value={getStatusValue()} />
+                            <InfoItem icon={Shield} label="Account Type" value={user.role.toUpperCase()} />
                         </div>
                     </CardContent>
                 </Card>
