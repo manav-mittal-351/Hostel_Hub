@@ -1,16 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import AuthContext from "@/context/AuthContext";
-import { BedDouble, Building, Users, CheckCircle2, LogOut, MapPin, User as UserIcon, ShieldCheck, CreditCard, Calendar, Download, Printer, CheckCircle, Info, MessageSquare, ArrowRight } from "lucide-react";
+import { BedDouble, Building, Users, CheckCircle2, LogOut, MapPin, User as UserIcon, ShieldCheck, CreditCard, Calendar, Download, Printer, CheckCircle, Info, MessageSquare, ArrowRight, UserCircle, TrendingUp } from "lucide-react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import AdminRoomManagement from "@/components/AdminRoomManagement";
+import { jsPDF } from "jspdf";
 import {
     Dialog,
     DialogContent,
 } from "@/components/ui/dialog";
 import { useNotifications } from "@/context/NotificationContext";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 
 const RoomAllotment = () => {
     const { user, updateUser } = useContext(AuthContext);
@@ -20,6 +24,14 @@ const RoomAllotment = () => {
     const [error, setError] = useState(null);
     const [showReceipt, setShowReceipt] = useState(false);
     const [showAllAvailable, setShowAllAvailable] = useState(!user?.roomNumber);
+    const [roommates, setRoommates] = useState([]);
+    const [loadingRoommates, setLoadingRoommates] = useState(false);
+    const [roomToBook, setRoomToBook] = useState(null);
+    const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+    const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+    const [bookingLoading, setBookingLoading] = useState(false);
+    const [checkoutLoading, setCheckoutLoading] = useState(false);
+
     const token = user?.token;
 
     const fetchRooms = async () => {
@@ -38,51 +50,176 @@ const RoomAllotment = () => {
         }
     };
 
+    const fetchRoommates = async () => {
+        if (!user?.roomNumber || !token) return;
+        setLoadingRoommates(true);
+        try {
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const { data } = await axios.get(`/api/rooms/${user.roomNumber}/occupants`, config);
+            // Filter out the current user
+            setRoommates(data.filter(occupant => occupant._id !== user._id));
+        } catch (error) {
+            console.error("Error fetching roommates:", error);
+        } finally {
+            setLoadingRoommates(false);
+        }
+    };
+
+    const recommendedRooms = useMemo(() => {
+        if (!rooms || rooms.length === 0) return [];
+        // Just pick 3 interesting options:
+        // 1. Less crowded (most vacant slots)
+        // 2. Best Budget (lowest price)
+        // 3. Premium (AC with good occupancy)
+        const sorted = [...rooms].filter(r => r.occupied < r.capacity);
+        const budget = [...sorted].sort((a, b) => a.price - b.price)[0];
+        const private_option = [...sorted].sort((a, b) => (a.capacity - a.occupied) - (b.capacity - b.occupied))[0];
+        const premium = [...sorted].filter(r => r.type === 'AC').sort((a, b) => b.price - a.price)[0];
+
+        return [
+            { ...budget, recommend_tag: 'Best Budget', recommend_desc: 'Most economical choice.' },
+            { ...private_option, recommend_tag: 'Quiet Room', recommend_desc: 'Maximum vacancy available.' },
+            { ...premium, recommend_tag: 'Premium', recommend_desc: 'Top-tier amenities.' }
+        ].filter((v, i, a) => a.findIndex(t => t?._id === v?._id) === i && v?._id);
+    }, [rooms]);
+
     useEffect(() => {
         if (user?.role === 'student') {
             fetchRooms();
-            if (!user.roomNumber) {
+            if (user.roomNumber) {
+                fetchRoommates();
+            } else {
                 setShowAllAvailable(true);
             }
         }
     }, [user, token]);
+    
+    const handleDownloadReceipt = () => {
+        console.log("Generating receipt for:", user.name);
+        const doc = new jsPDF();
+        
+        // Premium Header
+        doc.setFillColor(79, 70, 229); // Accent color
+        doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(24);
+        doc.setFont("helvetica", "bold");
+        doc.text("HostelHub Residence Receipt", 20, 25);
+        
+        // Receipt metadata
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Transaction Ref: ${user._id?.toUpperCase()}`, 20, 32);
+        doc.text(`Date: ${new Date().toLocaleDateString()}`, 160, 25);
+        
+        // Reset color for body
+        doc.setTextColor(50, 50, 50);
+        doc.setFontSize(12);
+        
+        // Recipient Details
+        doc.setFont("helvetica", "bold");
+        doc.text("Resident Details", 20, 60);
+        doc.setLineWidth(0.5);
+        doc.line(20, 63, 190, 63);
+        
+        doc.setFont("helvetica", "normal");
+        doc.text(`Name: ${user.name}`, 20, 75);
+        doc.text(`Student ID: ${user.studentId}`, 20, 85);
+        doc.text(`Department: ${user.department || 'General'}`, 20, 95);
+        
+        // Property Details
+        doc.setFont("helvetica", "bold");
+        doc.text("Accommodation Information", 20, 115);
+        doc.line(20, 118, 190, 118);
+        
+        doc.setFont("helvetica", "normal");
+        doc.text(`Hostel: ${user.hostelName || 'HostelHub Central'}`, 20, 130);
+        doc.text(`Block: ${user.hostelBlock || 'Resident Block'}`, 20, 140);
+        doc.text(`Room Number: ${user.roomNumber}`, 20, 150);
+        
+        // Payment Summary Table
+        doc.setFillColor(243, 244, 246);
+        doc.rect(20, 170, 170, 10, 'F');
+        doc.setFont("helvetica", "bold");
+        doc.text("Description", 25, 177);
+        doc.text("Amount (INR)", 150, 177);
+        
+        doc.setFont("helvetica", "normal");
+        doc.text("Standard Room Rent", 25, 190);
+        doc.text("₹5,000.00", 150, 190);
+        
+        if (user.hostelBlock?.includes('AC')) {
+            doc.text("Premium AC Facility", 25, 200);
+            doc.text("₹3,000.00", 150, 200);
+        }
+        
+        doc.setDrawColor(200, 200, 200);
+        doc.line(20, 210, 190, 210);
+        
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text("TOTAL PAID", 25, 222);
+        doc.text(`₹${user.hostelBlock?.includes('AC') ? '8,000.00' : '5,000.00'}`, 150, 222);
+        
+        // Footer
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "italic");
+        doc.setTextColor(150, 150, 150);
+        doc.text("This is an electronically generated receipt and does not require a physical signature.", 105, 270, null, null, "center");
+        doc.text("HostelHub Administration © 2026", 105, 276, null, null, "center");
+        
+        doc.save(`receipt_${user.studentId || user.name.replace(/\s+/g, '_')}.pdf`);
+    };
 
     if (user?.role === 'admin' || user?.role === 'warden') {
         return <AdminRoomManagement />;
     }
 
-    const handleBookRoom = async (room) => {
-        const price = room.type === 'AC' ? 8000 : 5000;
-        if (!confirm(`Are you sure you want to book Room ${room.roomNumber} (${room.type})? Payment of ₹${price} will be deducted.`)) return;
+    const handleBookRoom = (room) => {
+        setRoomToBook(room);
+        setIsBookingModalOpen(true);
+    };
 
+    const handleCheckout = () => {
+        setIsCheckoutModalOpen(true);
+    };
+
+    const onBookConfirm = async () => {
+        if (!roomToBook) return;
+        const price = roomToBook.type === 'AC' ? 8000 : 5000;
+        setBookingLoading(true);
         try {
             const config = { headers: { Authorization: `Bearer ${token}` } };
             const { data } = await axios.post("/api/rooms/book", {
-                roomId: room._id,
+                roomId: roomToBook._id,
                 amount: price,
                 paymentType: 'hostel_fee'
             }, config);
 
             addNotification({
                 title: "Booking Successful",
-                message: `Unit ${room.roomNumber} (${room.type}) has been allotted to you. Welcome!`,
+                message: `Unit ${roomToBook.roomNumber} (${roomToBook.type}) has been allotted to you. Welcome!`,
                 type: "success"
             });
 
-            alert("Room Booked Successfully! Welcome to your new home.");
+            toast.success("Room Booked Successfully! Welcome to your new home.");
             if (data.user) {
                 updateUser(data.user);
             }
-            window.location.reload();
+            setIsBookingModalOpen(false);
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         } catch (error) {
             console.error("Booking error details:", error);
-            alert(error.response?.data?.message || "Booking failed.");
+            toast.error(error.response?.data?.message || "Booking failed.");
+        } finally {
+            setBookingLoading(false);
         }
     };
 
-    const handleCheckout = async () => {
-        if (!confirm("Are you sure you want to checkout? Your room allotment will be removed immediately.")) return;
-
+    const onCheckoutConfirm = async () => {
+        setCheckoutLoading(true);
         try {
             const config = { headers: { Authorization: `Bearer ${token}` } };
             const { data } = await axios.post("/api/rooms/checkout", {}, config);
@@ -93,25 +230,53 @@ const RoomAllotment = () => {
                 type: "warning"
             });
 
-            alert("Checked out successfully!");
+            toast.success("Checked out successfully!");
             if (data.user) {
                 updateUser(data.user);
             }
-            window.location.reload();
+            setIsCheckoutModalOpen(false);
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         } catch (error) {
             console.error("Checkout error:", error);
-            alert(error.response?.data?.message || "Checkout failed");
+            toast.error(error.response?.data?.message || "Checkout failed");
+        } finally {
+            setCheckoutLoading(false);
         }
     };
 
     return (
         <div className="space-y-10 animate-in fade-in duration-1000">
+            <ConfirmationModal 
+                open={isBookingModalOpen}
+                onOpenChange={setIsBookingModalOpen}
+                title="Confirm Booking?"
+                description={roomToBook ? `Are you sure you want to book Room ${roomToBook.roomNumber} (${roomToBook.type})? Institutional charges of ₹${roomToBook.type === 'AC' ? 8000 : 5000} will apply.` : ""}
+                onConfirm={onBookConfirm}
+                confirmText="Confirm Reservation"
+                cancelText="Decline"
+                loading={bookingLoading}
+                variant="primary"
+            />
+
+            <ConfirmationModal 
+                open={isCheckoutModalOpen}
+                onOpenChange={setIsCheckoutModalOpen}
+                title="Authorization Required: Checkout?"
+                description="This will immediately terminate your resident registry for the current allotted unit. This action is critical and irreversible."
+                onConfirm={onCheckoutConfirm}
+                confirmText="Proceed Checkout"
+                cancelText="Keep Room"
+                loading={checkoutLoading}
+                variant="destructive"
+            />
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-4">
                 <div>
                     <h1 className="section-title">
-                        Room <span className="text-primary">{user?.roomNumber ? "Confirmation" : "Selection"}</span>
+                        My <span className="text-primary">{user?.roomNumber ? "Room" : "Selection"}</span>
                     </h1>
-                    <p className="section-subtitle">View your room details or select a new room for the semester.</p>
+                    <p className="section-subtitle">View your room details or choose a new room.</p>
                 </div>
                 {user?.roomNumber && (
                     <Button 
@@ -120,7 +285,7 @@ const RoomAllotment = () => {
                         onClick={handleCheckout}
                     >
                         <LogOut className="w-3.5 h-3.5" />
-                        Checkout
+                        Check Out
                     </Button>
                 )}
             </div>
@@ -166,7 +331,7 @@ const RoomAllotment = () => {
                                     className="bg-primary text-white hover:bg-primary/90 transition-all rounded-xl h-12 px-8 font-bold uppercase tracking-widest text-[11px] shadow-lg shadow-primary/10 active:scale-95"
                                     onClick={() => setShowReceipt(true)}
                                 >
-                                    <Printer className="h-3.5 w-3.5 mr-2" /> Retrieve Receipt
+                                    <Printer className="h-3.5 w-3.5 mr-2" /> Download Receipt
                                 </Button>
                             </div>
                         </CardContent>
@@ -179,7 +344,7 @@ const RoomAllotment = () => {
                                     <div className="p-2 bg-secondary/50 rounded-lg text-primary">
                                         <Building className="w-4 h-4" />
                                     </div>
-                                    <h3 className="text-[14px] font-semibold text-foreground">Hostel Details</h3>
+                                    <h3 className="text-[14px] font-semibold text-foreground">Hostel Info</h3>
                                 </div>
                                 <div className="space-y-4">
                                     <div className="flex items-start gap-3">
@@ -196,7 +361,7 @@ const RoomAllotment = () => {
                                             </div>
                                             <div>
                                                 <p className="text-[13px] font-bold text-foreground">Hostel Warden</p>
-                                                <p className="text-[11px] font-medium text-muted-foreground">Administrative Desk (+91 Institutional)</p>
+                                                <p className="text-[11px] font-medium text-muted-foreground">Contact: +91 XXXXXXXX</p>
                                             </div>
                                         </div>
                                         <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-lg hover:bg-primary/10 hover:text-primary">
@@ -214,34 +379,61 @@ const RoomAllotment = () => {
                                     <h3 className="text-[14px] font-semibold text-foreground">Student Details</h3>
                                 </div>
                                 <div className="space-y-3">
-                                    <DetailRow label="Department" value={user.department || 'General Registry'} />
+                                    <DetailRow label="Department" value={user.department || 'General'} />
                                     <DetailRow label="Student ID" value={user.studentId || 'UNASSIGNED'} />
-                                    <DetailRow label="Joined" value={new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} />
+                                    <DetailRow label="Joined On" value={new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} />
                                 </div>
                             </Card>
                         </div>
 
-                        <Card className="premium-card bg-white text-center p-12">
-                            <div className="max-w-xs mx-auto space-y-4">
-                                <div className="w-12 h-12 bg-secondary/50 rounded-xl flex items-center justify-center mx-auto text-primary">
-                                    <Users className="w-5 h-5" />
+                        <Card className="premium-card bg-white p-6 h-full flex flex-col justify-center">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                                    <Users className="w-4 h-4" />
                                 </div>
-                                <h3 className="text-[15px] font-semibold text-foreground">Seeking Roommates</h3>
-                                <p className="text-[12px] text-muted-foreground leading-relaxed">
-                                    Your room is currently set for single occupancy. New roommates will appear here once allocated by admin.
-                                </p>
+                                <h3 className="text-[14px] font-bold text-foreground">Roommates</h3>
                             </div>
+                            
+                            {loadingRoommates ? (
+                                <div className="space-y-4 animate-pulse">
+                                    <div className="h-12 bg-secondary/30 rounded-xl" />
+                                    <div className="h-12 bg-secondary/30 rounded-xl" />
+                                </div>
+                            ) : roommates.length > 0 ? (
+                                <div className="space-y-3">
+                                    {roommates.map((mate) => (
+                                        <div key={mate._id} className="flex items-center gap-4 p-3.5 bg-secondary/5 rounded-2xl border border-border/20 group hover:border-primary/30 transition-all">
+                                            <div className="h-10 w-10 bg-white rounded-xl shadow-sm border border-border/50 flex items-center justify-center text-muted-foreground group-hover:text-primary transition-colors">
+                                                <UserCircle className="h-6 w-6" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-[13px] font-bold text-foreground truncate">{mate.name}</p>
+                                                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{mate.studentId} • {mate.department || 'General'}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-4 space-y-3">
+                                    <div className="w-12 h-12 bg-secondary/30 rounded-xl flex items-center justify-center mx-auto text-muted-foreground/40 border border-dashed border-border">
+                                        <Users className="w-5 h-5" />
+                                    </div>
+                                    <p className="text-[12px] text-muted-foreground font-medium px-4">
+                                        No roommates assigned yet. They will appear here once added.
+                                    </p>
+                                </div>
+                            )}
                         </Card>
                     </div>
 
                     <div className="space-y-6">
                         <Card className="premium-card bg-white p-6">
-                            <h3 className="text-[14px] font-semibold text-foreground mb-4">Rent Summary</h3>
+                            <h3 className="text-[14px] font-semibold text-foreground mb-4">Payment Summary</h3>
                             <div className="space-y-4">
                                 <div className="p-4 rounded-xl bg-emerald-50/50 flex items-center justify-between border border-emerald-100/50">
                                     <div>
-                                        <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">Fee Token</p>
-                                        <p className="text-[15px] font-bold text-foreground">Active & Paid</p>
+                                        <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">Payment Status</p>
+                                        <p className="text-[15px] font-bold text-foreground">Paid</p>
                                     </div>
                                     <div className="w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center text-white">
                                         <CheckCircle2 className="w-4 h-4" />
@@ -249,7 +441,7 @@ const RoomAllotment = () => {
                                 </div>
                                 <div className="space-y-2.5 px-0.5">
                                     <div className="flex justify-between text-[12px]">
-                                        <span className="text-muted-foreground">Standard Rent</span>
+                                        <span className="text-muted-foreground">Rent</span>
                                         <span className="font-semibold text-foreground">₹5,000.00</span>
                                     </div>
                                     {user.hostelBlock?.includes('AC') && (
@@ -259,7 +451,7 @@ const RoomAllotment = () => {
                                         </div>
                                     )}
                                     <div className="pt-3 mt-1 border-t border-dashed border-border flex justify-between text-[14px] font-bold">
-                                        <span>Subtotal</span>
+                                        <span>Total</span>
                                         <span className="text-primary">₹{user.hostelBlock?.includes('AC') ? '8,000.00' : '5,000.00'}</span>
                                     </div>
                                 </div>
@@ -269,16 +461,16 @@ const RoomAllotment = () => {
                         <div className="premium-card bg-secondary/20 p-5">
                             <div className="flex items-center gap-2 mb-3 text-primary">
                                 <Info className="w-4 h-4" />
-                                <span className="text-[11px] font-bold uppercase tracking-wider">Residence Policy</span>
+                                <span className="text-[11px] font-bold uppercase tracking-wider">Room Rules</span>
                             </div>
                             <ul className="space-y-2.5">
                                 <li className="text-[11px] leading-relaxed text-muted-foreground flex gap-2">
                                     <div className="w-1 h-1 bg-primary/40 rounded-full mt-1.5 shrink-0" />
-                                    Formal checkout is mandatory before room vacation.
+                                    Please check out before leaving your room.
                                 </li>
                                 <li className="text-[11px] leading-relaxed text-muted-foreground flex gap-2">
                                     <div className="w-1 h-1 bg-primary/40 rounded-full mt-1.5 shrink-0" />
-                                    Inventory damage will be billed to scholar account.
+                                    Any damages will be charged to your account.
                                 </li>
                             </ul>
                         </div>
@@ -295,7 +487,7 @@ const RoomAllotment = () => {
                             <div className="w-1.5 h-8 bg-primary rounded-full" />
                             Available Rooms
                         </h2>
-                        <p className="text-sm text-muted-foreground ml-4">Browse and book available rooms in the hostel.</p>
+                        <p className="text-sm text-muted-foreground ml-4">View and request available rooms.</p>
                     </div>
                     <div className="flex items-center gap-4">
                         {user?.roomNumber && (
@@ -317,7 +509,123 @@ const RoomAllotment = () => {
                 </div>
 
                 {showAllAvailable && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in slide-in-from-bottom-4 duration-700">
+                    <div className="space-y-12">
+                        {/* Smart Recommendations Section */}
+                        {recommendedRooms.length > 0 && !user?.roomNumber && (
+                            <section className="animate-in fade-in slide-in-from-top-4 duration-700">
+                                <div className="flex items-center justify-between mb-8 px-1">
+                                    <div>
+                                        <h2 className="text-[17px] font-black text-foreground tracking-tight flex items-center gap-2">
+                                            <TrendingUp className="h-4 w-4 text-primary" /> Recommended For You
+                                        </h2>
+                                        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">System-curated selections based on your profile.</p>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {recommendedRooms.map((room) => (
+                                        <Card key={`rec-${room._id}`} className="premium-card bg-primary/[0.03] border-primary/20 p-6 relative overflow-hidden group hover:scale-[1.02] transition-all">
+                                            <div className="absolute top-0 right-0 p-3">
+                                                <Badge className="bg-primary text-white text-[9px] font-black uppercase tracking-widest border-none px-2 rounded-md shadow-lg shadow-primary/20">
+                                                    {room.recommend_tag}
+                                                </Badge>
+                                            </div>
+                                            <div className="space-y-4">
+                                                <div className="space-y-1">
+                                                    <h3 className="text-xl font-black text-foreground">Room {room.roomNumber}</h3>
+                                                    <p className="text-[11px] text-muted-foreground font-medium italic opacity-80 leading-snug">"{room.recommend_desc}"</p>
+                                                </div>
+                                                <div className="flex items-center justify-between pt-2">
+                                                    <div className="flex items-center gap-2 text-[12px] font-bold text-foreground">
+                                                        <Users className="w-3.5 h-3.5 text-primary" />
+                                                        {room.occupants?.length || 0}/{room.capacity} Slots
+                                                    </div>
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        className="h-9 px-4 text-[11px] font-bold uppercase tracking-widest text-primary hover:bg-primary/10 rounded-xl flex items-center gap-2"
+                                                        onClick={() => handleBookRoom(room)}
+                                                    >
+                                                        Details <ArrowRight className="h-3 w-3" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Interactive Floor Map Section */}
+                        <section className="animate-in fade-in duration-1000">
+                            <div className="flex items-center justify-between mb-8 px-1">
+                                <div>
+                                    <h2 className="text-[17px] font-black text-foreground tracking-tight flex items-center gap-2">
+                                        <Building className="h-4 w-4 text-primary" /> Multi-Level Floor Strategy
+                                    </h2>
+                                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Visual grid of institutional housing capacity.</p>
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200" />
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Vacant</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-sm shadow-amber-200" />
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Partial</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm shadow-red-200" />
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Occupied</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <Card className="premium-card bg-white p-8 border-border/60 overflow-x-auto shadow-sm">
+                                <div className="flex flex-col gap-10 min-w-[600px]">
+                                    {[1, 2, 3].map((floor) => (
+                                        <div key={`floor-${floor}`} className="space-y-4">
+                                            <div className="flex items-center gap-3">
+                                                <Badge className="h-7 w-12 flex items-center justify-center bg-secondary/50 text-foreground font-black text-[11px] rounded-lg border-none">
+                                                    FL {floor}
+                                                </Badge>
+                                                <div className="h-px bg-slate-100 flex-1" />
+                                            </div>
+                                            <div className="grid grid-cols-10 gap-3">
+                                                {rooms.filter(r => r.floor === floor).map(room => {
+                                                    const occupancy = (room.occupants?.length || 0);
+                                                    const statusColor = occupancy === 0 ? 'bg-emerald-500' : occupancy >= room.capacity ? 'bg-red-500' : 'bg-amber-500';
+                                                    return (
+                                                        <motion.button
+                                                            key={`map-${room._id}`}
+                                                            whileHover={{ scale: 1.1, y: -2 }}
+                                                            onClick={() => handleBookRoom(room)}
+                                                            className={`h-11 rounded-xl flex items-center justify-center text-[11px] font-black text-white shadow-lg transition-all ${statusColor} ring-offset-4 hover:ring-2 ring-primary/20`}
+                                                        >
+                                                            {room.roomNumber}
+                                                        </motion.button>
+                                                    );
+                                                })}
+                                                {rooms.filter(r => r.floor === floor).length === 0 && (
+                                                    <div className="col-span-full py-4 text-center opacity-20">
+                                                        <p className="text-[10px] font-black tracking-widest uppercase">Registry scan zero for this level</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Card>
+                        </section>
+
+                        <div className="h-px bg-border/50 mx-4" />
+
+                        <div className="flex items-center justify-between px-1">
+                            <div>
+                                <h2 className="text-[17px] font-black text-foreground tracking-tight">Available Inventory</h2>
+                                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Total {rooms.length} records found.</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in slide-in-from-bottom-4 duration-700 pb-20">
                     {loadingRooms ? (
                         Array.from({ length: 3 }).map((_, i) => (
                             <div key={i} className="h-56 rounded-2xl bg-muted animate-pulse border border-border/50" />
@@ -370,7 +678,7 @@ const RoomAllotment = () => {
                                                 disabled
                                             >
                                                 <CheckCircle2 className="w-4 h-4 mr-2" />
-                                                Active Residence
+                                                Your Room
                                             </Button>
                                         ) : isFull ? (
                                             <Button 
@@ -384,7 +692,7 @@ const RoomAllotment = () => {
                                                 className="w-full h-11 text-[13px] font-semibold btn-primary rounded-xl" 
                                                 onClick={() => handleBookRoom(room)}
                                             >
-                                                {user?.roomNumber ? "Request Transfer" : "Reserve Room"}
+                                                {user?.roomNumber ? "Request Room Change" : "Reserve Room"}
                                             </Button>
                                         )}
                                     </CardContent>
@@ -398,7 +706,8 @@ const RoomAllotment = () => {
                             <p className="text-[12px] text-muted-foreground">Please contact administration for offline waitlist availability.</p>
                         </div>
                     )}
-                </div>
+                        </div>
+                    </div>
                 )}
             </div>
 
@@ -443,7 +752,10 @@ const RoomAllotment = () => {
                             >
                                 <Printer className="w-4 h-4" /> Print
                             </Button>
-                            <Button className="h-11 rounded-xl btn-primary font-bold gap-2 text-[12px]">
+                            <Button 
+                                className="h-11 rounded-xl btn-primary font-bold gap-2 text-[12px]"
+                                onClick={handleDownloadReceipt}
+                            >
                                 <Download className="w-4 h-4" /> Export
                             </Button>
                         </div>

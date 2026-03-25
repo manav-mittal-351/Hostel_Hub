@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Plus, Users, BedDouble, CheckCircle2, XCircle, Search, Filter, ShieldPlus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+import { toast } from "sonner";
+
 const AdminRoomManagement = () => {
     const { user } = useContext(AuthContext);
     const [rooms, setRooms] = useState([]);
@@ -39,10 +41,10 @@ const AdminRoomManagement = () => {
             await axios.post('/api/rooms', newRoom, config);
             setNewRoom({ roomNumber: '', capacity: 3, floor: 1, type: 'Non-AC' });
             fetchRooms();
-            alert("Room created successfully");
+            toast.success("Room created successfully");
         } catch (error) {
             console.error("Error creating room", error);
-            alert("Error creating room");
+            toast.error("Error creating room");
         }
     };
 
@@ -53,10 +55,10 @@ const AdminRoomManagement = () => {
             await axios.put(`/api/rooms/${allocateData.roomId}/allocate`, { studentId: allocateData.studentId }, config);
             setAllocateData({ roomId: '', studentId: '' });
             fetchRooms();
-            alert("Room allocated successfully");
+            toast.success("Room allocated successfully");
         } catch (error) {
             console.error("Error allocating room", error);
-            alert(error.response?.data?.message || "Error allocating room");
+            toast.error(error.response?.data?.message || "Error allocating room");
         }
     };
 

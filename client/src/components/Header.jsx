@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { useNotifications } from "@/context/NotificationContext";
+import SmartAssistant from "./SmartAssistant";
 
 const Header = ({ onMenuClick }) => {
     const { logout, user } = useContext(AuthContext);
@@ -220,9 +221,12 @@ const Header = ({ onMenuClick }) => {
                     </div>
                 )}
 
-                {/* Branding and Greeting Module - ONLY for Students (Replaces empty space) */}
+                {/* Smart Hostel Assistant - ONLY for Students */}
+                {user?.role === 'student' && <SmartAssistant />}
+
+                {/* Branding and Greeting Module - ONLY for Students */}
                 {user?.role === 'student' && (
-                    <div className="hidden md:flex items-center gap-6 animate-in fade-in slide-in-from-left-4 duration-500">
+                    <div className="hidden xl:flex items-center gap-6 animate-in fade-in slide-in-from-left-4 duration-500 min-w-max">
                         <div className="flex items-center gap-4">
                             <div className="h-10 w-10 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/20 shadow-inner group transition-all duration-500 hover:rotate-12 hover:scale-110">
                                 <Sparkles className="h-5 w-5 animate-pulse" />

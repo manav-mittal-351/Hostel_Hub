@@ -9,9 +9,14 @@ import { Input } from "@/components/ui/input";
 import AdminGatePass from "@/components/AdminGatePass";
 import axios from "axios";
 
+import { toast } from "sonner";
+
+import { QRCodeSVG } from "qrcode.react";
+
 const GatePass = () => {
     const { user } = useContext(AuthContext); 
     const [requests, setRequests] = useState([]);
+    const [latestPass, setLatestPass] = useState(null);
     const [formData, setFormData] = useState({
         type: 'Outing',
         outDate: '',
@@ -32,6 +37,9 @@ const GatePass = () => {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const { data } = await axios.get("/api/gate-pass/my-passes", config);
             setRequests(data);
+            if (data.length > 0) {
+                setLatestPass(data[0]); // assuming sorted by date desc
+            }
         } catch (error) {
             console.error("Error fetching requests:", error);
         }
@@ -49,10 +57,10 @@ const GatePass = () => {
             await axios.post("/api/gate-pass", formData, config);
             fetchRequests();
             setFormData({ type: 'Outing', outDate: '', inDate: '', reason: '', destination: '' });
-            alert("Request submitted successfully!");
+            toast.success("Gatepass request submitted successfully!");
         } catch (error) {
             console.error("Error submitting request:", error);
-            alert("Failed to submit request.");
+            toast.error("Failed to submit gatepass request.");
         } finally {
             setLoading(false);
         }
@@ -218,16 +226,36 @@ const GatePass = () => {
                 <div className="lg:col-span-4 space-y-8">
                     <Card className="premium-card bg-white p-7 text-center space-y-7 sticky top-8">
                         <div className="inline-flex items-center justify-center p-5 bg-secondary/30 rounded-3xl border border-border/50 mx-auto relative group overflow-hidden">
-                            <QrCode className="h-24 w-24 text-primary/40 group-hover:scale-110 transition-transform duration-500" />
-                            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            {latestPass?.status === 'Approved' ? (
+                                <QRCodeSVG 
+                                    value={JSON.stringify({
+                                        id: latestPass._id,
+                                        student: user.name,
+                                        room: user.roomNumber,
+                                        out: latestPass.outDate,
+                                        in: latestPass.inDate,
+                                        verified: true
+                                    })}
+                                    size={120}
+                                    fgColor="#4F46E5"
+                                    level="L"
+                                    includeMargin={false}
+                                    className="group-hover:scale-110 transition-transform duration-500"
+                                />
+                            ) : (
+                                <>
+                                    <QrCode className="h-24 w-24 text-primary/40 group-hover:scale-110 transition-transform duration-500" />
+                                    <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </>
+                            )}
                         </div>
                         <div className="space-y-3">
-                            <Badge className="bg-emerald-50 text-emerald-600 border-none px-3 py-1 rounded-md text-[10px] uppercase font-bold tracking-widest mx-auto block w-fit">
-                                Status Tracking
+                            <Badge className={`${latestPass?.status === 'Approved' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'} border-none px-3 py-1 rounded-md text-[10px] uppercase font-bold tracking-widest mx-auto block w-fit`}>
+                                {latestPass?.status === 'Approved' ? 'Identity Authorized' : 'Status Tracking'}
                             </Badge>
                             <h3 className="text-[17px] font-bold text-foreground tracking-tight">Approval Status</h3>
                             <p className="text-[12px] text-muted-foreground font-medium px-4 leading-relaxed">
-                                Once approved, your dynamic QR identity will activate for gate authentication.
+                                {latestPass?.status === 'Approved' ? 'Your dynamic QR identity is active for gate authentication.' : 'Once approved, your dynamic QR identity will activate for gate authentication.'}
                             </p>
                         </div>
                         

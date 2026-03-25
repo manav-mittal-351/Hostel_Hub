@@ -8,6 +8,7 @@ const getAllActions = async (req, res) => {
     try {
         const actions = await NonDisciplinaryAction.find()
             .populate('student', 'name studentId email roomNumber')
+            .populate('createdBy', 'name role')
             .sort({ createdAt: -1 });
         res.json(actions);
     } catch (error) {
@@ -19,23 +20,48 @@ const getAllActions = async (req, res) => {
 // @route   POST /api/non-disciplinary
 // @access  Private (Admin)
 const createAction = async (req, res) => {
-    const { studentId, actionType, description, amount, status } = req.body;
+    let { studentId, actionType, description, amount, status } = req.body;
 
     try {
-        // Find student by their searchable studentId or _id
+        const queryId = studentId?.toString().trim();
+        
+        if (!queryId) {
+            return res.status(400).json({ message: 'A valid Student ID is required' });
+        }
+
+        // Performance-first lookup strategies:
+        // 1. Exact match on studentId or full ObjectID
         let student = await User.findOne({ 
             $or: [
-                { studentId: studentId },
-                { _id: studentId.match(/^[0-9a-fA-F]{24}$/) ? studentId : null }
+                { studentId: { $regex: `^${queryId}$`, $options: 'i' } },
+                { _id: queryId.match(/^[0-9a-fA-F]{24}$/) ? queryId : null }
             ]
         });
 
+        // 2. Short ID suffix match (Case-insensitive check for the last 6 characters of the Hex ID)
+        if (!student && queryId.length >= 4) {
+             student = await User.findOne({
+                $expr: {
+                    $eq: [
+                        { $toLower: { $substrCP: [{ $toString: "$_id" }, 18, 6] } },
+                        queryId.toLowerCase().slice(-6)
+                    ]
+                }
+            });
+        }
+
+        // 3. Fallback: Generic case-insensitive search on studentId
         if (!student) {
-            return res.status(404).json({ message: 'Student not found with that ID' });
+            student = await User.findOne({ studentId: { $regex: queryId, $options: 'i' } });
+        }
+
+        if (!student) {
+            return res.status(404).json({ message: `Student Registry not found for ID: ${queryId}. Please use the Full Student ID or the 6-character Short Code.` });
         }
 
         const action = await NonDisciplinaryAction.create({
             student: student._id,
+            createdBy: req.user._id,
             actionType,
             description,
             amount,
@@ -43,7 +69,8 @@ const createAction = async (req, res) => {
         });
 
         const populatedAction = await NonDisciplinaryAction.findById(action._id)
-            .populate('student', 'name studentId email roomNumber');
+            .populate('student', 'name studentId email roomNumber')
+            .populate('createdBy', 'name role');
 
         res.status(201).json(populatedAction);
     } catch (error) {
@@ -65,7 +92,8 @@ const updateActionStatus = async (req, res) => {
             const updatedAction = await action.save();
             
             const populatedAction = await NonDisciplinaryAction.findById(updatedAction._id)
-                .populate('student', 'name studentId email roomNumber');
+                .populate('student', 'name studentId email roomNumber')
+                .populate('createdBy', 'name role');
                 
             res.json(populatedAction);
         } else {
@@ -99,7 +127,9 @@ const deleteAction = async (req, res) => {
 // @access  Private (Student)
 const getMyActions = async (req, res) => {
     try {
-        const actions = await NonDisciplinaryAction.find({ student: req.user._id }).sort({ createdAt: -1 });
+        const actions = await NonDisciplinaryAction.find({ student: req.user._id })
+            .populate('createdBy', 'name role')
+            .sort({ createdAt: -1 });
         res.json(actions);
     } catch (error) {
         res.status(500).json({ message: error.message });

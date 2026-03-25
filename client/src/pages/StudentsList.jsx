@@ -6,14 +6,8 @@ import { Users, Search, Trash2, Shield, User, Filter, AlertTriangle, ArrowUpDown
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
-} from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 
 const StudentsList = () => {
     const { user } = useContext(AuthContext);
@@ -63,9 +57,10 @@ const StudentsList = () => {
             setStudents(students.filter(s => s._id !== studentToDelete._id));
             setIsDeleteDialogOpen(false);
             setStudentToDelete(null);
+            toast.success("Student record deleted successfully");
         } catch (error) {
             console.error("Error deleting student:", error);
-            alert(error.response?.data?.message || "Failed to delete student");
+            toast.error(error.response?.data?.message || "Failed to delete student");
         } finally {
             setDeleteLoading(false);
         }
@@ -194,33 +189,17 @@ const StudentsList = () => {
                 </div>
             </Card>
 
-            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                <DialogContent className="max-w-md bg-white border-none rounded-3xl p-8 shadow-2xl">
-                    <DialogHeader className="space-y-4">
-                        <div className="mx-auto w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center">
-                            <AlertTriangle className="h-8 w-8 text-red-600" />
-                        </div>
-                        <div className="text-center space-y-2">
-                            <DialogTitle className="text-2xl font-black tracking-tight">Confirm Deletion?</DialogTitle>
-                            <DialogDescription className="text-[14px] font-medium px-4">
-                                This action will permanently remove <span className="text-foreground font-bold">{studentToDelete?.name}</span>'s institutional record. This process is irreversible.
-                            </DialogDescription>
-                        </div>
-                    </DialogHeader>
-                    <DialogFooter className="mt-8 flex gap-3 sm:justify-center">
-                        <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} className="h-12 px-8 text-[11px] font-bold uppercase tracking-widest border-border/60 hover:bg-secondary/50 rounded-2xl">
-                            Cancel
-                        </Button>
-                        <Button 
-                            onClick={handleDelete} 
-                            disabled={deleteLoading}
-                            className="h-12 px-10 bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold uppercase tracking-widest rounded-2xl shadow-xl shadow-red-200"
-                        >
-                            {deleteLoading ? "Processing Deletion..." : "Confirm Delete"}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <ConfirmationModal 
+                open={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+                title="Confirm Deletion?"
+                description={studentToDelete ? `This action will permanently remove ${studentToDelete.name}'s institutional record from the registry. This process is audited and irreversible.` : ""}
+                onConfirm={handleDelete}
+                confirmText="Confirm Delete"
+                cancelText="Cancel"
+                loading={deleteLoading}
+                variant="destructive"
+            />
         </div>
     );
 };

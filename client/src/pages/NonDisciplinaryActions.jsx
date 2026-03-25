@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from 'react-router-dom';
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 
 const NonDisciplinaryActions = () => {
     const { user } = useContext(AuthContext);
@@ -49,6 +50,9 @@ const NonDisciplinaryActions = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filterStatus, setFilterStatus] = useState("All");
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [recordToDelete, setRecordToDelete] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
     
     // Form State
     const [formData, setFormData] = useState({
@@ -73,7 +77,7 @@ const NonDisciplinaryActions = () => {
             setRecords(data);
         } catch (error) {
             console.error("Error fetching records:", error);
-            toast.error("Failed to load records");
+            toast.error("Failed to load records from registry.");
         } finally {
             setLoading(false);
         }
@@ -87,9 +91,9 @@ const NonDisciplinaryActions = () => {
             setRecords([data, ...records]);
             setIsAddModalOpen(false);
             setFormData({ studentId: "", actionType: "Damage", description: "", amount: "", status: "Pending" });
-            toast.success("Record added successfully");
+            toast.success("Institutional record authorized successfully");
         } catch (error) {
-            toast.error(error.response?.data?.message || "Failed to add record");
+            toast.error(error.response?.data?.message || "Failed to authorize record");
         }
     };
 
@@ -98,21 +102,31 @@ const NonDisciplinaryActions = () => {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const { data } = await axios.put(`/api/non-disciplinary/${id}`, { status: newStatus }, config);
             setRecords(records.map(r => r._id === id ? data : r));
-            toast.success(`Status updated to ${newStatus}`);
+            toast.success(`Compliance status updated to ${newStatus}`);
         } catch (error) {
-            toast.error("Failed to update status");
+            toast.error("Failed to update compliance status");
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!confirm("Are you sure you want to delete this record?")) return;
+    const confirmDelete = (id) => {
+        setRecordToDelete(id);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleDelete = async () => {
+        if (!recordToDelete) return;
+        setDeleteLoading(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`/api/non-disciplinary/${id}`, config);
-            setRecords(records.filter(r => r._id !== id));
-            toast.success("Record deleted");
+            await axios.delete(`/api/non-disciplinary/${recordToDelete}`, config);
+            setRecords(records.filter(r => r._id !== recordToDelete));
+            toast.success("Record permanently removed from registry");
+            setIsDeleteModalOpen(false);
         } catch (error) {
-            toast.error("Failed to delete record");
+            toast.error("Failed to delete record from database");
+        } finally {
+            setDeleteLoading(false);
+            setRecordToDelete(null);
         }
     };
 
@@ -142,6 +156,17 @@ const NonDisciplinaryActions = () => {
                     <h1 className="section-title">Student Records</h1>
                     <p className="section-subtitle">Comprehensive administrative summary and institutional history log.</p>
                 </div>
+                <ConfirmationModal 
+                    open={isDeleteModalOpen}
+                    onOpenChange={setIsDeleteModalOpen}
+                    title="Authorize Record Deletion?"
+                    description="This will permanently nullify this administrative record from the student's institutional history. This action is audited."
+                    onConfirm={handleDelete}
+                    confirmText="Delete Record"
+                    cancelText="Cancel"
+                    loading={deleteLoading}
+                    variant="destructive"
+                />
                 {(user?.role === 'admin' || user?.role === 'warden') && (
                     <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
                         <DialogTrigger asChild>
@@ -359,6 +384,19 @@ const NonDisciplinaryActions = () => {
                                         <td className="px-7 py-6">
                                             <div className="space-y-2">
                                                 <p className="text-[13px] text-muted-foreground font-medium italic leading-relaxed line-clamp-2 group-hover:line-clamp-none transition-all">"{record.description}"</p>
+                                                
+                                                {record.createdBy && (
+                                                    <div className="flex items-center gap-2 mt-2">
+                                                        <div className="h-5 w-5 rounded-full bg-secondary/50 flex items-center justify-center border border-border/40">
+                                                            <Contact className="w-2.5 h-2.5 text-muted-foreground" />
+                                                        </div>
+                                                        <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest leading-none">
+                                                            Logged by: <span className="text-foreground/80">{record.createdBy.name}</span> 
+                                                            <span className="ml-1.5 px-1.5 py-0.5 bg-secondary/30 rounded text-[8px] border border-border/20">{record.createdBy.role}</span>
+                                                        </p>
+                                                    </div>
+                                                )}
+
                                                 {record.amount > 0 && (
                                                     <div className="flex flex-col gap-1.5">
                                                         <p className="text-[14px] font-bold text-foreground">
@@ -408,7 +446,7 @@ const NonDisciplinaryActions = () => {
                                                         size="icon" 
                                                         variant="ghost" 
                                                         className="h-8 w-8 text-red-400 hover:bg-red-50 hover:text-red-500 rounded-lg"
-                                                        onClick={() => handleDelete(record._id)}
+                                                        onClick={() => confirmDelete(record._id)}
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </Button>

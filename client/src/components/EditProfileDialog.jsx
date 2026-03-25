@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AuthContext from "@/context/AuthContext";
 import axios from "axios";
+import { toast } from "sonner";
 import { Settings2, User, Save, X } from "lucide-react";
 
 export function EditProfileDialog() {
@@ -76,9 +77,10 @@ export function EditProfileDialog() {
             );
             updateUser(data);
             setOpen(false);
+            toast.success("Profile updated successfully");
         } catch (error) {
             console.error("Error updating profile:", error);
-            alert("Failed to update profile.");
+            toast.error("Failed to update profile.");
         } finally {
             setLoading(false);
         }

@@ -186,4 +186,22 @@ const checkoutRoom = async (req, res) => {
     }
 };
 
-module.exports = { createRoom, getAllRooms, allocateRoom, bookRoom, checkoutRoom };
+// @desc    Get occupants of a specific room
+// @route   GET /api/rooms/:roomNumber/occupants
+// @access  Private
+const getRoomOccupants = async (req, res) => {
+    try {
+        const room = await Room.findOne({ roomNumber: req.params.roomNumber })
+            .populate('occupants', 'name studentId department');
+        
+        if (!room) {
+            return res.status(404).json({ message: 'Room not found' });
+        }
+
+        res.json(room.occupants);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { createRoom, getAllRooms, allocateRoom, bookRoom, checkoutRoom, getRoomOccupants };

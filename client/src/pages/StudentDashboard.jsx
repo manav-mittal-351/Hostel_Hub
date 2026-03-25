@@ -87,7 +87,40 @@ const StudentDashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                <Card className="premium-card lg:col-span-2 overflow-hidden border-border bg-white p-0 shadow-sm">
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Payment Reminder System */}
+                    {user?.roomNumber && (
+                        <div className="bg-primary shadow-2xl shadow-primary/20 rounded-3xl p-8 relative overflow-hidden group animate-in slide-in-from-top-6 duration-1000">
+                            {/* Decorative Elements */}
+                            <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none group-hover:bg-white/15 transition-all duration-700" />
+                            <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-indigo-500/20 rounded-full blur-2xl pointer-events-none" />
+                            
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                                <div className="flex items-center gap-6">
+                                    <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-inner">
+                                        <Clock className="h-8 w-8 text-white animate-pulse" />
+                                    </div>
+                                    <div className="text-left space-y-1">
+                                        <h3 className="text-xl font-black text-white tracking-tight">Institutional Billing Cycle</h3>
+                                        <p className="text-white/70 text-[11px] font-black uppercase tracking-[0.2em] leading-none mb-2 italic">Next Cycle: {new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</p>
+                                        <div className="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full w-fit border border-white/10">
+                                            <div className="w-2 h-2 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform" />
+                                            <span className="text-[9px] font-bold text-white uppercase tracking-widest">Active Resident Registry</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-4 w-full md:w-auto">
+                                    <Link to="/payments" className="w-full md:w-auto">
+                                        <Button className="w-full md:w-auto bg-white text-primary hover:bg-slate-50 transition-all font-black uppercase tracking-widest rounded-xl h-12 px-8 text-[11px] shadow-xl active:scale-[0.98]">
+                                            Audit Ledger
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <Card className="premium-card overflow-hidden border-border bg-white p-0 shadow-sm">
                     <CardHeader className="p-7 border-b border-border bg-secondary/10">
                         <div className="flex items-center justify-between">
                             <div>
@@ -131,7 +164,7 @@ const StudentDashboard = () => {
                         )}
                     </div>
                 </Card>
-
+                </div>
                 <div className="space-y-6">
                     <Card className="premium-card bg-white p-7 border border-border/60 shadow-sm group hover:border-emerald-200 transition-all duration-300">
                         <div className="space-y-6">
@@ -140,16 +173,18 @@ const StudentDashboard = () => {
                                     <ShieldCheck className="h-6 w-6 text-emerald-600" />
                                 </div>
                                 <div className="text-left">
-                                    <h3 className="text-[16px] font-bold text-foreground tracking-tight">Institutional Support</h3>
-                                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest leading-none mt-1">Direct Administrative Terminal</p>
+                                    <h3 className="text-[16px] font-bold text-foreground tracking-tight">Facilities & Maintenance</h3>
+                                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest leading-none mt-1">Direct Technical Terminal</p>
                                 </div>
                             </div>
                             <p className="text-muted-foreground text-[13px] font-medium leading-relaxed text-left border-l-2 border-emerald-100 pl-4 py-1">
-                                Our administrative team is available for residential queries, emergency maintenance, or protocol clarifications.
+                                Our technical team is available for residential queries, emergency repairs, or facility synchronization.
                             </p>
-                            <Button className="w-full bg-emerald-600 text-white hover:bg-emerald-700 transition-all font-bold uppercase tracking-widest rounded-xl h-11 text-[11px] shadow-md shadow-emerald-600/10 active:scale-[0.98] gap-2">
-                                <MessageSquare className="h-3.5 w-3.5" /> Dispatch Request
-                            </Button>
+                            <Link to="/maintenance">
+                                <Button className="w-full bg-emerald-600 text-white hover:bg-emerald-700 transition-all font-bold uppercase tracking-widest rounded-xl h-11 text-[11px] shadow-md shadow-emerald-600/10 active:scale-[0.98] gap-2">
+                                    <MessageSquare className="h-3.5 w-3.5" /> Dispatch Request
+                                </Button>
+                            </Link>
                         </div>
                     </Card>
 
@@ -157,27 +192,11 @@ const StudentDashboard = () => {
                         <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -mr-12 -mt-12 pointer-events-none" />
                         <div className="flex items-center gap-3 mb-6 relative">
                             <div className="w-1.5 h-6 bg-primary/30 rounded-full" />
-                            <h3 className="text-[15px] font-bold text-foreground">Bulletins</h3>
+                            <h3 className="text-[15px] font-bold text-foreground">Institutional Bulletins</h3>
                         </div>
                         <div className="space-y-5 relative">
-                            <div className="p-4 rounded-xl bg-secondary/15 border border-border/40 hover:bg-secondary/20 transition-all group cursor-default">
-                                <div className="flex gap-4">
-                                    <div className="mt-1 w-2 h-2 rounded-full bg-primary/60 flex-shrink-0 animate-pulse" />
-                                    <div className="space-y-1">
-                                        <p className="text-[13px] font-bold text-foreground leading-tight tracking-tight">Maintenance Schedule</p>
-                                        <p className="text-[12px] font-medium text-muted-foreground leading-relaxed">Infrastructure maintenance scheduled for Sunday, 02:00 IST.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="p-4 rounded-xl bg-secondary/15 border border-border/40 hover:bg-secondary/20 transition-all group cursor-default">
-                                <div className="flex gap-4">
-                                    <div className="mt-1 w-2 h-2 rounded-full bg-emerald-500/60 flex-shrink-0" />
-                                    <div className="space-y-1">
-                                        <p className="text-[13px] font-bold text-foreground leading-tight tracking-tight">Seasonal Residency</p>
-                                        <p className="text-[12px] font-medium text-muted-foreground leading-relaxed">Registrations for interim seasonal residency are now accepting applications.</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <BulletinItem iconColor="bg-primary" title="Maintenance Schedule" description="Infrastructure maintenance scheduled for Sunday, 02:00 IST." />
+                            <BulletinItem iconColor="bg-emerald-500" title="Seasonal Residency" description="Registrations for interim seasonal residency are now accepting applications." />
                         </div>
                     </Card>
                 </div>
@@ -185,6 +204,18 @@ const StudentDashboard = () => {
         </div>
     );
 };
+
+const BulletinItem = ({ iconColor, title, description }) => (
+    <div className="p-4 rounded-xl bg-secondary/15 border border-border/40 hover:bg-secondary/20 transition-all group cursor-default">
+        <div className="flex gap-4">
+            <div className={`mt-1 w-2 h-2 rounded-full ${iconColor}/60 flex-shrink-0 animate-pulse`} />
+            <div className="space-y-1">
+                <p className="text-[13px] font-bold text-foreground leading-tight tracking-tight">{title}</p>
+                <p className="text-[12px] font-medium text-muted-foreground leading-relaxed">{description}</p>
+            </div>
+        </div>
+    </div>
+);
 
 const StatsCard = ({ title, value, subtitle, icon: Icon, link, linkText }) => {
     return (

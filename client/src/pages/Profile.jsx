@@ -145,6 +145,34 @@ const Profile = () => {
                         </CardContent>
                     </Card>
 
+                    {isStudent && (
+                        <Card className="premium-card bg-white border-border/60 overflow-hidden group">
+                            <CardHeader className="px-7 py-6 border-b border-border/50 bg-primary/5">
+                                <CardTitle className="text-[15px] font-bold tracking-tight flex items-center gap-2">
+                                    <Users className="h-4 w-4 text-primary" /> Roommate Matching
+                                </CardTitle>
+                                <CardDescription className="text-[10px] font-bold uppercase tracking-widest opacity-60">Internal Compatibility Index</CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-7 space-y-6">
+                                <div className="space-y-3">
+                                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest leading-none">Lifestyle Alignment</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        <PreferenceTag label="Night Owl" active={true} />
+                                        <PreferenceTag label="Quiet Study" active={false} />
+                                        <PreferenceTag label="Clean Freak" active={true} />
+                                        <PreferenceTag label="Early Bird" active={false} />
+                                        <PreferenceTag label="Social" active={true} />
+                                    </div>
+                                </div>
+                                <div className="pt-4 border-t border-dashed border-border/60">
+                                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest italic opacity-40 leading-relaxed">
+                                        * Algorithm utilizes these parameters for matching residents during automated allocation cycles.
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
                     <div className="rounded-2xl bg-gradient-to-br from-emerald-900 to-emerald-950 p-8 text-white space-y-5 border border-emerald-800/50 shadow-2xl shadow-emerald-900/20 overflow-hidden relative">
                         <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-400/10 rounded-full blur-2xl" />
                         <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-emerald-400/10 rounded-full blur-3xl" />
@@ -178,6 +206,16 @@ const InfoItem = ({ icon: Icon, label, value }) => (
             <p className="text-[14px] font-bold text-foreground tracking-tight">{value || "Not provided"}</p>
         </div>
     </div>
+);
+
+const PreferenceTag = ({ label, active }) => (
+    <Badge className={`px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border-none shadow-sm transition-all ${
+        active 
+        ? "bg-primary text-white scale-105 shadow-primary/20" 
+        : "bg-secondary text-muted-foreground/60 opacity-60 hover:opacity-100"
+    }`}>
+        {label}
+    </Badge>
 );
 
 export default Profile;

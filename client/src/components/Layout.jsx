@@ -2,6 +2,7 @@ import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { X } from "lucide-react";
+import ChatAssistant from "./ChatAssistant";
 
 const Layout = ({ children }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -38,6 +39,7 @@ const Layout = ({ children }) => {
                     </div>
                 </main>
             </div>
+            <ChatAssistant />
         </div>
     );
 };

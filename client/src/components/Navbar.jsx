@@ -2,7 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useContext, useState, useEffect } from "react";
 import AuthContext from "@/context/AuthContext";
-import { LogOut, Menu, X, Users, LayoutDashboard, BedDouble, CreditCard, FileText, AlertCircle, User as UserIcon, UserPlus } from "lucide-react";
+import { LogOut, Menu, X, Users, LayoutDashboard, BedDouble, CreditCard, FileText, AlertCircle, User as UserIcon, UserPlus, Bell, Wrench } from "lucide-react";
+import { NotificationCenter } from "./NotificationCenter";
 
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
@@ -30,6 +31,7 @@ const Navbar = () => {
         { path: "/room-allotment", icon: BedDouble, label: "My Room" },
         { path: "/payments", icon: CreditCard, label: "Payments" },
         { path: "/gate-pass", icon: FileText, label: "Gatepass" },
+        { path: "/maintenance", icon: Wrench, label: "Maintenance" },
         { path: "/complaints", icon: AlertCircle, label: "Support" },
     ];
 
@@ -39,6 +41,7 @@ const Navbar = () => {
         { path: "/room-allotment", icon: BedDouble, label: "Rooms" },
         { path: "/payments", icon: CreditCard, label: "Payments" },
         { path: "/gate-pass", icon: FileText, label: "Gatepass" },
+        { path: "/maintenance", icon: Wrench, label: "Maintenance" },
         { path: "/register", icon: UserPlus, label: "Add Student" },
         { path: "/complaints", icon: AlertCircle, label: "Complaints" },
     ];
@@ -49,6 +52,7 @@ const Navbar = () => {
         { path: "/room-allotment", icon: BedDouble, label: "Rooms Status" },
         { path: "/register", icon: UserPlus, label: "Add Student" },
         { path: "/gate-pass", icon: FileText, label: "Gate Passes" },
+        { path: "/maintenance", icon: Wrench, label: "Maintenance" },
         { path: "/complaints", icon: AlertCircle, label: "Complaints" },
     ];
 
@@ -87,6 +91,7 @@ const Navbar = () => {
                                 </Link>
                             ))}
                             <div className="h-4 w-px bg-border mx-2" />
+                            <NotificationCenter />
                             <Link to="/profile" className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-secondary/30 transition-all border border-transparent hover:border-border/50">
                                 <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
                                     <UserIcon className="h-4 w-4 text-white" />
@@ -114,7 +119,8 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Menu Button */}
-                <div className="md:hidden">
+                <div className="md:hidden flex items-center gap-3">
+                    {user && <NotificationCenter />}
                     <Button variant="ghost" size="icon" onClick={toggleMenu} className="hover:bg-secondary/40 rounded-xl">
                         {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                     </Button>

@@ -6,10 +6,15 @@ const nonDisciplinaryActionSchema = mongoose.Schema({
         required: true,
         ref: 'User'
     },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    },
     actionType: {
         type: String,
         required: true,
-        enum: ['Damage', 'Late Payment', 'Extra Service', 'Other']
+        enum: ['Notice', 'Damage', 'Penalty', 'Remark', 'Late Payment', 'Extra Service', 'Other']
     },
     description: {
         type: String,

@@ -3,11 +3,13 @@ import { useContext, useEffect, useState } from "react";
 import AuthContext from "@/context/AuthContext";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, CheckCircle2, Clock, Send, Plus, Filter, MessageSquare, Info, Search } from "lucide-react";
+import { AlertCircle, CheckCircle2, CheckCircle, Clock, Send, Plus, Filter, MessageSquare, Info, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AdminComplaints from "@/components/AdminComplaints";
+
+import { toast } from "sonner";
 
 const Complaints = () => {
     const { user } = useContext(AuthContext);
@@ -51,11 +53,11 @@ const Complaints = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             await axios.post("/api/complaints", formData, config);
-            alert("Complaint submitted successfully!");
+            toast.success("Complaint submitted successfully!");
             setFormData({ title: "", description: "", category: "General" });
             fetchComplaints();
         } catch (error) {
-            alert("Failed to submit complaint.");
+            toast.error("Failed to submit complaint.");
         }
     };
 
@@ -194,8 +196,28 @@ const Complaints = () => {
                                                         {new Date(complaint.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
                                                     </span>
                                                 </div>
-                                                <h3 className="text-[15px] font-bold text-foreground">{complaint.title}</h3>
-                                                <p className="text-[13px] text-muted-foreground leading-relaxed line-clamp-2 max-w-xl font-medium">{complaint.description}</p>
+                                                <p className="text-[13px] text-muted-foreground leading-relaxed line-clamp-2 max-w-xl font-medium mb-4">{complaint.description}</p>
+                                                
+                                                {/* Status Timeline */}
+                                                <div className="pt-4 flex items-center gap-1 w-full max-w-lg">
+                                                    <StatusTimelineStep 
+                                                        label="Submitted" 
+                                                        active={true} 
+                                                        completed={['pending', 'in progress', 'resolved'].includes(complaint.status?.toLowerCase())} 
+                                                    />
+                                                    <div className={`h-0.5 flex-1 ${['in progress', 'resolved'].includes(complaint.status?.toLowerCase()) ? 'bg-primary' : 'bg-slate-100'}`} />
+                                                    <StatusTimelineStep 
+                                                        label="In Progress" 
+                                                        active={complaint.status?.toLowerCase() === 'in progress'} 
+                                                        completed={['resolved'].includes(complaint.status?.toLowerCase())} 
+                                                    />
+                                                    <div className={`h-0.5 flex-1 ${['resolved'].includes(complaint.status?.toLowerCase()) ? 'bg-primary' : 'bg-slate-100'}`} />
+                                                    <StatusTimelineStep 
+                                                        label="Resolved" 
+                                                        active={complaint.status?.toLowerCase() === 'resolved'} 
+                                                        completed={complaint.status?.toLowerCase() === 'resolved'} 
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                         <Badge className="rounded-lg bg-secondary/50 border-none text-[9px] uppercase font-bold text-muted-foreground px-2.5 py-1">
@@ -206,8 +228,9 @@ const Complaints = () => {
                             ))
                         ) : (
                             <div className="py-24 text-center rounded-3xl border border-dashed border-border/60 bg-secondary/10 flex flex-col items-center justify-center space-y-3 grayscale opacity-60">
-                                <AlertCircle className="h-10 w-10 text-muted-foreground" />
-                                <p className="text-[13px] font-semibold text-muted-foreground tracking-tight">No complaints yet</p>
+                                <CheckCircle className="h-10 w-10 text-emerald-500 opacity-60" />
+                                <h3 className="text-[17px] font-bold text-foreground">All Clear! 🎉</h3>
+                                <p className="text-[13px] font-semibold text-muted-foreground tracking-tight italic">Your registry has no pending complaints.</p>
                             </div>
                         )}
                     </div>
@@ -216,5 +239,18 @@ const Complaints = () => {
         </div>
     );
 };
+
+const StatusTimelineStep = ({ label, active, completed }) => (
+    <div className="flex flex-col items-center gap-2 min-w-[60px]">
+        <div className={`w-3 h-3 rounded-full flex items-center justify-center shadow-sm transition-all duration-500 ${
+            completed ? 'bg-primary' : active ? 'bg-primary scale-125 ring-4 ring-primary/10' : 'bg-slate-200'
+        }`}>
+            {completed && <CheckCircle className="h-2 w-2 text-white" />}
+        </div>
+        <span className={`text-[8px] font-black uppercase tracking-widest ${active || completed ? 'text-primary' : 'text-muted-foreground/50'}`}>
+            {label}
+        </span>
+    </div>
+);
 
 export default Complaints;

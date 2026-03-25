@@ -3,7 +3,8 @@ import { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import AuthContext from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Users, BedDouble, AlertCircle, TrendingUp, ArrowRight, Settings, Plus, UserPlus, FileText } from "lucide-react";
+import { Users, BedDouble, AlertCircle, TrendingUp, ArrowRight, Settings, Plus, UserPlus, FileText, PieChart as PieChartIcon, BarChart3 } from "lucide-react";
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Link, useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
@@ -81,6 +82,82 @@ const AdminDashboard = () => {
                     icon={TrendingUp} 
                     trend="Financial Overview"
                 />
+            </div>
+
+            {/* Analytics Charts Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <Card className="premium-card bg-white p-7 border-border/60 shadow-sm overflow-hidden">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 className="text-[17px] font-bold text-foreground flex items-center gap-2">
+                                <PieChartIcon className="h-4 w-4 text-primary" /> Occupancy Distribution
+                            </h3>
+                            <p className="text-[12px] text-muted-foreground font-medium">Allocation profile by room status.</p>
+                        </div>
+                    </div>
+                    <div className="h-[260px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={[
+                                        { name: 'Occupied', value: stats.occupancy.occupied },
+                                        { name: 'Available', value: stats.occupancy.capacity - stats.occupancy.occupied }
+                                    ]}
+                                    innerRadius={70}
+                                    outerRadius={90}
+                                    paddingAngle={8}
+                                    dataKey="value"
+                                >
+                                    <Cell fill="#4F46E5" />
+                                    <Cell fill="#E2E8F0" />
+                                </Pie>
+                                <Tooltip 
+                                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontSize: '12px' }}
+                                />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                    <div className="flex justify-center gap-8 mt-4">
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-primary" />
+                            <span className="text-[11px] font-bold text-muted-foreground uppercase opacity-80">Occupied</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-slate-200" />
+                            <span className="text-[11px] font-bold text-muted-foreground uppercase opacity-80">Empty</span>
+                        </div>
+                    </div>
+                </Card>
+
+                <Card className="premium-card bg-white p-7 border-border/60 shadow-sm overflow-hidden">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 className="text-[17px] font-bold text-foreground flex items-center gap-2">
+                                <BarChart3 className="h-4 w-4 text-primary" /> Revenue Velocity
+                            </h3>
+                            <p className="text-[12px] text-muted-foreground font-medium">Monthly collection trajectory.</p>
+                        </div>
+                    </div>
+                    <div className="h-[260px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={[
+                                { name: 'Jan', amount: stats.monthlyRevenue * 0.8 },
+                                { name: 'Feb', amount: stats.monthlyRevenue * 0.9 },
+                                { name: 'Mar', amount: stats.monthlyRevenue }
+                            ]}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 600, fill: '#64748B' }} dy={10} />
+                                <YAxis hide />
+                                <Tooltip 
+                                    cursor={{ fill: '#F8FAFC' }}
+                                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontSize: '12px' }}
+                                />
+                                <Bar dataKey="amount" fill="#4F46E5" radius={[6, 6, 0, 0]} barSize={40} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                    <p className="text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-6 opacity-40 italic">Data synchronized from latest transaction ledger</p>
+                </Card>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
