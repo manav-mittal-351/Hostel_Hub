@@ -554,16 +554,17 @@ const RoomAllotment = () => {
                             </section>
                         )}
 
-                        {/* Interactive Floor Map Section */}
+                        {/* Interactive Floor Map Section - Premium Architectural Style */}
                         <section className="animate-in fade-in duration-1000">
                             <div className="flex items-center justify-between mb-8 px-1">
                                 <div>
-                                    <h2 className="text-[17px] font-black text-foreground tracking-tight flex items-center gap-2">
-                                        <Building className="h-4 w-4 text-primary" /> Floor Plan
+                                    <h2 className="text-[18px] font-black text-foreground tracking-tight flex items-center gap-3">
+                                        <Building className="h-4.5 w-4.5 text-primary" />
+                                        Institutional Floor Plan
                                     </h2>
-                                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Room map for each floor.</p>
+                                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Interactive spatial overview of rooms.</p>
                                 </div>
-                                <div className="flex gap-4">
+                                <div className="hidden md:flex gap-6 items-center px-6 py-2.5 bg-secondary/20 rounded-2xl border border-border/40">
                                     <div className="flex items-center gap-1.5">
                                         <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200" />
                                         <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Vacant</span>
@@ -579,41 +580,57 @@ const RoomAllotment = () => {
                                 </div>
                             </div>
                             
-                            <Card className="premium-card bg-white p-8 border-border/60 overflow-x-auto shadow-sm">
-                                <div className="flex flex-col gap-10 min-w-[600px]">
-                                    {[1, 2, 3].map((floor) => (
-                                        <div key={`floor-${floor}`} className="space-y-4">
-                                            <div className="flex items-center gap-3">
-                                                <Badge className="h-7 w-12 flex items-center justify-center bg-secondary/50 text-foreground font-black text-[11px] rounded-lg border-none">
-                                                    Floor {floor}
-                                                </Badge>
-                                                <div className="h-px bg-slate-100 flex-1" />
+                            <div className="space-y-10">
+                                {[1, 2, 3].map((floor) => {
+                                    const floorRooms = rooms.filter(r => r.floor === floor);
+                                    if (floorRooms.length === 0) return null;
+                                    
+                                    // Split rooms into two sides of a corridor for an architectural look
+                                    const leftWing = floorRooms.filter((_, idx) => idx % 2 === 0);
+                                    const rightWing = floorRooms.filter((_, idx) => idx % 2 !== 0);
+
+                                    return (
+                                        <div key={`floor-${floor}`} className="group relative">
+                                            {/* Floor Header Badge */}
+                                            <div className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 hidden lg:block">
+                                                <div className="h-20 w-8 bg-primary rounded-l-xl flex items-center justify-center [writing-mode:vertical-lr] rotate-180">
+                                                    <span className="text-[10px] font-black text-white uppercase tracking-[0.3em]">FLOOR {floor}</span>
+                                                </div>
                                             </div>
-                                            <div className="grid grid-cols-10 gap-3">
-                                                {rooms.filter(r => r.floor === floor).map(room => {
-                                                    const occupancy = (room.occupants?.length || 0);
-                                                    const statusColor = occupancy === 0 ? 'bg-emerald-500' : occupancy >= room.capacity ? 'bg-red-500' : 'bg-amber-500';
-                                                    return (
-                                                        <motion.button
-                                                            key={`map-${room._id}`}
-                                                            whileHover={{ scale: 1.1, y: -2 }}
-                                                            onClick={() => handleBookRoom(room)}
-                                                            className={`h-11 rounded-xl flex items-center justify-center text-[11px] font-black text-white shadow-lg transition-all ${statusColor} ring-offset-4 hover:ring-2 ring-primary/20`}
-                                                        >
-                                                            {room.roomNumber}
-                                                        </motion.button>
-                                                    );
-                                                })}
-                                                {rooms.filter(r => r.floor === floor).length === 0 && (
-                                                    <div className="col-span-full py-4 text-center opacity-20">
-                                                        <p className="text-[10px] font-black tracking-widest uppercase">No rooms on this level</p>
+
+                                            <Card className="premium-card bg-white/60 backdrop-blur-md border border-border/40 overflow-hidden shadow-2xl shadow-primary/5 transition-all group-hover:border-primary/20">
+                                                <div className="p-1 md:p-8 relative">
+                                                    <div className="flex flex-col gap-6">
+                                                        {/* Wing 1 */}
+                                                        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-10 gap-2.5">
+                                                            {leftWing.map(room => (
+                                                                <RoomMapItem key={`map-${room._id}`} room={room} onBook={handleBookRoom} />
+                                                            ))}
+                                                        </div>
+
+                                                        {/* Central Corridor Axis */}
+                                                        <div className="relative h-14 bg-secondary/40 rounded-3xl border border-border/30 flex items-center justify-center overflow-hidden">
+                                                            <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(to_bottom,white,transparent)] opacity-20" />
+                                                            <div className="h-px bg-primary/20 flex-1 mx-10" />
+                                                            <div className="px-6 py-1 bg-white border border-border/50 rounded-full font-black text-[9px] uppercase tracking-[.4em] text-muted-foreground/40 z-10">
+                                                                Central Corridor • Floor {floor}
+                                                            </div>
+                                                            <div className="h-px bg-primary/20 flex-1 mx-10" />
+                                                        </div>
+
+                                                        {/* Wing 2 */}
+                                                        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-10 gap-2.5">
+                                                            {rightWing.map(room => (
+                                                                <RoomMapItem key={`map-${room._id}`} room={room} onBook={handleBookRoom} />
+                                                            ))}
+                                                        </div>
                                                     </div>
-                                                )}
-                                            </div>
+                                                </div>
+                                            </Card>
                                         </div>
-                                    ))}
-                                </div>
-                            </Card>
+                                    );
+                                })}
+                            </div>
                         </section>
 
                         <div className="h-px bg-border/50 mx-4" />
@@ -772,5 +789,42 @@ const DetailRow = ({ label, value }) => (
         <span className="font-semibold text-foreground">{value}</span>
     </div>
 );
+
+const RoomMapItem = ({ room, onBook }) => {
+    const occupancy = (room.occupants?.length || 0);
+    const isFull = occupancy >= room.capacity;
+    
+    const getStatusStyles = () => {
+        if (occupancy === 0) return 'from-emerald-500 to-emerald-600 shadow-emerald-200 text-white';
+        if (isFull) return 'from-red-500 to-red-600 shadow-red-100 text-white';
+        return 'from-amber-400 to-amber-500 shadow-amber-100 text-white';
+    };
+
+    return (
+        <motion.button
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onBook(room)}
+            className={`relative group h-16 rounded-2xl bg-gradient-to-br ${getStatusStyles()} shadow-lg transition-all p-3 flex flex-col justify-between overflow-hidden border border-white/20`}
+        >
+            {/* Glossy Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 to-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            
+            <div className="flex justify-between items-start z-10">
+                <span className="text-[12px] font-black tracking-tighter">{room.roomNumber}</span>
+                <div className="flex gap-0.5">
+                    {Array.from({ length: room.capacity }).map((_, i) => (
+                        <div key={i} className={`w-1.5 h-1.5 rounded-full border border-white/20 ${i < occupancy ? 'bg-white' : 'bg-white/30'}`} />
+                    ))}
+                </div>
+            </div>
+            
+            <div className="flex justify-between items-end z-10">
+                <span className="text-[8px] font-black uppercase tracking-widest opacity-80">{room.type}</span>
+                {occupancy === 0 && <Badge className="bg-white/20 text-white border-none text-[7px] px-1 py-0 h-3">NEW</Badge>}
+            </div>
+        </motion.button>
+    );
+};
 
 export default RoomAllotment;

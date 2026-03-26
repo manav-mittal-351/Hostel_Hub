@@ -5,6 +5,8 @@ import { User, Mail, Phone, MapPin, Building, Shield, Calendar, Edit2, LogOut, C
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EditProfileDialog } from "@/components/EditProfileDialog";
+import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
+import { LoginHistoryDialog } from "@/components/LoginHistoryDialog";
 
 const Profile = () => {
     const { user, logout } = useContext(AuthContext);
@@ -130,18 +132,8 @@ const Profile = () => {
                             <CardTitle className="text-[15px] font-bold tracking-tight">Settings</CardTitle>
                         </CardHeader>
                         <CardContent className="p-7 space-y-4">
-                            <Button variant="outline" className="w-full justify-between h-11 text-[12px] font-bold tracking-tight px-4 border-border/50 hover:bg-secondary/50 transition-colors rounded-xl shadow-none">
-                                <div className="flex items-center gap-3">
-                                    <Shield className="h-4 w-4 text-primary opacity-70" /> Change Password
-                                </div>
-                                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                            </Button>
-                            <Button variant="outline" className="w-full justify-between h-11 text-[12px] font-bold tracking-tight px-4 border-border/50 hover:bg-secondary/50 transition-colors rounded-xl shadow-none">
-                                <div className="flex items-center gap-3">
-                                    <Clock className="h-4 w-4 text-primary opacity-70" /> Login History
-                                </div>
-                                <Shield className="h-3 w-3 text-muted-foreground/30" />
-                            </Button>
+                            <ChangePasswordDialog />
+                            <LoginHistoryDialog />
                         </CardContent>
                     </Card>
 

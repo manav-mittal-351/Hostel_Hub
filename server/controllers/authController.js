@@ -108,6 +108,14 @@ const loginUser = async (req, res) => {
         });
 
         if (user && (await user.matchPassword(password))) {
+            // Log this session in login history
+            user.loginHistory.push({
+                ip: req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+                browser: req.headers['user-agent'],
+                device: 'Browser Session'
+            });
+            await user.save();
+
             res.json({
                 _id: user._id,
                 name: user.name,
@@ -203,4 +211,39 @@ const getUserProfile = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser, updateUserProfile, getUserProfile };
+// @desc    Change password
+// @route   POST /api/auth/change-password
+// @access  Private
+const changePassword = async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    try {
+        const user = await User.findById(req.user._id);
+        if (user && (await user.matchPassword(oldPassword))) {
+            user.password = newPassword;
+            await user.save();
+            res.json({ message: 'Password changed successfully' });
+        } else {
+            res.status(401).json({ message: 'Invalid current password' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get login history
+// @route   GET /api/auth/login-history
+// @access  Private
+const getLoginHistory = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select('loginHistory');
+        if (user) {
+            res.json(user.loginHistory.reverse()); // Latest first
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { registerUser, loginUser, updateUserProfile, getUserProfile, changePassword, getLoginHistory };

@@ -5,6 +5,7 @@ import AuthContext from "@/context/AuthContext";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import ReactMarkdown from 'react-markdown';
 
 const ChatAssistant = () => {
     const { user } = useContext(AuthContext);
@@ -67,15 +68,16 @@ const ChatAssistant = () => {
         setIsTyping(true);
 
         try {
-            // Priority: Try to use backend AI API
-            const { data } = await axios.post("/api/ai/chat", {
-                message: currentInput,
-                role: user?.role
-            }).catch(() => ({ data: null })); // Fallback if API doesn't exist yet
+            // Use the newly integrated Groq AI Assistant API
+            const { data } = await axios.post("/api/assistant/ask", {
+                query: currentInput
+            }, {
+                headers: { Authorization: `Bearer ${user?.token}` }
+            });
 
             const botMsg = {
                 id: Date.now() + 1,
-                text: data?.response || getRuleResponse(currentInput),
+                text: data?.answer || getRuleResponse(currentInput),
                 sender: "bot",
                 timestamp: new Date().toISOString()
             };
@@ -87,6 +89,7 @@ const ChatAssistant = () => {
             }, 800);
 
         } catch (error) {
+            console.error("Chat Assistant AI Error:", error);
             const fallbackMsg = {
                 id: Date.now() + 1,
                 text: getRuleResponse(currentInput),
@@ -162,7 +165,9 @@ const ChatAssistant = () => {
                                             ? 'bg-primary text-white rounded-tr-none'
                                             : 'bg-white text-slate-700 border border-border/40 rounded-tl-none'
                                         }`}>
-                                            {msg.text}
+                                            <div className="markdown-content prose prose-sm max-w-none">
+                                                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                                            </div>
                                             <p className={`text-[9px] mt-2 font-black uppercase tracking-widest ${msg.sender === 'user' ? 'text-white/40' : 'text-slate-300'}`}>
                                                 {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </p>

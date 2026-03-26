@@ -36,7 +36,13 @@ const userSchema = new mongoose.Schema({
     },
     roomNumber: { // Optional, for students
         type: String,
-    }
+    },
+    loginHistory: [{
+        timestamp: { type: Date, default: Date.now },
+        device: String,
+        browser: String,
+        ip: String
+    }]
 }, {
     timestamps: true,
 });

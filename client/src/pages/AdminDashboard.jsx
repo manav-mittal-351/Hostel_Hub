@@ -22,6 +22,8 @@ const AdminDashboard = () => {
     const [isSearching, setIsSearching] = useState(false);
     const [showResults, setShowResults] = useState(false);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         const fetchStats = async () => {
             try {
@@ -46,7 +48,11 @@ const AdminDashboard = () => {
                     <p className="section-subtitle">Overview of hostel activity and key stats.</p>
                 </div>
                 <div className="flex gap-3">
-                    <Button variant="outline" className="h-10 px-5 text-[11px] font-bold uppercase tracking-widest border-border/60 bg-white hover:bg-secondary/50 rounded-xl flex items-center gap-2 transition-all">
+                    <Button 
+                        variant="outline" 
+                        onClick={() => navigate('/profile')}
+                        className="h-10 px-5 text-[11px] font-bold uppercase tracking-widest border-border/60 bg-white hover:bg-secondary/50 rounded-xl flex items-center gap-2 transition-all"
+                    >
                         <Settings className="h-3.5 w-3.5" /> Settings
                     </Button>
                     <Link to="/register">
@@ -108,8 +114,8 @@ const AdminDashboard = () => {
                                     paddingAngle={8}
                                     dataKey="value"
                                 >
-                                    <Cell fill="#4F46E5" />
-                                    <Cell fill="#E2E8F0" />
+                                    <Cell fill="#2F5D50" /> {/* Brand Primary */}
+                                    <Cell fill="#D9E5E2" /> {/* Brand Secondary */}
                                 </Pie>
                                 <Tooltip 
                                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontSize: '12px' }}
@@ -119,11 +125,11 @@ const AdminDashboard = () => {
                     </div>
                     <div className="flex justify-center gap-8 mt-4">
                         <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-primary" />
+                            <div className="w-3 h-3 rounded-full bg-[#2F5D50]" />
                             <span className="text-[11px] font-bold text-muted-foreground uppercase opacity-80">Occupied</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-slate-200" />
+                            <div className="w-3 h-3 rounded-full bg-[#D9E5E2]" />
                             <span className="text-[11px] font-bold text-muted-foreground uppercase opacity-80">Empty</span>
                         </div>
                     </div>
@@ -152,7 +158,7 @@ const AdminDashboard = () => {
                                     cursor={{ fill: '#F8FAFC' }}
                                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontSize: '12px' }}
                                 />
-                                <Bar dataKey="amount" fill="#4F46E5" radius={[6, 6, 0, 0]} barSize={40} />
+                                <Bar dataKey="amount" fill="#2F5D50" radius={[6, 6, 0, 0]} barSize={40} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -224,7 +230,11 @@ const AdminDashboard = () => {
                             )}
                             <ActivityItem text={`Collections: ₹${stats.monthlyRevenue.toLocaleString()} this month.`} time="Synced" />
                             
-                            <Button variant="ghost" className="w-full mt-2 text-muted-foreground hover:text-primary font-bold text-[10px] uppercase tracking-widest gap-2 rounded-xl transition-all border border-transparent hover:border-border/60 bg-secondary/5 h-12">
+                            <Button 
+                                variant="ghost" 
+                                onClick={() => navigate('/notifications')}
+                                className="w-full mt-2 text-muted-foreground hover:text-primary font-bold text-[10px] uppercase tracking-widest gap-2 rounded-xl transition-all border border-transparent hover:border-border/60 bg-secondary/5 h-12"
+                            >
                                 See All <ArrowRight className="h-3.5 w-3.5" />
                             </Button>
                         </div>
