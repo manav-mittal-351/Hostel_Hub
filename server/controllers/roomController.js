@@ -2,6 +2,7 @@ const Room = require('../models/Room');
 const User = require('../models/User');
 const Payment = require('../models/Payment');
 const mongoose = require('mongoose');
+const { createAndSendNotification } = require('./notificationController');
 
 // @desc    Create a new room
 // @route   POST /api/rooms
@@ -45,26 +46,22 @@ const getAllRooms = async (req, res) => {
 // @access  Private (Admin)
 const allocateRoom = async (req, res) => {
     const { studentId } = req.body;
-    console.log(`Attempting allocation: Room ${req.params.id}, StudentID ${studentId}`);
 
     try {
         const room = await Room.findById(req.params.id);
         let student;
         
-        // Try searching by _id first, then by studentId property
         if (mongoose.Types.ObjectId.isValid(studentId)) {
             student = await User.findById(studentId);
         }
         
         if (!student) {
-            // Ensure search handles numeric studentId correctly
             const queryId = !isNaN(studentId) ? Number(studentId) : studentId;
             student = await User.findOne({ studentId: queryId });
         }
 
         if (!room || !student) {
-            console.log("Allocation stopped: Room or Student not found.", { roomFound: !!room, studentFound: !!student });
-            return res.status(404).json({ message: 'Target mismatch: Ensure you are using the correct numeric Student ID (e.g., 1001).' });
+            return res.status(404).json({ message: 'Target mismatch: Ensure you are using the correct numeric Student ID.' });
         }
 
         if (room.occupants.length >= room.capacity) {
@@ -75,13 +72,11 @@ const allocateRoom = async (req, res) => {
             return res.status(400).json({ message: 'Member already allocated to this unit' });
         }
 
-        // Verify if student already has a room
         const existingRoom = await Room.findOne({ occupants: student._id });
         if (existingRoom) {
             return res.status(400).json({ message: `Member is already assigned to Unit ${existingRoom.roomNumber}` });
         }
 
-        console.log(`Applying updates for ${student.name}`);
         room.occupants.push(student._id);
         await room.save();
 
@@ -90,10 +85,18 @@ const allocateRoom = async (req, res) => {
         student.hostelName = room.hostelName || 'Boys Hostel';
         await student.save();
 
-        console.log("Allocation finalized.");
+        // Notify student about room allotment
+        createAndSendNotification({
+            recipient: student._id,
+            sender: req.user._id,
+            title: "Room Allotted",
+            message: `You have been allotted Room ${room.roomNumber} in ${student.hostelName}.`,
+            type: "room",
+            link: "/room-allotment"
+        });
+
         res.json(room);
     } catch (error) {
-        console.error("ALLOCATE_ERROR:", error);
         res.status(500).json({ message: "Infrastructure error during allocation: " + error.message });
     }
 };
@@ -104,8 +107,6 @@ const allocateRoom = async (req, res) => {
 const bookRoom = async (req, res) => {
     const { roomId, amount, paymentType } = req.body;
     const userId = req.user._id;
-
-    console.log(`Booking attempt by user ${userId} for room ${roomId}`);
 
     try {
         const room = await Room.findById(roomId);
@@ -138,7 +139,28 @@ const bookRoom = async (req, res) => {
         student.hostelName = room.hostelName;
         await student.save();
 
-        console.log(`Booking successful for user ${userId}`);
+        // Notify student of success
+        createAndSendNotification({
+            recipient: userId,
+            sender: userId,
+            title: "Room Booked",
+            message: `Room ${room.roomNumber} successfully booked. Payment confirmed.`,
+            type: "success",
+            link: "/room-allotment"
+        });
+
+        // Notify Wardens/Admins
+        const staff = await User.find({ role: { $in: ['admin', 'warden'] } });
+        staff.forEach(user => {
+            createAndSendNotification({
+                recipient: user._id,
+                sender: userId,
+                title: "New Room Booking",
+                message: `${student.name} booked Room ${room.roomNumber}.`,
+                type: "room",
+                link: `/admin/rooms`
+            });
+        });
 
         const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : '';
         const updatedUser = { ...student.toObject(), token };
@@ -147,7 +169,6 @@ const bookRoom = async (req, res) => {
         res.status(200).json({ message: 'Room booked successfully', room, user: updatedUser });
 
     } catch (error) {
-        console.error('Room booking error:', error);
         res.status(400).json({ message: error.message || 'Room booking failed' });
     }
 };
@@ -163,7 +184,8 @@ const checkoutRoom = async (req, res) => {
         if (!student) return res.status(404).json({ message: 'Student not found' });
         if (!student.roomNumber) return res.status(400).json({ message: 'You do not have a room allotted' });
 
-        const room = await Room.findOne({ roomNumber: student.roomNumber });
+        const roomNum = student.roomNumber;
+        const room = await Room.findOne({ roomNumber: roomNum });
         if (room) {
             room.occupants = room.occupants.filter(id => id.toString() !== userId.toString());
             await room.save();
@@ -174,6 +196,19 @@ const checkoutRoom = async (req, res) => {
         student.hostelName = undefined;
         await student.save();
 
+        // Notify Wardens/Admins
+        const staff = await User.find({ role: { $in: ['admin', 'warden'] } });
+        staff.forEach(user => {
+            createAndSendNotification({
+                recipient: user._id,
+                sender: userId,
+                title: "Room Checkout",
+                message: `${student.name} has checked out of Room ${roomNum}.`,
+                type: "info",
+                link: `/admin/rooms`
+            });
+        });
+
         const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : '';
         const updatedUser = { ...student.toObject(), token };
         delete updatedUser.password;
@@ -181,7 +216,6 @@ const checkoutRoom = async (req, res) => {
         res.status(200).json({ message: 'Checked out successfully', user: updatedUser });
 
     } catch (error) {
-        console.error('Checkout error:', error);
         res.status(400).json({ message: error.message || 'Checkout failed' });
     }
 };

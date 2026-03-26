@@ -9,31 +9,48 @@ import { Button } from "@/components/ui/button";
 const StudentDashboard = () => {
     const { user } = useContext(AuthContext);
     const [complaintStats, setComplaintStats] = useState({ active: 0, pending: 0, resolved: 0 });
+    const [pendingDues, setPendingDues] = useState(0);
+
+    const fetchDashboardData = async () => {
+        try {
+            if (!user?.token) return;
+            const config = { headers: { Authorization: `Bearer ${user.token}` } };
+            
+            // Fetch everything in parallel
+            const [complaintsRes, paymentsRes, actionsRes] = await Promise.all([
+                axios.get("/api/complaints/my", config).catch(() => ({ data: [] })),
+                axios.get("/api/payments/my-payments", config).catch(() => ({ data: [] })),
+                axios.get("/api/non-disciplinary/my", config).catch(() => ({ data: [] }))
+            ]);
+
+            // Process complaints
+            const stats = complaintsRes.data.reduce((acc, curr) => {
+                if (curr.status === 'pending') acc.pending++;
+                if (curr.status === 'resolved') acc.resolved++;
+                return acc;
+            }, { pending: 0, resolved: 0 });
+
+            setComplaintStats({
+                active: stats.pending,
+                pending: stats.pending,
+                resolved: stats.resolved
+            });
+
+            // Process dues
+            const combined = [...(paymentsRes.data || []), ...(actionsRes.data || [])];
+            const dues = combined.reduce((acc, curr) => {
+                const isPending = ['pending', 'overdue'].includes(curr.status?.toLowerCase());
+                return isPending ? acc + (curr.amount || 0) : acc;
+            }, 0);
+            setPendingDues(dues);
+
+        } catch (error) {
+            console.error("Error fetching dashboard stats:", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchComplaintStats = async () => {
-            try {
-                if (!user?.token) return;
-                const config = { headers: { Authorization: `Bearer ${user.token}` } };
-                const { data } = await axios.get("/api/complaints/my", config);
-                
-                const stats = data.reduce((acc, curr) => {
-                    if (curr.status === 'pending') acc.pending++;
-                    if (curr.status === 'resolved') acc.resolved++;
-                    return acc;
-                }, { pending: 0, resolved: 0 });
-
-                setComplaintStats({
-                    active: stats.pending,
-                    pending: stats.pending,
-                    resolved: stats.resolved
-                });
-            } catch (error) {
-                console.error("Error fetching complaint stats:", error);
-            }
-        };
-
-        fetchComplaintStats();
+        fetchDashboardData();
     }, [user]);
 
     return (
@@ -41,48 +58,48 @@ const StudentDashboard = () => {
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
                 <div>
                     <h1 className="section-title">
-                        Academic Workspace, <span className="text-primary">{user?.name}</span>
+                        Welcome back, <span className="text-primary">{user?.name}</span>
                     </h1>
-                    <p className="section-subtitle">A comprehensive overview of your institutional residency and administrative status.</p>
+                    <p className="section-subtitle">A quick look at your room, payments, and recent updates.</p>
                 </div>
                 <div className="flex items-center gap-3 bg-white border border-border/60 px-4 py-2 rounded-xl shadow-sm">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)] animate-pulse" />
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Registry Live</span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Connected</span>
                 </div>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatsCard 
-                    title="Residential Unit" 
-                    value={user?.roomNumber || "Unassigned"} 
-                    subtitle={user?.roomNumber ? "Active Allocation" : "Allocation Pending"}
+                    title="Your Room" 
+                    value={user?.roomNumber || "No Room"} 
+                    subtitle={user?.roomNumber ? "Booked" : "Not assigned"}
                     icon={BedDouble}
                     link="/room-allotment"
-                    linkText={user?.roomNumber ? "Inspect" : "Register"}
+                    linkText={user?.roomNumber ? "View" : "Book"}
                 />
                 <StatsCard 
-                    title="Financial Record" 
-                    value={user?.roomNumber ? "Settled" : "N/A"} 
-                    subtitle={user?.roomNumber ? "Billing cycle active" : "No active dues"}
+                    title="Payments" 
+                    value={pendingDues > 0 ? `₹${pendingDues.toLocaleString()}` : (user?.roomNumber ? "No Dues" : "N/A")} 
+                    subtitle={pendingDues > 0 ? "Pending Dues" : (user?.roomNumber ? "Fees paid" : "No active dues")}
                     icon={CreditCard}
                     link="/payments"
-                    linkText="Ledger"
+                    linkText="View"
                 />
                 <StatsCard 
-                    title="Active Petitions" 
+                    title="Complaints" 
                     value={complaintStats.active} 
-                    subtitle={`${complaintStats.resolved} Records Archived`}
+                    subtitle={`${complaintStats.resolved} Closed`}
                     icon={AlertCircle}
                     link="/complaints"
-                    linkText="Archive"
+                    linkText="View All"
                 />
                 <StatsCard 
-                    title="Exit Protocols" 
-                    value="Authorized" 
-                    subtitle="Valid synchronization"
+                    title="Gatepass Status" 
+                    value="Approved" 
+                    subtitle="Ready to exit"
                     icon={FileText}
                     link="/gate-pass"
-                    linkText="Monitor"
+                    linkText="Check"
                 />
             </div>
 
@@ -101,18 +118,22 @@ const StudentDashboard = () => {
                                         <Clock className="h-8 w-8 text-white animate-pulse" />
                                     </div>
                                     <div className="text-left space-y-1">
-                                        <h3 className="text-xl font-black text-white tracking-tight">Institutional Billing Cycle</h3>
-                                        <p className="text-white/70 text-[11px] font-black uppercase tracking-[0.2em] leading-none mb-2 italic">Next Cycle: {new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</p>
+                                        <h3 className="text-xl font-black text-white tracking-tight">
+                                            {pendingDues > 0 ? "Outstanding Dues" : "Payment Reminder"}
+                                        </h3>
+                                        <p className="text-white/70 text-[11px] font-black uppercase tracking-[0.2em] leading-none mb-2 italic">
+                                            {pendingDues > 0 ? `Total Pending: ₹${pendingDues.toLocaleString()}` : `Next Due: ${new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}`}
+                                        </p>
                                         <div className="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full w-fit border border-white/10">
                                             <div className="w-2 h-2 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform" />
-                                            <span className="text-[9px] font-bold text-white uppercase tracking-widest">Active Resident Registry</span>
+                                            <span className="text-[9px] font-bold text-white uppercase tracking-widest">Resident</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 w-full md:w-auto">
                                     <Link to="/payments" className="w-full md:w-auto">
                                         <Button className="w-full md:w-auto bg-white text-primary hover:bg-slate-50 transition-all font-black uppercase tracking-widest rounded-xl h-12 px-8 text-[11px] shadow-xl active:scale-[0.98]">
-                                            Audit Ledger
+                                            See History
                                         </Button>
                                     </Link>
                                 </div>
@@ -124,8 +145,8 @@ const StudentDashboard = () => {
                     <CardHeader className="p-7 border-b border-border bg-secondary/10">
                         <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle className="text-[17px] font-bold text-foreground">Operational Timeline</CardTitle>
-                                <CardDescription className="text-[12px] font-medium">Historical audit of your recent institutional actions.</CardDescription>
+                                <CardTitle className="text-[17px] font-bold text-foreground">Recent Activity</CardTitle>
+                                <CardDescription className="text-[12px] font-medium">A quick look at your latest updates.</CardDescription>
                             </div>
                             <CheckCircle2 className="h-5 w-5 text-primary/50" />
                         </div>
@@ -135,22 +156,22 @@ const StudentDashboard = () => {
                             // Showing recent complaints as activity
                             <div className="space-y-0">
                                 {complaintStats.active > 0 && (
-                                    <ActivityRow 
-                                        title={`${complaintStats.active} Pending Petitions`}
-                                        date="Requires Action"
+                                <ActivityRow 
+                                        title={`${complaintStats.active} Pending Complaints`}
+                                        date="Support active"
                                         type="complaint"
                                     />
                                 )}
                                 {complaintStats.resolved > 0 && (
                                     <ActivityRow 
-                                        title={`${complaintStats.resolved} Applications Resolved`}
-                                        date="Archive Updated"
+                                        title={`${complaintStats.resolved} Solved`}
+                                        date="Completed"
                                         type="complaint"
                                     />
                                 )}
                                 <ActivityRow 
-                                    title="System Synchronization"
-                                    date="Real-time"
+                                    title="System Synced"
+                                    date="All up to date"
                                     type="gatepass"
                                 />
                             </div>
@@ -159,7 +180,7 @@ const StudentDashboard = () => {
                                 <div className="w-10 h-10 bg-secondary/30 rounded-full flex items-center justify-center mx-auto">
                                     <Clock className="w-5 h-5 text-muted-foreground/50" />
                                 </div>
-                                <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-widest">No Recent Operational Logs</p>
+                                <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-widest">Nothing here yet</p>
                             </div>
                         )}
                     </div>
@@ -173,16 +194,16 @@ const StudentDashboard = () => {
                                     <ShieldCheck className="h-6 w-6 text-emerald-600" />
                                 </div>
                                 <div className="text-left">
-                                    <h3 className="text-[16px] font-bold text-foreground tracking-tight">Facilities & Maintenance</h3>
-                                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest leading-none mt-1">Direct Technical Terminal</p>
+                                    <h3 className="text-[16px] font-bold text-foreground tracking-tight">Support</h3>
+                                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest leading-none mt-1">Need a repair?</p>
                                 </div>
                             </div>
                             <p className="text-muted-foreground text-[13px] font-medium leading-relaxed text-left border-l-2 border-emerald-100 pl-4 py-1">
-                                Our technical team is available for residential queries, emergency repairs, or facility synchronization.
+                                Need a fix or have a question? Our team is here to help you.
                             </p>
                             <Link to="/maintenance">
                                 <Button className="w-full bg-emerald-600 text-white hover:bg-emerald-700 transition-all font-bold uppercase tracking-widest rounded-xl h-11 text-[11px] shadow-md shadow-emerald-600/10 active:scale-[0.98] gap-2">
-                                    <MessageSquare className="h-3.5 w-3.5" /> Dispatch Request
+                                    <MessageSquare className="h-3.5 w-3.5" /> Report Issue
                                 </Button>
                             </Link>
                         </div>
@@ -192,11 +213,11 @@ const StudentDashboard = () => {
                         <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -mr-12 -mt-12 pointer-events-none" />
                         <div className="flex items-center gap-3 mb-6 relative">
                             <div className="w-1.5 h-6 bg-primary/30 rounded-full" />
-                            <h3 className="text-[15px] font-bold text-foreground">Institutional Bulletins</h3>
+                            <h3 className="text-[15px] font-bold text-foreground">Updates</h3>
                         </div>
                         <div className="space-y-5 relative">
-                            <BulletinItem iconColor="bg-primary" title="Maintenance Schedule" description="Infrastructure maintenance scheduled for Sunday, 02:00 IST." />
-                            <BulletinItem iconColor="bg-emerald-500" title="Seasonal Residency" description="Registrations for interim seasonal residency are now accepting applications." />
+                            <BulletinItem iconColor="bg-primary" title="Maintenance" description="Sunday repair schedule starting at 02:00 AM." />
+                            <BulletinItem iconColor="bg-emerald-500" title="Summer Stay" description="Applications for vacation stay are now open." />
                         </div>
                     </Card>
                 </div>

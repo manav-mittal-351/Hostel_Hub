@@ -43,6 +43,7 @@ app.use('/api/non-disciplinary', require('./routes/nonDisciplinaryRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/students', require('./routes/studentRoutes'));
 app.use('/api/search', require('./routes/searchRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 app.get('/', (req, res) => {
     res.send('API is running...');
@@ -57,10 +58,16 @@ app.use((err, req, res, next) => {
     });
 });
 
+const http = require('http');
+const { initSocket } = require('./utils/socket');
+
+const server = http.createServer(app);
+initSocket(server);
+
 const PORT = process.env.PORT || 5000;
 
 if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
 module.exports = app;

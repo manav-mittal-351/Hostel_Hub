@@ -1,4 +1,6 @@
 const Complaint = require('../models/Complaint');
+const { createAndSendNotification } = require('./notificationController');
+const User = require('../models/User');
 
 // @desc    Create a new complaint
 // @route   POST /api/complaints
@@ -12,6 +14,20 @@ const createComplaint = async (req, res) => {
             title,
             description,
         });
+
+        // Notify Admins & Wardens
+        const staff = await User.find({ role: { $in: ['admin', 'warden'] } });
+        staff.forEach(user => {
+            createAndSendNotification({
+                recipient: user._id,
+                sender: req.user._id,
+                title: "New Student Complaint",
+                message: `${req.user.name} submitted: ${title}`,
+                type: "complaint",
+                link: `/admin/complaints`
+            });
+        });
+
         res.status(201).json(complaint);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -55,6 +71,17 @@ const resolveComplaint = async (req, res) => {
             complaint.status = 'resolved';
             complaint.resolvedBy = req.user._id;
             const updatedComplaint = await complaint.save();
+            
+            // Notify student
+            createAndSendNotification({
+                recipient: complaint.student.toString(),
+                sender: req.user._id,
+                title: "Complaint Resolved",
+                message: `Your complaint "${complaint.title}" has been resolved by ${req.user.name}.`,
+                type: "success",
+                link: "/complaints"
+            });
+
             res.json(updatedComplaint);
         } else {
             res.status(404).json({ message: 'Complaint not found' });

@@ -47,7 +47,7 @@ const AdminDashboard = () => {
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" className="h-10 px-5 text-[11px] font-bold uppercase tracking-widest border-border/60 bg-white hover:bg-secondary/50 rounded-xl flex items-center gap-2 transition-all">
-                        <Settings className="h-3.5 w-3.5" /> Dashboard Config
+                        <Settings className="h-3.5 w-3.5" /> Settings
                     </Button>
                     <Link to="/register">
                         <Button className="btn-primary h-10 px-8 text-[11px] font-bold uppercase tracking-widest active:scale-95 shadow-lg shadow-primary/10 flex items-center gap-2">
@@ -59,28 +59,28 @@ const AdminDashboard = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <AdminStatsCard 
-                    title="Total Residents" 
+                    title="All Students" 
                     value={stats.totalStudents} 
                     icon={Users} 
-                    trend="+12% since last month"
+                    trend="+12% this month"
                 />
                 <AdminStatsCard 
-                    title="Occupancy Rate" 
+                    title="Room Status" 
                     value={`${stats.occupancy.rate}%`} 
                     icon={BedDouble} 
-                    trend={`${stats.occupancy.occupied} Rooms Occupied`}
+                    trend={`${stats.occupancy.occupied} Filled`}
                 />
                 <AdminStatsCard 
-                    title="Active Complaints" 
+                    title="Open Complaints" 
                     value={stats.pendingComplaints} 
                     icon={AlertCircle} 
-                    trend="Needs your attention"
+                    trend="Check now"
                 />
                 <AdminStatsCard 
-                    title="Monthly Income" 
+                    title="Fees Collected" 
                     value={`₹${(stats.monthlyRevenue / 1000).toFixed(1)}K`} 
                     icon={TrendingUp} 
-                    trend="Financial Overview"
+                    trend="Revenue View"
                 />
             </div>
 
@@ -90,9 +90,9 @@ const AdminDashboard = () => {
                     <div className="flex items-center justify-between mb-8">
                         <div>
                             <h3 className="text-[17px] font-bold text-foreground flex items-center gap-2">
-                                <PieChartIcon className="h-4 w-4 text-primary" /> Occupancy Distribution
+                                <PieChartIcon className="h-4 w-4 text-primary" /> Room Usage
                             </h3>
-                            <p className="text-[12px] text-muted-foreground font-medium">Allocation profile by room status.</p>
+                            <p className="text-[12px] text-muted-foreground font-medium">How rooms are being used.</p>
                         </div>
                     </div>
                     <div className="h-[260px] w-full">
@@ -133,9 +133,9 @@ const AdminDashboard = () => {
                     <div className="flex items-center justify-between mb-8">
                         <div>
                             <h3 className="text-[17px] font-bold text-foreground flex items-center gap-2">
-                                <BarChart3 className="h-4 w-4 text-primary" /> Revenue Velocity
+                                <BarChart3 className="h-4 w-4 text-primary" /> Revenue Growth
                             </h3>
-                            <p className="text-[12px] text-muted-foreground font-medium">Monthly collection trajectory.</p>
+                            <p className="text-[12px] text-muted-foreground font-medium">Monthly collection trends.</p>
                         </div>
                     </div>
                     <div className="h-[260px] w-full">
@@ -156,7 +156,7 @@ const AdminDashboard = () => {
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
-                    <p className="text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-6 opacity-40 italic">Data synchronized from latest transaction ledger</p>
+                    <p className="text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-6 opacity-40 italic">Updates automatically</p>
                 </Card>
             </div>
 
@@ -165,28 +165,28 @@ const AdminDashboard = () => {
                     <Card className="premium-card bg-white p-0 overflow-hidden border-border/60 shadow-sm">
                         <CardHeader className="p-7 border-b border-border bg-secondary/10">
                             <div>
-                                <CardTitle className="text-[17px] font-bold text-foreground">Management Console</CardTitle>
-                                <CardDescription className="text-[12px] font-medium">Quick access to common administrative tasks.</CardDescription>
+                                <CardTitle className="text-[17px] font-bold text-foreground">Admin Tasks</CardTitle>
+                                <CardDescription className="text-[12px] font-medium">Manage students, rooms, and payments.</CardDescription>
                             </div>
                         </CardHeader>
                         <div className="p-7 grid grid-cols-1 md:grid-cols-2 gap-6 bg-white">
                             <ManagementGridLink 
                                 to="/room-allotment" 
                                 icon={BedDouble} 
-                                title="Room Allocation" 
-                                description="Manage and assign rooms to students"
+                                title="Room Booking" 
+                                description="Assign rooms to students"
                             />
                             <ManagementGridLink 
                                 to="/complaints" 
                                 icon={AlertCircle} 
-                                title="Complaint Resolution" 
-                                description="View and resolve student complaints"
+                                title="Fix Complaints" 
+                                description="Resolve student issues"
                             />
                             <ManagementGridLink 
                                 to="/gate-pass" 
                                 icon={FileText} 
-                                title="Entry & Exit Log" 
-                                description="Track student in/out records"
+                                title="Gatepasses" 
+                                description="Track student entry/exit"
                             />
                             <ManagementGridLink 
                                 to="/register" 
@@ -197,8 +197,8 @@ const AdminDashboard = () => {
                             <ManagementGridLink 
                                 to="/students" 
                                 icon={Users} 
-                                title="Student Registry" 
-                                description="Monitor and manage all resident records"
+                                title="All Students" 
+                                description="View all student records"
                             />
                         </div>
                     </Card>
@@ -208,8 +208,8 @@ const AdminDashboard = () => {
                     <Card className="premium-card bg-white p-0 overflow-hidden border-border/60 shadow-sm h-[400px]">
                         <CardHeader className="p-7 border-b border-border bg-secondary/10 flex flex-row items-center justify-between space-y-0">
                             <div>
-                                <CardTitle className="text-[17px] font-bold text-foreground">Live Activity Feed</CardTitle>
-                                <CardDescription className="text-[12px] font-medium">Live updates from the hostel system.</CardDescription>
+                                <CardTitle className="text-[17px] font-bold text-foreground">Recent Activity</CardTitle>
+                                <CardDescription className="text-[12px] font-medium">What's happening now.</CardDescription>
                             </div>
                             <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg border border-emerald-100">
                                 <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
@@ -217,15 +217,15 @@ const AdminDashboard = () => {
                             </div>
                         </CardHeader>
                         <div className="p-7 space-y-7 relative h-[calc(400px-110px)] overflow-y-auto custom-scrollbar">
-                            <ActivityItem text={`${stats.totalStudents} student is currently registered in the hostel.`} time="Registry Live" />
-                            <ActivityItem text={`${stats.occupancy.occupied} out of ${stats.occupancy.capacity} rooms are currently occupied.`} time="Dashboard Overview" />
+                            <ActivityItem text={`${stats.totalStudents} students are registered.`} time="Connected" />
+                            <ActivityItem text={`${stats.occupancy.occupied} / ${stats.occupancy.capacity} rooms are filled.`} time="Stats" />
                             {stats.pendingComplaints > 0 && (
-                                <ActivityItem text={`Attention: ${stats.pendingComplaints} complaints awaiting resolution.`} time="Needs Attention" />
+                                <ActivityItem text={`${stats.pendingComplaints} complaints need attention.`} time="Urgent" />
                             )}
-                            <ActivityItem text={`Financial records are up to date (Total income this month: ₹${stats.monthlyRevenue.toLocaleString()}).`} time="Audit Sync" />
+                            <ActivityItem text={`Collections: ₹${stats.monthlyRevenue.toLocaleString()} this month.`} time="Synced" />
                             
                             <Button variant="ghost" className="w-full mt-2 text-muted-foreground hover:text-primary font-bold text-[10px] uppercase tracking-widest gap-2 rounded-xl transition-all border border-transparent hover:border-border/60 bg-secondary/5 h-12">
-                                View Records <ArrowRight className="h-3.5 w-3.5" />
+                                See All <ArrowRight className="h-3.5 w-3.5" />
                             </Button>
                         </div>
                     </Card>

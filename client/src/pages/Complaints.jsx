@@ -22,6 +22,7 @@ const Complaints = () => {
     });
     const [searchTerm, setSearchTerm] = useState("");
     const [filterStatus, setFilterStatus] = useState("All");
+    const [submitting, setSubmitting] = useState(false);
 
     const filteredComplaints = complaints.filter(c => {
         const matchesSearch = c.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -50,6 +51,7 @@ const Complaints = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSubmitting(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             await axios.post("/api/complaints", formData, config);
@@ -58,6 +60,8 @@ const Complaints = () => {
             fetchComplaints();
         } catch (error) {
             toast.error("Failed to submit complaint.");
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -68,8 +72,8 @@ const Complaints = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             <header>
-                <h1 className="section-title">Complaints & Support</h1>
-                <p className="text-sm text-muted-foreground mt-1">Submit a complaint or request maintenance from the hostel administration.</p>
+                <h1 className="section-title">Support</h1>
+                <p className="section-subtitle">Report a problem or check your requests.</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -77,10 +81,8 @@ const Complaints = () => {
                 <div className="lg:col-span-4 space-y-6">
                     <Card className="premium-card bg-white p-0 overflow-hidden sticky top-8">
                         <CardHeader className="px-7 py-6 border-b border-border bg-secondary/30">
-                            <CardTitle className="text-[15px] font-semibold flex items-center gap-2">
-                                <Plus className="h-4 w-4 text-primary" /> Raise a Complaint
-                            </CardTitle>
-                            <CardDescription className="text-[12px]">Provide details about the issue you're facing.</CardDescription>
+                            <CardTitle className="text-[17px] font-bold tracking-tight">Report Issue</CardTitle>
+                            <CardDescription className="text-[12px] font-medium">Tell us what needs fixing.</CardDescription>
                         </CardHeader>
                         <CardContent className="p-7">
                             <form onSubmit={handleSubmit} className="space-y-5">
@@ -99,7 +101,7 @@ const Complaints = () => {
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Complaint Title</Label>
+                                    <Label className="text-[11px] font-black uppercase tracking-widest mb-3 block text-muted-foreground/50">Subject</Label>
                                     <Input 
                                         className="h-11 px-4 text-[13px] bg-secondary/20 border-border/50 focus:bg-white transition-all rounded-xl"
                                         placeholder="E.g. Room light not working"
@@ -109,18 +111,18 @@ const Complaints = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[11px] font-semibold text-muted-foreground ml-1">Description</Label>
+                                    <Label className="text-[11px] font-black uppercase tracking-widest mb-3 block text-muted-foreground/50">Details</Label>
                                     <textarea 
                                         rows="4"
                                         className="w-full rounded-xl p-4 text-[13px] bg-secondary/20 border border-border/50 focus:bg-white transition-all outline-none resize-none min-h-[100px]"
-                                        placeholder="Please provide specific details..."
+                                        placeholder="Tell us more about the problem..."
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                         required
                                     ></textarea>
                                 </div>
-                                <Button className="w-full h-11 btn-primary text-[13px] font-semibold gap-2">
-                                    <Send className="h-3.5 w-3.5" /> Submit Complaint
+                                <Button className="w-full h-11 btn-primary text-[13px] font-semibold gap-2" disabled={submitting}>
+                                    {submitting ? "Sending..." : <><Send className="h-3.5 w-3.5" /> Send Request</>}
                                 </Button>
                             </form>
                         </CardContent>
@@ -143,14 +145,14 @@ const Complaints = () => {
                 <div className="lg:col-span-8 space-y-6">
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2 border-b border-border/50">
                         <div>
-                            <h2 className="text-[17px] font-semibold text-foreground tracking-tight">My Complaints</h2>
-                            <p className="text-[12px] text-muted-foreground font-medium">You have raised {complaints.length} complaints.</p>
+                            <h2 className="text-[17px] font-semibold text-foreground tracking-tight">My Requests</h2>
+                            <p className="text-[12px] text-muted-foreground font-medium">You have {complaints.length} requests.</p>
                         </div>
                         <div className="flex items-center gap-3 w-full sm:w-auto">
                             <div className="relative flex-1 sm:flex-none group">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
                                 <Input 
-                                    placeholder="Filter by title or content..."
+                                    placeholder="Filter by subject or content..."
                                     className="pl-12 h-11 w-full sm:w-72 text-[13px] bg-white border-border/60 focus:bg-white rounded-xl shadow-sm transition-all"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -161,7 +163,7 @@ const Complaints = () => {
                                 value={filterStatus}
                                 onChange={(e) => setFilterStatus(e.target.value)}
                             >
-                                <option value="All">All statuses</option>
+                                <option value="All">All</option>
                                 <option value="Pending">Pending</option>
                                 <option value="Resolved">Resolved</option>
                             </select>
@@ -230,7 +232,7 @@ const Complaints = () => {
                             <div className="py-24 text-center rounded-3xl border border-dashed border-border/60 bg-secondary/10 flex flex-col items-center justify-center space-y-3 grayscale opacity-60">
                                 <CheckCircle className="h-10 w-10 text-emerald-500 opacity-60" />
                                 <h3 className="text-[17px] font-bold text-foreground">All Clear! 🎉</h3>
-                                <p className="text-[13px] font-semibold text-muted-foreground tracking-tight italic">Your registry has no pending complaints.</p>
+                                <p className="text-[13px] font-semibold text-muted-foreground tracking-tight italic">You have no pending requests.</p>
                             </div>
                         )}
                     </div>

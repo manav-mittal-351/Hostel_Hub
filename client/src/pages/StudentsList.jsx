@@ -70,14 +70,14 @@ const StudentsList = () => {
         <div className="space-y-8 animate-in fade-in duration-700">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
                 <div>
-                    <h1 className="section-title">Institutional Registry</h1>
-                    <p className="section-subtitle">Manage and monitor official student records.</p>
+                    <h1 className="section-title">All Students</h1>
+                    <p className="section-subtitle">View and manage all student accounts.</p>
                 </div>
                 <div className="flex bg-secondary/10 p-1 rounded-xl border border-border/40 min-w-[320px] items-center relative group">
                     <Search className="absolute left-4 h-4 w-4 text-muted-foreground opacity-50 group-focus-within:opacity-100 transition-opacity" />
                     <Input 
                         type="text" 
-                        placeholder="Search Identity Registry..." 
+                        placeholder="Search students..." 
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="h-10 pl-11 text-[12px] font-bold bg-transparent border-none focus-visible:ring-0 placeholder:text-muted-foreground/30 shadow-none"
@@ -87,21 +87,21 @@ const StudentsList = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                  <StudentStatCard 
-                    title="Total Enrollment" 
+                    title="Total Students" 
                     value={students.length} 
-                    subtitle={user?.role === 'warden' ? `Block ${user.hostelBlock}` : "Direct Registry"}
+                    subtitle="Global Institutional Registry"
                     icon={Users}
                 />
                 <StudentStatCard 
-                    title="Identity Type" 
+                    title="Member Type" 
                     value="Student" 
-                    subtitle="Verified Status"
+                    subtitle="Verified"
                     icon={Shield}
                 />
                 <StudentStatCard 
-                    title="Access Level" 
+                    title="My Role" 
                     value={user?.role.toUpperCase()} 
-                    subtitle="Management Rights"
+                    subtitle="Active"
                     icon={ArrowUpDown}
                 />
             </div>
@@ -109,20 +109,20 @@ const StudentsList = () => {
             <Card className="premium-card bg-white p-0 overflow-hidden border-border/60 shadow-sm">
                 <CardHeader className="p-7 border-b border-border bg-secondary/5 flex flex-row items-center justify-between space-y-0">
                     <div>
-                        <CardTitle className="text-[17px] font-bold text-foreground">Registry Explorer</CardTitle>
-                        <CardDescription className="text-[12px] font-medium italic opacity-60">Verified Members Only</CardDescription>
+                        <CardTitle className="text-[17px] font-bold text-foreground">Student List</CardTitle>
+                        <CardDescription className="text-[12px] font-medium italic opacity-60">Official Records</CardDescription>
                     </div>
                     <Badge variant="outline" className="text-[9px] font-bold uppercase tracking-widest px-3 py-1 bg-white border-border/60 text-primary">
-                        {filteredStudents.length} Records Found
+                        {filteredStudents.length} Students Found
                     </Badge>
                 </CardHeader>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-secondary/10 border-b border-border/50">
-                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Institutional ID</th>
-                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Full Identity</th>
-                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Allocation</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">ID</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Name & Email</th>
+                                <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Room</th>
                                 <th className="px-7 py-4 text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Block</th>
                                 <th className="px-7 py-4 text-right text-[10px] font-bold text-foreground/60 uppercase tracking-[0.2em]">Actions</th>
                             </tr>
@@ -147,7 +147,7 @@ const StudentsList = () => {
                                             </div>
                                         </td>
                                         <td className="px-7 py-5">
-                                            <p className="text-[13px] font-bold text-foreground/80">{student.roomNumber || "Unassigned"}</p>
+                                            <p className="text-[13px] font-bold text-foreground/80">{student.roomNumber || "No Room"}</p>
                                         </td>
                                         <td className="px-7 py-5">
                                             <Badge className="bg-secondary/50 text-foreground/60 border-none px-3 py-0.5 text-[9px] font-black uppercase tracking-widest">
@@ -177,8 +177,8 @@ const StudentsList = () => {
                                                 <Users className="h-12 w-12" />
                                             </div>
                                             <div className="space-y-1">
-                                                <p className="text-[15px] font-bold uppercase tracking-[0.2em]">Zero Records Encountered</p>
-                                                <p className="text-[12px] font-medium">Verify your synchronization parameters.</p>
+                                                <p className="text-[15px] font-bold uppercase tracking-[0.2em]">No students found</p>
+                                                <p className="text-[12px] font-medium">Try searching for something else.</p>
                                             </div>
                                         </div>
                                     </td>
@@ -193,7 +193,7 @@ const StudentsList = () => {
                 open={isDeleteDialogOpen}
                 onOpenChange={setIsDeleteDialogOpen}
                 title="Confirm Deletion?"
-                description={studentToDelete ? `This action will permanently remove ${studentToDelete.name}'s institutional record from the registry. This process is audited and irreversible.` : ""}
+                description={studentToDelete ? `This will permanently delete ${studentToDelete.name}'s account. You can't undo this action.` : ""}
                 onConfirm={handleDelete}
                 confirmText="Confirm Delete"
                 cancelText="Cancel"

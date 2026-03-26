@@ -53,6 +53,7 @@ const NonDisciplinaryActions = () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [recordToDelete, setRecordToDelete] = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     
     // Form State
     const [formData, setFormData] = useState({
@@ -77,7 +78,7 @@ const NonDisciplinaryActions = () => {
             setRecords(data);
         } catch (error) {
             console.error("Error fetching records:", error);
-            toast.error("Failed to load records from registry.");
+            toast.error("Failed to load records.");
         } finally {
             setLoading(false);
         }
@@ -85,15 +86,18 @@ const NonDisciplinaryActions = () => {
 
     const handleCreate = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const { data } = await axios.post("/api/non-disciplinary", formData, config);
             setRecords([data, ...records]);
             setIsAddModalOpen(false);
             setFormData({ studentId: "", actionType: "Damage", description: "", amount: "", status: "Pending" });
-            toast.success("Institutional record authorized successfully");
+            toast.success("Record added successfully");
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to authorize record");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -102,7 +106,7 @@ const NonDisciplinaryActions = () => {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const { data } = await axios.put(`/api/non-disciplinary/${id}`, { status: newStatus }, config);
             setRecords(records.map(r => r._id === id ? data : r));
-            toast.success(`Compliance status updated to ${newStatus}`);
+            toast.success(`Status updated to ${newStatus}`);
         } catch (error) {
             toast.error("Failed to update compliance status");
         }
@@ -120,7 +124,7 @@ const NonDisciplinaryActions = () => {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             await axios.delete(`/api/non-disciplinary/${recordToDelete}`, config);
             setRecords(records.filter(r => r._id !== recordToDelete));
-            toast.success("Record permanently removed from registry");
+            toast.success("Record deleted successfully");
             setIsDeleteModalOpen(false);
         } catch (error) {
             toast.error("Failed to delete record from database");
@@ -154,13 +158,13 @@ const NonDisciplinaryActions = () => {
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="section-title">Student Records</h1>
-                    <p className="section-subtitle">Comprehensive administrative summary and institutional history log.</p>
+                    <p className="section-subtitle">A clear history of your room and hostel records.</p>
                 </div>
                 <ConfirmationModal 
                     open={isDeleteModalOpen}
                     onOpenChange={setIsDeleteModalOpen}
-                    title="Authorize Record Deletion?"
-                    description="This will permanently nullify this administrative record from the student's institutional history. This action is audited."
+                    title="Delete Record?"
+                    description="This will remove the record forever. You can't undo this action."
                     onConfirm={handleDelete}
                     confirmText="Delete Record"
                     cancelText="Cancel"
@@ -171,20 +175,20 @@ const NonDisciplinaryActions = () => {
                     <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
                         <DialogTrigger asChild>
                             <Button className="btn-primary h-11 px-8 font-bold uppercase tracking-widest text-[11px] flex items-center gap-2 active:scale-95 shadow-lg shadow-primary/20">
-                                <Plus className="w-4 h-4" /> Log Administrative Action
+                                <Plus className="w-4 h-4" /> Add Record
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="bg-white border-none rounded-2xl p-0 overflow-hidden shadow-2xl max-w-md">
                             <DialogHeader className="p-7 bg-secondary/30 border-b border-border">
-                                <DialogTitle className="text-lg font-bold tracking-tight text-foreground">Record Authorization</DialogTitle>
-                                <DialogDescription className="text-[12px] font-medium text-muted-foreground">Document a permanent administrative event in the resident's registry.</DialogDescription>
+                                <DialogTitle className="text-lg font-bold tracking-tight text-foreground">New Record</DialogTitle>
+                                <DialogDescription className="text-[12px] font-medium text-muted-foreground">Add a new update to the student's history.</DialogDescription>
                             </DialogHeader>
                             <form onSubmit={handleCreate} className="p-7 space-y-5">
                                 <div className="space-y-2">
                                     <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Student ID (M-ID)</Label>
                                     <Input 
                                         className="h-11 font-medium bg-secondary/10 border-border/40 focus:bg-white rounded-xl"
-                                        placeholder="Enter student code..."
+                                        placeholder="Enter student ID..."
                                         value={formData.studentId}
                                         onChange={(e) => setFormData({...formData, studentId: e.target.value})}
                                         required
@@ -192,20 +196,20 @@ const NonDisciplinaryActions = () => {
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Event Type</Label>
+                                        <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Type</Label>
                                         <select 
                                             className="w-full h-11 rounded-xl px-4 text-[13px] font-bold bg-secondary/10 border border-border/40 outline-none transition-all focus:bg-white appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%20fill%3D%22none%22%20xmlns%3D%220%200%2010%206%22%3E%3Cpath%20d%3D%22M1%201L5%205L9%201%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-[length:10px] bg-[right_1rem_center] bg-no-repeat"
                                             value={formData.actionType}
                                             onChange={(e) => setFormData({...formData, actionType: e.target.value})}
                                         >
-                                            <option value="Notice">Official Notice</option>
-                                            <option value="Damage">Damage Report</option>
-                                            <option value="Penalty">Penalty Citation</option>
-                                            <option value="Remark">Admin Remark</option>
+                                            <option value="Notice">Notice</option>
+                                            <option value="Damage">Damage</option>
+                                            <option value="Penalty">Penalty</option>
+                                            <option value="Remark">Remark</option>
                                         </select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Charge Ref (₹)</Label>
+                                        <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Amount (₹)</Label>
                                         <Input 
                                             type="number"
                                             className="h-11 font-medium bg-secondary/10 border-border/40 focus:bg-white rounded-xl"
@@ -217,17 +221,17 @@ const NonDisciplinaryActions = () => {
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Record Narration</Label>
+                                    <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Description</Label>
                                     <textarea 
                                         className="w-full h-24 rounded-xl p-4 text-[13px] bg-secondary/10 border border-border/40 outline-none transition-all focus:bg-white resize-none font-medium"
-                                        placeholder="Describe the incident or record details..."
+                                        placeholder="What happened?"
                                         value={formData.description}
                                         onChange={(e) => setFormData({...formData, description: e.target.value})}
                                         required
                                     />
                                 </div>
-                                <Button type="submit" className="w-full btn-primary h-12 font-bold uppercase tracking-widest text-[11px] shadow-lg shadow-primary/10 rounded-xl active:scale-95 transition-all">
-                                    Log Record
+                                <Button type="submit" disabled={isSubmitting} className="w-full btn-primary h-12 font-bold uppercase tracking-widest text-[11px] shadow-lg shadow-primary/10 rounded-xl active:scale-95 transition-all">
+                                    {isSubmitting ? "Adding..." : "Add Record"}
                                 </Button>
                             </form>
                         </DialogContent>
@@ -243,8 +247,8 @@ const NonDisciplinaryActions = () => {
                             <Hash className="h-6 w-6 text-primary" />
                         </div>
                         <div>
-                            <h2 className="text-sm font-bold text-foreground">Registry Session: {user.name}</h2>
-                            <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest">Hostel Unit: {user.roomNumber ? `Station #${user.roomNumber}` : 'Allocation Pending'}</p>
+                            <h2 className="text-sm font-bold text-foreground">Account: {user.name}</h2>
+                            <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest">Room: {user.roomNumber ? `Room ${user.roomNumber}` : 'Not assigned'}</p>
                         </div>
                     </div>
                     <div className="hidden md:flex items-center gap-8">
@@ -254,8 +258,8 @@ const NonDisciplinaryActions = () => {
                         </div>
                         <div className="h-8 w-px bg-border/60" />
                         <div className="text-right">
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60 mb-0.5">Security Status</p>
-                            <Badge className="bg-emerald-500/10 text-emerald-600 border-none px-2 py-0 text-[9px] font-bold uppercase">Clearance Level 1</Badge>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60 mb-0.5">Safety</p>
+                            <Badge className="bg-emerald-500/10 text-emerald-600 border-none px-2 py-0 text-[9px] font-bold uppercase">Verified</Badge>
                         </div>
                     </div>
                 </div>
@@ -300,9 +304,9 @@ const NonDisciplinaryActions = () => {
                         <div>
                             <div className="flex items-center gap-2 mb-1">
                                 <History className="w-4 h-4 text-primary" />
-                                <CardTitle className="text-[16px] font-bold text-foreground">Chronological Log</CardTitle>
+                                <CardTitle className="text-[16px] font-bold text-foreground">Recent Updates</CardTitle>
                             </div>
-                            <CardDescription className="text-[12px] font-medium text-muted-foreground">Historical sequence of all administrative interactions.</CardDescription>
+                            <CardDescription className="text-[12px] font-medium text-muted-foreground">A list of all records and updates.</CardDescription>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="relative">
@@ -321,11 +325,11 @@ const NonDisciplinaryActions = () => {
                     <table className="w-full text-left">
                         <thead>
                             <tr className="border-b border-border/40 bg-secondary/10">
-                                <th className="px-7 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] w-1/5">Timeline Date</th>
-                                <th className="px-7 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] w-1/5">Event Category</th>
-                                <th className="px-7 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] w-1/3">Record Narrative</th>
-                                <th className="px-7 py-5 text-center text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Record Status</th>
-                                {(user?.role === 'admin' || user?.role === 'warden') && <th className="px-7 py-5 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Compliance</th>}
+                                <th className="px-7 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] w-1/5">Date</th>
+                                <th className="px-7 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] w-1/5">Type</th>
+                                <th className="px-7 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] w-1/3">Description</th>
+                                <th className="px-7 py-5 text-center text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Status</th>
+                                {(user?.role === 'admin' || user?.role === 'warden') && <th className="px-7 py-5 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Action</th>}
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border/40">
@@ -345,8 +349,8 @@ const NonDisciplinaryActions = () => {
                                                 <ShieldCheck className="w-14 h-14 stroke-[1.2]" />
                                             </div>
                                             <div className="space-y-1">
-                                                <p className="text-[12px] font-bold uppercase tracking-widest text-foreground/50">Registry Vacant</p>
-                                                <p className="text-[10px] font-medium tracking-wide">No administrative records found for this resident.</p>
+                                                <p className="text-[12px] font-bold uppercase tracking-widest text-foreground/50">No Records</p>
+                                                <p className="text-[10px] font-medium tracking-wide">There are no records to show.</p>
                                             </div>
                                         </div>
                                     </td>
@@ -400,7 +404,7 @@ const NonDisciplinaryActions = () => {
                                                 {record.amount > 0 && (
                                                     <div className="flex flex-col gap-1.5">
                                                         <p className="text-[14px] font-bold text-foreground">
-                                                            Institutional Charge: <span className="text-primary">₹{record.amount.toLocaleString()}</span>
+                                                            Fee: <span className="text-primary">₹{record.amount.toLocaleString()}</span>
                                                         </p>
                                                         {record.status === 'Pending' && (
                                                             <p className="text-[9px] font-bold text-amber-600 uppercase tracking-[0.1em] flex items-center gap-1.5 bg-amber-50 w-fit px-2.5 py-1 rounded-lg border border-amber-100">
@@ -412,13 +416,11 @@ const NonDisciplinaryActions = () => {
                                             </div>
                                         </td>
                                         <td className="px-7 py-6 text-center">
-                                            <Badge className={`px-4 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest border-none shadow-sm ${
+                                            <Badge className={`inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent px-4 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest border-none shadow-sm ${
                                                 record.status === 'Pending' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 
-                                                record.status === 'Paid' ? 'bg-emerald-50 text-emerald-600' :
-                                                'bg-secondary text-muted-foreground'
+                                                'bg-emerald-50 text-emerald-600'
                                             }`}>
-                                                {record.status === 'Pending' ? 'Active Citation' : 
-                                                 record.status === 'Paid' ? 'Audited' : 'Archived'}
+                                                {record.status === 'Pending' ? 'Pending' : 'Paid'}
                                             </Badge>
                                         </td>
                                         {(user?.role === 'admin' || user?.role === 'warden') && (
@@ -430,16 +432,7 @@ const NonDisciplinaryActions = () => {
                                                             onClick={() => handleUpdateStatus(record._id, 'Paid')}
                                                             className="bg-secondary/80 hover:bg-primary text-foreground hover:text-white h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-widest transition-all"
                                                         >
-                                                            Verify
-                                                        </Button>
-                                                    )}
-                                                    {record.status === 'Paid' && (
-                                                        <Button 
-                                                            size="sm" 
-                                                            onClick={() => handleUpdateStatus(record._id, 'Resolved')}
-                                                            className="bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white border border-emerald-100 h-8 px-3 rounded-lg font-bold text-[9px] uppercase tracking-widest transition-all"
-                                                        >
-                                                            Archive
+                                                            Mark Paid
                                                         </Button>
                                                     )}
                                                     <Button 

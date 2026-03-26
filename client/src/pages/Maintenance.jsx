@@ -75,18 +75,16 @@ const Maintenance = () => {
         <div className="space-y-8 animate-in fade-in duration-700">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
                 <div>
-                    <h1 className="section-title text-3xl font-black">Maintenance Registry</h1>
-                    <p className="section-subtitle font-medium opacity-70">Log technical issues for prompt facility resolution.</p>
+                    <h1 className="section-title">Repairs</h1>
+                <p className="section-subtitle">Request a fix for your room or common areas.</p>
                 </div>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 <Card className="premium-card bg-white p-7 border-border/60 shadow-sm">
                     <CardHeader className="px-0 pt-0 pb-6 border-b border-border/40">
-                        <CardTitle className="text-[17px] font-bold flex items-center gap-2">
-                             <Plus className="h-4 w-4 text-primary" /> Log Request
-                        </CardTitle>
-                        <CardDescription className="text-[11px] font-medium tracking-tight">Technical dispatch authorization form.</CardDescription>
+                        <CardTitle className="text-[17px] font-bold tracking-tight">Fix it</CardTitle>
+                        <CardDescription className="text-[12px] font-medium">Tell us what's broken.</CardDescription>
                     </CardHeader>
                     <form onSubmit={handleSubmit} className="space-y-6 pt-6">
                         <div className="space-y-2">

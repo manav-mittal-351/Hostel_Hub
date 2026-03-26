@@ -15,26 +15,26 @@ const Profile = () => {
 
     // Role-based Label Mapping
     const labels = {
-        id: isStudent ? "Student ID" : "Staff ID (Auto Generated)",
-        dept: isStudent ? "Department" : "Role / Position",
-        hostel: isStudent ? "Hostel & Block" : "Access Level",
-        room: isStudent ? "Room Number" : "Location",
-        status: isStudent ? "Room Status" : "Status"
+        id: isStudent ? "Student ID" : "Staff ID",
+        dept: isStudent ? "Department" : "Position",
+        hostel: isStudent ? "Hostel" : "Permissions",
+        room: isStudent ? "Room Number" : "Office",
+        status: isStudent ? "Status" : "Status"
     };
 
     // Role-based Value Formatting
     const getHostelValue = () => {
         if (isStudent) {
-            return user.hostelName ? `${user.hostelName} (Block ${user.hostelBlock || 'Global'})` : "Pending Allotment";
+            return user.hostelName ? `${user.hostelName} (${user.hostelBlock || 'Global'})` : "Not assigned yet";
         }
-        return user.hostelBlock ? `Block ${user.hostelBlock}` : "Global Registry";
+        return user.hostelBlock ? `Block ${user.hostelBlock}` : "All Blocks";
     };
 
     const getRoomValue = () => {
         if (isStudent) {
-            return user.roomNumber ? `Room #${user.roomNumber}` : "NOT ALLOTTED";
+            return user.roomNumber ? `Room ${user.roomNumber}` : "Not assigned";
         }
-        return user.roomNumber ? `Office #${user.roomNumber}` : "Main Wing";
+        return user.roomNumber ? `Room ${user.roomNumber}` : "Main Office";
     };
 
     const getStatusValue = () => {
@@ -48,7 +48,7 @@ const Profile = () => {
         <div className="space-y-8 animate-in fade-in duration-700">
             <header>
                 <h1 className="section-title">My Profile</h1>
-                <p className="section-subtitle">Manage your personal information and account settings.</p>
+                <p className="section-subtitle">Manage your personal information and settings.</p>
             </header>
 
             {/* Profile Hero Section */}
@@ -106,8 +106,8 @@ const Profile = () => {
                 {/* Personal Information */}
                 <Card className="premium-card lg:col-span-8 bg-white overflow-hidden p-0 border-border/60">
                     <CardHeader className="px-8 py-7 border-b border-border bg-secondary/10">
-                        <CardTitle className="text-[17px] font-bold tracking-tight">Profile</CardTitle>
-                        <CardDescription className="text-[12px] font-medium">Your basic account details</CardDescription>
+                        <CardTitle className="text-[17px] font-bold tracking-tight">Details</CardTitle>
+                        <CardDescription className="text-[12px] font-medium">Manage your details here</CardDescription>
                     </CardHeader>
                     <CardContent className="p-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -127,18 +127,18 @@ const Profile = () => {
                 <div className="lg:col-span-4 space-y-8">
                     <Card className="premium-card bg-white border-border/60">
                         <CardHeader className="px-7 py-6 border-b border-border/50">
-                            <CardTitle className="text-[15px] font-bold tracking-tight">Account Settings</CardTitle>
+                            <CardTitle className="text-[15px] font-bold tracking-tight">Settings</CardTitle>
                         </CardHeader>
                         <CardContent className="p-7 space-y-4">
                             <Button variant="outline" className="w-full justify-between h-11 text-[12px] font-bold tracking-tight px-4 border-border/50 hover:bg-secondary/50 transition-colors rounded-xl shadow-none">
                                 <div className="flex items-center gap-3">
-                                    <Shield className="h-4 w-4 text-primary opacity-70" /> Reset Password
+                                    <Shield className="h-4 w-4 text-primary opacity-70" /> Change Password
                                 </div>
                                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                             </Button>
                             <Button variant="outline" className="w-full justify-between h-11 text-[12px] font-bold tracking-tight px-4 border-border/50 hover:bg-secondary/50 transition-colors rounded-xl shadow-none">
                                 <div className="flex items-center gap-3">
-                                    <Clock className="h-4 w-4 text-primary opacity-70" /> Access Logs
+                                    <Clock className="h-4 w-4 text-primary opacity-70" /> Login History
                                 </div>
                                 <Shield className="h-3 w-3 text-muted-foreground/30" />
                             </Button>
@@ -149,13 +149,13 @@ const Profile = () => {
                         <Card className="premium-card bg-white border-border/60 overflow-hidden group">
                             <CardHeader className="px-7 py-6 border-b border-border/50 bg-primary/5">
                                 <CardTitle className="text-[15px] font-bold tracking-tight flex items-center gap-2">
-                                    <Users className="h-4 w-4 text-primary" /> Roommate Matching
+                                    <Users className="h-4 w-4 text-primary" /> Roommate Finder
                                 </CardTitle>
-                                <CardDescription className="text-[10px] font-bold uppercase tracking-widest opacity-60">Internal Compatibility Index</CardDescription>
+                                <CardDescription className="text-[10px] font-bold uppercase tracking-widest opacity-60">Find a match</CardDescription>
                             </CardHeader>
                             <CardContent className="p-7 space-y-6">
                                 <div className="space-y-3">
-                                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest leading-none">Lifestyle Alignment</p>
+                                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest leading-none">My Preferences</p>
                                     <div className="flex flex-wrap gap-2">
                                         <PreferenceTag label="Night Owl" active={true} />
                                         <PreferenceTag label="Quiet Study" active={false} />
@@ -166,7 +166,7 @@ const Profile = () => {
                                 </div>
                                 <div className="pt-4 border-t border-dashed border-border/60">
                                     <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest italic opacity-40 leading-relaxed">
-                                        * Algorithm utilizes these parameters for matching residents during automated allocation cycles.
+                                        * We use these to find the best roommates for you.
                                     </p>
                                 </div>
                             </CardContent>
@@ -182,11 +182,11 @@ const Profile = () => {
                         </div>
                         <div className="space-y-2 relative z-10">
                             <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                                Verified Account
+                                Account Verified
                                 <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                             </h3>
                             <p className="text-[13px] text-emerald-50/80 leading-relaxed font-medium">
-                                Your identity is fully verified within the HostelHub network. You have full access to your assigned modules.
+                                Your account is verified. You have full access to all features.
                             </p>
                         </div>
                     </div>

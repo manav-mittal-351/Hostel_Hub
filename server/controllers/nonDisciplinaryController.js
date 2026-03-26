@@ -1,5 +1,6 @@
 const NonDisciplinaryAction = require('../models/NonDisciplinaryAction');
 const User = require('../models/User');
+const { createAndSendNotification } = require('./notificationController');
 
 // @desc    Get all non-disciplinary actions
 // @route   GET /api/non-disciplinary
@@ -29,8 +30,7 @@ const createAction = async (req, res) => {
             return res.status(400).json({ message: 'A valid Student ID is required' });
         }
 
-        // Performance-first lookup strategies:
-        // 1. Exact match on studentId or full ObjectID
+        // Performance-first lookup strategies
         let student = await User.findOne({ 
             $or: [
                 { studentId: { $regex: `^${queryId}$`, $options: 'i' } },
@@ -38,7 +38,6 @@ const createAction = async (req, res) => {
             ]
         });
 
-        // 2. Short ID suffix match (Case-insensitive check for the last 6 characters of the Hex ID)
         if (!student && queryId.length >= 4) {
              student = await User.findOne({
                 $expr: {
@@ -50,13 +49,12 @@ const createAction = async (req, res) => {
             });
         }
 
-        // 3. Fallback: Generic case-insensitive search on studentId
         if (!student) {
             student = await User.findOne({ studentId: { $regex: queryId, $options: 'i' } });
         }
 
         if (!student) {
-            return res.status(404).json({ message: `Student Registry not found for ID: ${queryId}. Please use the Full Student ID or the 6-character Short Code.` });
+            return res.status(404).json({ message: `Student Registry not found for ID: ${queryId}.` });
         }
 
         const action = await NonDisciplinaryAction.create({
@@ -71,6 +69,16 @@ const createAction = async (req, res) => {
         const populatedAction = await NonDisciplinaryAction.findById(action._id)
             .populate('student', 'name studentId email roomNumber')
             .populate('createdBy', 'name role');
+
+        // Notify student about new institutional record
+        createAndSendNotification({
+            recipient: student._id.toString(),
+            sender: req.user._id,
+            title: "New Student Record",
+            message: `A new ${actionType.toLowerCase()} has been logged for you.`,
+            type: actionType === "Penalty" ? "warning" : "info",
+            link: "/payments"
+        });
 
         res.status(201).json(populatedAction);
     } catch (error) {
@@ -95,6 +103,16 @@ const updateActionStatus = async (req, res) => {
                 .populate('student', 'name studentId email roomNumber')
                 .populate('createdBy', 'name role');
                 
+            // Notify student about record update (status)
+            createAndSendNotification({
+                recipient: action.student.toString(),
+                sender: req.user._id,
+                title: "Record Updated",
+                message: `Status of your ${action.actionType.toLowerCase()} record is now ${status}.`,
+                type: status === "Archived" ? "info" : "success",
+                link: "/payments"
+            });
+
             res.json(populatedAction);
         } else {
             res.status(404).json({ message: 'Action record not found' });
@@ -136,10 +154,46 @@ const getMyActions = async (req, res) => {
     }
 };
 
+// @desc    Pay or resolve a action (Student)
+// @route   PUT /api/non-disciplinary/:id/pay
+// @access  Private (Student)
+const payAction = async (req, res) => {
+    try {
+        const action = await NonDisciplinaryAction.findById(req.params.id);
+
+        if (!action) {
+            return res.status(404).json({ message: 'Record not found' });
+        }
+
+        // Check ownership
+        if (action.student.toString() !== req.user._id.toString()) {
+            return res.status(401).json({ message: 'Not authorized for this record' });
+        }
+
+        action.status = 'Paid';
+        await action.save();
+
+        // Notify student and creators/staff
+        createAndSendNotification({
+            recipient: req.user._id.toString(),
+            sender: req.user._id,
+            title: "Dues Paid",
+            message: `Your ${action.actionType} of ₹${action.amount} has been settled.`,
+            type: "success",
+            link: "/payments"
+        });
+
+        res.json(action);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getAllActions,
     createAction,
     updateActionStatus,
     deleteAction,
-    getMyActions
+    getMyActions,
+    payAction
 };

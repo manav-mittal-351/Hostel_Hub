@@ -134,11 +134,11 @@ const LandingPage = () => {
                     <div className="container max-w-7xl mx-auto px-6">
                         <div className="max-w-3xl mb-16 space-y-4">
                             <h2 className="text-3xl md:text-4xl font-bold tracking-tighter text-foreground">
-                                Precision Engineered <br />
-                                <span className="text-muted-foreground">For Institutional Excellence.</span>
+                                Simple & Powerful <br />
+                                <span className="text-muted-foreground">For Modern Student Life.</span>
                             </h2>
                             <p className="text-muted-foreground font-medium leading-relaxed">
-                                Our platform consolidates every aspect of the residential lifecycle into a single, intuitive interface. From unit allocation to financial settlements.
+                                Manage everything from room bookings to payments in one simple place. Built for students and staff to make hostel life easier.
                             </p>
                         </div>
 
@@ -227,11 +227,11 @@ const LandingPage = () => {
                     </Link>
                     
                     <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-widest">
-                        © 2026 HostelHub Management System
+                        © 2026 HostelHub
                     </p>
                     
                     <div className="flex items-center gap-8">
-                        {["Privacy", "Protocols", "Support"].map(item => (
+                        {["Privacy", "Terms", "Support"].map(item => (
                             <a key={item} href="#" className="text-[12px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors">
                                 {item}
                             </a>

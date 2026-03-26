@@ -73,8 +73,8 @@ const Login = () => {
                                 <Label htmlFor="email" className="ml-1">Institutional Email</Label>
                                 <Input
                                     id="email"
-                                    type="email"
-                                    placeholder="name@university.edu"
+                                    type="text"
+                                    placeholder="Institutional Email or Corporate ID"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required

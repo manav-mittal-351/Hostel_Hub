@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const { createAndSendNotification } = require('./notificationController');
 
 // @desc    Get all students
 // @route   GET /api/students
@@ -6,11 +7,6 @@ const User = require('../models/User');
 const getAllStudents = async (req, res) => {
     try {
         let query = { role: 'student' };
-
-        // If warden, restrict to their hostel block
-        if (req.user.role === 'warden' && req.user.hostelBlock) {
-            query.hostelBlock = req.user.hostelBlock;
-        }
 
         console.log("Fetching students with query:", query);
         const students = await User.find(query).select('-password').sort({ createdAt: -1 });
@@ -26,20 +22,29 @@ const getAllStudents = async (req, res) => {
 // @access  Private (Admin/Warden)
 const deleteStudent = async (req, res) => {
     try {
-        const student = await User.findById(req.params.id);
+        const studentId = req.params.id;
+        const student = await User.findById(studentId);
 
         if (!student || student.role !== 'student') {
             return res.status(404).json({ message: 'Student not found' });
         }
 
-        // Check permissions
-        if (req.user.role === 'warden') {
-            if (req.user.hostelBlock && student.hostelBlock !== req.user.hostelBlock) {
-                return res.status(403).json({ message: 'Not authorized to delete students from other blocks' });
-            }
-        }
+        const studentName = student.name;
+        await User.findByIdAndDelete(studentId);
 
-        await User.findByIdAndDelete(req.params.id);
+        // Notify other admins
+        const staff = await User.find({ role: 'admin', _id: { $ne: req.user._id } });
+        staff.forEach(s => {
+            createAndSendNotification({
+                recipient: s._id,
+                sender: req.user._id,
+                title: "Student Removed",
+                message: `Student record for ${studentName} was removed from the system by ${req.user.name}.`,
+                type: "system",
+                link: "/admin/students"
+            });
+        });
+
         res.json({ message: 'Student removed successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });

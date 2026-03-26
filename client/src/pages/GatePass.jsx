@@ -81,8 +81,8 @@ const GatePass = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             <header>
-                <h1 className="section-title">Gatepass Request</h1>
-                <p className="section-subtitle">Apply for a gatepass for outing or leave authorization.</p>
+                <h1 className="section-title">Gatepass</h1>
+                <p className="section-subtitle">Get a digital pass to leave the hostel.</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -90,10 +90,8 @@ const GatePass = () => {
                 <div className="lg:col-span-8 space-y-8">
                     <Card className="premium-card bg-white p-0 overflow-hidden">
                         <CardHeader className="px-7 py-6 border-b border-border bg-secondary/30">
-                            <CardTitle className="text-[15px] font-semibold flex items-center gap-2">
-                                <FileText className="h-4 w-4 text-primary" /> New Gatepass Request
-                            </CardTitle>
-                            <CardDescription className="text-[12px]">Please fill in your outing or leave details.</CardDescription>
+                            <CardTitle className="text-[17px] font-bold tracking-tight">New Pass</CardTitle>
+                            <CardDescription className="text-[12px] font-medium">Fill in your leave details.</CardDescription>
                         </CardHeader>
                         <CardContent className="p-7">
                             <form onSubmit={handleSubmit} className="space-y-6">
@@ -167,8 +165,8 @@ const GatePass = () => {
                                     ></textarea>
                                 </div>
 
-                                <Button className="w-full h-11 btn-primary text-[13px] font-semibold gap-2 active:scale-95" disabled={loading}>
-                                    <Send className="h-4 w-4" /> {loading ? 'Processing...' : 'Submit for Approval'}
+                                <Button type="submit" disabled={loading} className="btn-primary w-full h-12 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl active:scale-[0.98] shadow-lg shadow-primary/10 transition-all gap-2">
+                                    {loading ? 'Creating...' : 'Get Gatepass'}
                                 </Button>
                             </form>
                         </CardContent>
@@ -215,7 +213,7 @@ const GatePass = () => {
                                 ))
                             ) : (
                                 <div className="py-16 text-center rounded-3xl border border-dashed border-border/60 bg-secondary/5 grayscale opacity-50">
-                                    <p className="text-[13px] font-semibold text-muted-foreground tracking-tight italic">No activity found in the registry.</p>
+                                    <p className="text-[13px] font-bold text-muted-foreground italic opacity-40">No passes found</p>
                                 </div>
                             )}
                         </div>
@@ -253,7 +251,10 @@ const GatePass = () => {
                             <Badge className={`${latestPass?.status === 'Approved' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'} border-none px-3 py-1 rounded-md text-[10px] uppercase font-bold tracking-widest mx-auto block w-fit`}>
                                 {latestPass?.status === 'Approved' ? 'Identity Authorized' : 'Status Tracking'}
                             </Badge>
-                            <h3 className="text-[17px] font-bold text-foreground tracking-tight">Approval Status</h3>
+                            <div>
+                                <CardTitle className="text-[17px] font-bold tracking-tight">Active Passes</CardTitle>
+                                <CardDescription className="text-[12px] font-medium">Passes ready for use.</CardDescription>
+                            </div>
                             <p className="text-[12px] text-muted-foreground font-medium px-4 leading-relaxed">
                                 {latestPass?.status === 'Approved' ? 'Your dynamic QR identity is active for gate authentication.' : 'Once approved, your dynamic QR identity will activate for gate authentication.'}
                             </p>

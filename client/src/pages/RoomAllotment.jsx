@@ -104,12 +104,12 @@ const RoomAllotment = () => {
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(24);
         doc.setFont("helvetica", "bold");
-        doc.text("HostelHub Residence Receipt", 20, 25);
+        doc.text("Hostel Receipt", 20, 25);
         
         // Receipt metadata
         doc.setFontSize(10);
         doc.setFont("helvetica", "normal");
-        doc.text(`Transaction Ref: ${user._id?.toUpperCase()}`, 20, 32);
+        doc.text(`Order ID: ${user._id?.toUpperCase()}`, 20, 32);
         doc.text(`Date: ${new Date().toLocaleDateString()}`, 160, 25);
         
         // Reset color for body
@@ -129,7 +129,7 @@ const RoomAllotment = () => {
         
         // Property Details
         doc.setFont("helvetica", "bold");
-        doc.text("Accommodation Information", 20, 115);
+        doc.text("Room Details", 20, 115);
         doc.line(20, 118, 190, 118);
         
         doc.setFont("helvetica", "normal");
@@ -197,8 +197,8 @@ const RoomAllotment = () => {
             }, config);
 
             addNotification({
-                title: "Booking Successful",
-                message: `Unit ${roomToBook.roomNumber} (${roomToBook.type}) has been allotted to you. Welcome!`,
+                title: "Room Booked",
+                message: `Room ${roomToBook.roomNumber} (${roomToBook.type}) is yours. Welcome!`,
                 type: "success"
             });
 
@@ -225,8 +225,8 @@ const RoomAllotment = () => {
             const { data } = await axios.post("/api/rooms/checkout", {}, config);
 
             addNotification({
-                title: "Checkout Complete",
-                message: "Your residential allotment has been successfully terminated.",
+                title: "Checked Out",
+                message: "Your room has been cancelled successfully.",
                 type: "warning"
             });
 
@@ -252,10 +252,10 @@ const RoomAllotment = () => {
                 open={isBookingModalOpen}
                 onOpenChange={setIsBookingModalOpen}
                 title="Confirm Booking?"
-                description={roomToBook ? `Are you sure you want to book Room ${roomToBook.roomNumber} (${roomToBook.type})? Institutional charges of ₹${roomToBook.type === 'AC' ? 8000 : 5000} will apply.` : ""}
+                description={roomToBook ? `Are you sure you want to book Room ${roomToBook.roomNumber} (${roomToBook.type})? A fee of ₹${roomToBook.type === 'AC' ? 8000 : 5000} will apply.` : ""}
                 onConfirm={onBookConfirm}
-                confirmText="Confirm Reservation"
-                cancelText="Decline"
+                confirmText="Book Room"
+                cancelText="Cancel"
                 loading={bookingLoading}
                 variant="primary"
             />
@@ -263,11 +263,11 @@ const RoomAllotment = () => {
             <ConfirmationModal 
                 open={isCheckoutModalOpen}
                 onOpenChange={setIsCheckoutModalOpen}
-                title="Authorization Required: Checkout?"
-                description="This will immediately terminate your resident registry for the current allotted unit. This action is critical and irreversible."
+                title="Sure you want to leave?"
+                description="This will cancel your room booking. You can't undo this action."
                 onConfirm={onCheckoutConfirm}
-                confirmText="Proceed Checkout"
-                cancelText="Keep Room"
+                confirmText="Check Out"
+                cancelText="Stay"
                 loading={checkoutLoading}
                 variant="destructive"
             />
@@ -301,7 +301,7 @@ const RoomAllotment = () => {
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-3">
                                         <Badge className="bg-emerald-500 text-white border-none px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm shadow-emerald-500/10">
-                                            Booking Confirmed
+                                            Booked
                                         </Badge>
                                         <div className="flex items-center gap-1.5 px-2.5 py-1 bg-secondary/30 rounded-lg border border-border/40">
                                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -310,7 +310,7 @@ const RoomAllotment = () => {
                                     </div>
                                     <h2 className="text-4xl font-bold tracking-tight text-foreground">Room {user.roomNumber}</h2>
                                     <div className="flex items-center gap-3 text-muted-foreground">
-                                        <p className="text-[11px] font-bold uppercase tracking-[0.1em]">Booking ID</p>
+                                        <p className="text-[11px] font-bold uppercase tracking-[0.1em]">Order ID</p>
                                         <div className="px-2 py-0.5 bg-secondary/50 rounded font-mono text-[10px] border border-border/50 uppercase tracking-tighter">
                                             {user._id?.slice(-12)}
                                         </div>
@@ -319,7 +319,7 @@ const RoomAllotment = () => {
                             </div>
                             <div className="p-10 flex items-center gap-12 bg-secondary/10 relative z-10 min-w-[320px]">
                                 <div className="text-right space-y-1">
-                                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Monthly Rent</p>
+                                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Monthly Fee</p>
                                     <p className="text-3xl font-bold tracking-tighter text-foreground italic flex items-baseline justify-end gap-1">
                                         <span className="text-lg translate-y-[-2px]">₹</span>
                                         {user.hostelBlock?.includes('AC') && !user.hostelBlock?.includes('Non-AC') ? '8,000' : '5,000'}
@@ -350,8 +350,8 @@ const RoomAllotment = () => {
                                     <div className="flex items-start gap-3">
                                         <MapPin className="w-3.5 h-3.5 text-muted-foreground mt-1" />
                                         <div>
-                                            <p className="text-[13px] font-semibold text-foreground">{user.hostelName || 'HostelHub Residence'}</p>
-                                            <p className="text-[11px] text-muted-foreground">{user.hostelBlock || 'Allocation Pending'}</p>
+                                            <p className="text-[13px] font-semibold text-foreground">{user.hostelName || 'Hostel'}</p>
+                                            <p className="text-[11px] text-muted-foreground">{user.hostelBlock || 'Not assigned'}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between p-4 bg-secondary/5 rounded-2xl border border-border/40 group hover:border-primary/30 transition-all">
@@ -360,8 +360,8 @@ const RoomAllotment = () => {
                                                 <ShieldCheck className="w-4.5 h-4.5" />
                                             </div>
                                             <div>
-                                                <p className="text-[13px] font-bold text-foreground">Hostel Warden</p>
-                                                <p className="text-[11px] font-medium text-muted-foreground">Contact: +91 XXXXXXXX</p>
+                                                <p className="text-[13px] font-bold text-foreground">Warden</p>
+                                                <p className="text-[11px] font-medium text-muted-foreground">Phone: +91 XXXXXXXX</p>
                                             </div>
                                         </div>
                                         <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-lg hover:bg-primary/10 hover:text-primary">
@@ -380,7 +380,7 @@ const RoomAllotment = () => {
                                 </div>
                                 <div className="space-y-3">
                                     <DetailRow label="Department" value={user.department || 'General'} />
-                                    <DetailRow label="Student ID" value={user.studentId || 'UNASSIGNED'} />
+                                    <DetailRow label="Student ID" value={user.studentId || 'NOT SET'} />
                                     <DetailRow label="Joined On" value={new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} />
                                 </div>
                             </Card>
@@ -428,11 +428,11 @@ const RoomAllotment = () => {
 
                     <div className="space-y-6">
                         <Card className="premium-card bg-white p-6">
-                            <h3 className="text-[14px] font-semibold text-foreground mb-4">Payment Summary</h3>
+                            <h3 className="text-[14px] font-semibold text-foreground mb-4">Payment</h3>
                             <div className="space-y-4">
                                 <div className="p-4 rounded-xl bg-emerald-50/50 flex items-center justify-between border border-emerald-100/50">
                                     <div>
-                                        <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">Payment Status</p>
+                                        <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">Status</p>
                                         <p className="text-[15px] font-bold text-foreground">Paid</p>
                                     </div>
                                     <div className="w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center text-white">
@@ -446,7 +446,7 @@ const RoomAllotment = () => {
                                     </div>
                                     {user.hostelBlock?.includes('AC') && (
                                         <div className="flex justify-between text-[12px]">
-                                            <span className="text-muted-foreground">Premium AC Fee</span>
+                                            <span className="text-muted-foreground">Premium Fee</span>
                                             <span className="font-semibold text-foreground">₹3,000.00</span>
                                         </div>
                                     )}
@@ -461,7 +461,7 @@ const RoomAllotment = () => {
                         <div className="premium-card bg-secondary/20 p-5">
                             <div className="flex items-center gap-2 mb-3 text-primary">
                                 <Info className="w-4 h-4" />
-                                <span className="text-[11px] font-bold uppercase tracking-wider">Room Rules</span>
+                                <span className="text-[11px] font-bold uppercase tracking-wider">Rules</span>
                             </div>
                             <ul className="space-y-2.5">
                                 <li className="text-[11px] leading-relaxed text-muted-foreground flex gap-2">
@@ -496,13 +496,13 @@ const RoomAllotment = () => {
                                 onClick={() => setShowAllAvailable(!showAllAvailable)}
                                 className="h-10 px-5 rounded-xl text-[11px] font-bold uppercase tracking-widest border-border/60 hover:bg-secondary/20 transition-all active:scale-95"
                             >
-                                {showAllAvailable ? "Hide Rooms" : "View Other Rooms"}
+                                {showAllAvailable ? "Hide Rooms" : "See Others"}
                             </Button>
                         )}
                         {!user?.roomNumber && loadingRooms && (
                             <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary/50 rounded-lg">
                                 <div className="animate-spin h-3 w-3 border-2 border-primary border-t-transparent rounded-full" />
-                                <span className="text-[10px] text-primary font-bold uppercase tracking-wider">Syncing</span>
+                                <span className="text-[10px] text-primary font-bold uppercase tracking-wider">Updating</span>
                             </div>
                         )}
                     </div>
@@ -516,9 +516,9 @@ const RoomAllotment = () => {
                                 <div className="flex items-center justify-between mb-8 px-1">
                                     <div>
                                         <h2 className="text-[17px] font-black text-foreground tracking-tight flex items-center gap-2">
-                                            <TrendingUp className="h-4 w-4 text-primary" /> Recommended For You
+                                            <TrendingUp className="h-4 w-4 text-primary" /> Selected for you
                                         </h2>
-                                        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">System-curated selections based on your profile.</p>
+                                        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Hand-picked rooms based on your profile.</p>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -544,7 +544,7 @@ const RoomAllotment = () => {
                                                         className="h-9 px-4 text-[11px] font-bold uppercase tracking-widest text-primary hover:bg-primary/10 rounded-xl flex items-center gap-2"
                                                         onClick={() => handleBookRoom(room)}
                                                     >
-                                                        Details <ArrowRight className="h-3 w-3" />
+                                                        View <ArrowRight className="h-3 w-3" />
                                                     </Button>
                                                 </div>
                                             </div>
@@ -559,9 +559,9 @@ const RoomAllotment = () => {
                             <div className="flex items-center justify-between mb-8 px-1">
                                 <div>
                                     <h2 className="text-[17px] font-black text-foreground tracking-tight flex items-center gap-2">
-                                        <Building className="h-4 w-4 text-primary" /> Multi-Level Floor Strategy
+                                        <Building className="h-4 w-4 text-primary" /> Floor Plan
                                     </h2>
-                                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Visual grid of institutional housing capacity.</p>
+                                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Room map for each floor.</p>
                                 </div>
                                 <div className="flex gap-4">
                                     <div className="flex items-center gap-1.5">
@@ -585,7 +585,7 @@ const RoomAllotment = () => {
                                         <div key={`floor-${floor}`} className="space-y-4">
                                             <div className="flex items-center gap-3">
                                                 <Badge className="h-7 w-12 flex items-center justify-center bg-secondary/50 text-foreground font-black text-[11px] rounded-lg border-none">
-                                                    FL {floor}
+                                                    Floor {floor}
                                                 </Badge>
                                                 <div className="h-px bg-slate-100 flex-1" />
                                             </div>
@@ -606,7 +606,7 @@ const RoomAllotment = () => {
                                                 })}
                                                 {rooms.filter(r => r.floor === floor).length === 0 && (
                                                     <div className="col-span-full py-4 text-center opacity-20">
-                                                        <p className="text-[10px] font-black tracking-widest uppercase">Registry scan zero for this level</p>
+                                                        <p className="text-[10px] font-black tracking-widest uppercase">No rooms on this level</p>
                                                     </div>
                                                 )}
                                             </div>
@@ -620,8 +620,8 @@ const RoomAllotment = () => {
 
                         <div className="flex items-center justify-between px-1">
                             <div>
-                                <h2 className="text-[17px] font-black text-foreground tracking-tight">Available Inventory</h2>
-                                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Total {rooms.length} records found.</p>
+                                <h2 className="text-[17px] font-black text-foreground tracking-tight">Available Rooms</h2>
+                                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">{rooms.length} rooms found.</p>
                             </div>
                         </div>
 
@@ -632,9 +632,9 @@ const RoomAllotment = () => {
                         ))
                     ) : error ? (
                         <div className="col-span-full py-16 text-center premium-card bg-red-50/50 border-red-100">
-                            <p className="text-red-600 font-semibold mb-4 text-sm">System Connection Unavailable: {error}</p>
+                            <p className="text-red-600 font-semibold mb-4 text-sm">Can't connect: {error}</p>
                             <Button variant="outline" onClick={fetchRooms} className="rounded-xl border-red-200 text-red-600 hover:bg-red-100 text-[12px] h-9">
-                                Retry Connection
+                                Try Again
                             </Button>
                         </div>
                     ) : rooms.length > 0 ? (
@@ -649,7 +649,7 @@ const RoomAllotment = () => {
                                             <div>
                                                 <CardTitle className="text-lg font-bold">Room {room.roomNumber}</CardTitle>
                                                 <CardDescription className="text-[11px] font-semibold uppercase tracking-wider mt-0.5 text-muted-foreground">
-                                                    Floor {room.floor} • Sector {room.roomNumber.charAt(0)}
+                                                    Floor {room.floor} • Block {room.roomNumber.charAt(0)}
                                                 </CardDescription>
                                             </div>
                                             <Badge className={`rounded-lg px-2.5 py-1 text-[10px] font-bold ${room.type === 'AC' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'} border-none uppercase tracking-wider`}>
@@ -685,14 +685,14 @@ const RoomAllotment = () => {
                                                 className="w-full h-11 text-[13px] font-semibold bg-muted text-muted-foreground rounded-xl shadow-none cursor-not-allowed border border-border/50"
                                                 disabled
                                             >
-                                                Capacity Reached
+                                                Full
                                             </Button>
                                         ) : (
                                             <Button 
                                                 className="w-full h-11 text-[13px] font-semibold btn-primary rounded-xl" 
                                                 onClick={() => handleBookRoom(room)}
                                             >
-                                                {user?.roomNumber ? "Request Room Change" : "Reserve Room"}
+                                                {user?.roomNumber ? "Change Room" : "Book Now"}
                                             </Button>
                                         )}
                                     </CardContent>
@@ -703,7 +703,7 @@ const RoomAllotment = () => {
                         <div className="col-span-full py-20 text-center premium-card border-dashed border-2 m-4 bg-secondary/10">
                             <BedDouble className="w-10 h-10 text-muted-foreground mx-auto mb-4 opacity-50" />
                             <h3 className="text-[15px] font-semibold text-foreground">No Rooms Available</h3>
-                            <p className="text-[12px] text-muted-foreground">Please contact administration for offline waitlist availability.</p>
+                            <p className="text-[12px] text-muted-foreground">Ask the office for more info.</p>
                         </div>
                     )}
                         </div>
@@ -719,8 +719,8 @@ const RoomAllotment = () => {
                             <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto text-emerald-600">
                                 <CheckCircle className="w-7 h-7" />
                             </div>
-                            <h2 className="text-xl font-bold tracking-tight mt-4">Transaction Confirmed</h2>
-                            <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest leading-none">Official Residence Receipt</p>
+                            <h2 className="text-xl font-bold tracking-tight mt-4">Payment Successful</h2>
+                            <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest leading-none">Official Receipt</p>
                         </div>
 
                         <div className="space-y-4">
@@ -729,11 +729,11 @@ const RoomAllotment = () => {
                                 <span className="text-[13px] font-bold text-foreground">{user.name}</span>
                             </div>
                             <div className="flex justify-between items-center py-2.5 border-b border-border">
-                                <span className="text-[11px] text-muted-foreground font-semibold uppercase">Allocated Unit</span>
+                                <span className="text-[11px] text-muted-foreground font-semibold uppercase">Room</span>
                                 <span className="text-[13px] font-bold text-foreground">Room {user.roomNumber}</span>
                             </div>
                             <div className="flex justify-between items-center py-2.5 border-b border-border">
-                                <span className="text-[11px] text-muted-foreground font-semibold uppercase">ID Ref</span>
+                                <span className="text-[11px] text-muted-foreground font-semibold uppercase">Order ID</span>
                                 <span className="text-[11px] font-mono text-muted-foreground">{user._id}</span>
                             </div>
                             <div className="py-8 flex flex-col items-center bg-secondary/20 rounded-2xl mt-4">

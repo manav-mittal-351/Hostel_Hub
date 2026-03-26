@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { getNextSequenceValue } = require('../utils/idGenerator');
+const { createAndSendNotification } = require('./notificationController');
 
 const generateToken = (id) => {
     if (!process.env.JWT_SECRET) {
@@ -31,19 +32,14 @@ const registerUser = async (req, res) => {
         }
 
         let generatedId;
-        console.log("Processing registration for role:", role);
-        try {
-            const roleKey = (role || 'student').toLowerCase();
-            if (roleKey === 'student') {
-                generatedId = await getNextSequenceValue('studentId', '', 1000);
-            } else if (roleKey === 'warden') {
-                generatedId = await getNextSequenceValue('wardenId', 'W', 10100);
-            } else if (roleKey === 'admin') {
-                generatedId = await getNextSequenceValue('adminId', 'A', 1250);
-            }
-        } catch (err) {
-            console.error("Critical: Role ID generator failed:", err);
-            // In production, you might want to throw or return error
+        const roleKey = (role || 'student').toLowerCase();
+        
+        if (roleKey === 'student') {
+            generatedId = await getNextSequenceValue('studentId', 'ST', 1000);
+        } else if (roleKey === 'warden') {
+            generatedId = await getNextSequenceValue('wardenId', 'W', 10100);
+        } else if (roleKey === 'admin') {
+            generatedId = await getNextSequenceValue('adminId', 'A', 1250);
         }
 
         const user = await User.create({
@@ -55,6 +51,28 @@ const registerUser = async (req, res) => {
         });
 
         if (user) {
+            // Notify other admins/wardens about new enrollment
+            const staff = await User.find({ role: 'admin', _id: { $ne: req.user?._id } });
+            staff.forEach(s => {
+                createAndSendNotification({
+                    recipient: s._id,
+                    sender: req.user?._id,
+                    title: "New Enrollment",
+                    message: `${name} has been added as a ${user.role} to the system.`,
+                    type: "system",
+                    link: "/admin/students"
+                });
+            });
+
+            // Notify the user themselves
+            createAndSendNotification({
+                recipient: user._id,
+                title: `Welcome to HostelHub`,
+                message: `Hello ${name}, your account has been created successfully. Your ID is ${generatedId}.`,
+                type: "success",
+                link: "/profile"
+            });
+
             res.status(201).json({
                 _id: user._id,
                 name: user.name,
@@ -79,10 +97,15 @@ const registerUser = async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body; // email field here is used as a generic identifier
 
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({
+            $or: [
+                { email: email.toLowerCase() },
+                { studentId: email } // Allowing login by Student/Admin ID
+            ]
+        });
 
         if (user && (await user.matchPassword(password))) {
             res.json({

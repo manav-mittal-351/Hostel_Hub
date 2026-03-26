@@ -26,39 +26,19 @@ const Navbar = () => {
 
     const toggleMenu = () => setIsOpen(!isOpen);
 
-    const studentLinks = [
-        { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-        { path: "/room-allotment", icon: BedDouble, label: "My Room" },
-        { path: "/payments", icon: CreditCard, label: "Payments" },
-        { path: "/gate-pass", icon: FileText, label: "Gatepass" },
-        { path: "/maintenance", icon: Wrench, label: "Maintenance" },
-        { path: "/complaints", icon: AlertCircle, label: "Support" },
+    const allNavLinks = [
+        { label: 'Home', path: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'warden', 'student'] },
+        { label: 'Profile', path: '/profile', icon: UserIcon, roles: ['admin', 'warden', 'student'] },
+        { label: 'Rooms', path: '/room-allotment', icon: BedDouble, roles: ['admin', 'warden', 'student'] },
+        { label: 'Members', path: '/students', icon: Users, roles: ['admin', 'warden'] },
+        { label: 'Payments', path: '/payments', icon: CreditCard, roles: ['admin', 'warden', 'student'] },
+        { label: 'Support', path: '/complaints', icon: AlertCircle, roles: ['admin', 'warden', 'student'] },
+        { label: 'Gatepass', path: '/gate-pass', icon: FileText, roles: ['admin', 'warden', 'student'] },
+        { label: 'Repairs', path: '/maintenance', icon: Wrench, roles: ['student'] },
+        { label: 'Register', path: '/register', icon: UserPlus, roles: ['admin', 'warden'] },
     ];
 
-    const adminLinks = [
-        { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-        { path: "/students", icon: Users, label: "Students" },
-        { path: "/room-allotment", icon: BedDouble, label: "Rooms" },
-        { path: "/payments", icon: CreditCard, label: "Payments" },
-        { path: "/gate-pass", icon: FileText, label: "Gatepass" },
-        { path: "/maintenance", icon: Wrench, label: "Maintenance" },
-        { path: "/register", icon: UserPlus, label: "Add Student" },
-        { path: "/complaints", icon: AlertCircle, label: "Complaints" },
-    ];
-
-    const wardenLinks = [
-        { path: "/dashboard", icon: LayoutDashboard, label: "Warden Overview" },
-        { path: "/students", icon: Users, label: "Students List" },
-        { path: "/room-allotment", icon: BedDouble, label: "Rooms Status" },
-        { path: "/register", icon: UserPlus, label: "Add Student" },
-        { path: "/gate-pass", icon: FileText, label: "Gate Passes" },
-        { path: "/maintenance", icon: Wrench, label: "Maintenance" },
-        { path: "/complaints", icon: AlertCircle, label: "Complaints" },
-    ];
-
-    let navLinks = studentLinks;
-    if (user?.role === 'admin') navLinks = adminLinks;
-    if (user?.role === 'warden') navLinks = wardenLinks;
+    const navLinks = user ? allNavLinks.filter(link => link.roles.includes(user.role)) : [];
 
     return (
         <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${

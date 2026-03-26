@@ -1,14 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { Bell, Check, Trash2, Info, CheckCircle2, AlertTriangle, Clock } from "lucide-react";
+import { Bell, Check, Trash2, Info, CheckCircle2, AlertTriangle, Clock, RefreshCw, ArrowRight } from "lucide-react";
 import { useNotifications } from "@/context/NotificationContext";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export function NotificationCenter() {
-    const { notifications, unreadCount, markAsRead, markAllAsRead, clearAll } = useNotifications();
+    const { notifications, unreadCount, markAsRead, markAllAsRead, clearAll, loading, refresh } = useNotifications();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -26,6 +27,10 @@ export function NotificationCenter() {
             case 'error': return 'bg-red-50 text-red-600 border-red-100';
             case 'warning': return 'bg-amber-50 text-amber-600 border-amber-100';
             case 'info': return 'bg-indigo-50 text-indigo-600 border-indigo-100';
+            case 'payment': return 'bg-blue-50 text-blue-600 border-blue-100';
+            case 'complaint': return 'bg-purple-50 text-purple-600 border-purple-100';
+            case 'gatepass': return 'bg-orange-50 text-orange-600 border-orange-100';
+            case 'room': return 'bg-teal-50 text-teal-600 border-teal-100';
             default: return 'bg-secondary/50 text-muted-foreground border-border/50';
         }
     };
@@ -36,6 +41,7 @@ export function NotificationCenter() {
             case 'error': return <AlertTriangle className="h-3.5 w-3.5" />;
             case 'warning': return <AlertTriangle className="h-3.5 w-3.5" />;
             case 'info': return <Info className="h-3.5 w-3.5" />;
+            case 'payment': return <RefreshCw className="h-3.5 w-3.5" />; // Representative for transactions
             default: return <Clock className="h-3.5 w-3.5" />;
         }
     };
@@ -65,7 +71,10 @@ export function NotificationCenter() {
                     >
                         <div className="p-6 border-b border-border/40 flex items-center justify-between bg-secondary/5">
                             <div>
-                                <h3 className="text-[15px] font-black text-foreground tracking-tight">Notification Center</h3>
+                                <h3 className="text-[15px] font-black text-foreground tracking-tight flex items-center gap-2">
+                                    Notification Center
+                                    {loading && <RefreshCw className="h-3 w-3 animate-spin text-primary" />}
+                                </h3>
                                 <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-60">System Synchronized</p>
                             </div>
                             <div className="flex gap-2">
@@ -83,7 +92,7 @@ export function NotificationCenter() {
                                     size="icon" 
                                     onClick={clearAll} 
                                     className="h-8 w-8 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
-                                    title="Clear all"
+                                    title="Clear all history"
                                 >
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -95,22 +104,24 @@ export function NotificationCenter() {
                                 <div className="divide-y divide-border/20">
                                     {notifications.map((n) => (
                                         <div 
-                                            key={n.id} 
-                                            className={`p-5 group transition-all hover:bg-secondary/10 relative ${!n.read ? "bg-primary/[0.02]" : ""}`}
-                                            onClick={() => markAsRead(n.id)}
+                                            key={n._id} 
+                                            className={`p-5 group transition-all hover:bg-secondary/10 relative cursor-pointer ${!n.read ? "bg-primary/[0.02]" : ""}`}
+                                            onClick={() => markAsRead(n._id)}
                                         >
                                             {!n.read && (
-                                                <div className="absolute top-6 left-2 w-1 h-1 rounded-full bg-primary" />
+                                                <div className="absolute top-6 left-2 w-1.5 h-1.5 rounded-full bg-primary" />
                                             )}
                                             <div className="flex gap-4">
-                                                <div className={`mt-0.5 h-8 w-8 rounded-xl border flex items-center justify-center shrink-0 ${getTypeStyles(n.type)}`}>
+                                                <div className={`mt-0.5 h-9 w-9 rounded-2xl border flex items-center justify-center shrink-0 shadow-sm ${getTypeStyles(n.type)}`}>
                                                     {getTypeIcon(n.type)}
                                                 </div>
-                                                <div className="space-y-1">
-                                                    <h4 className={`text-[13px] font-bold ${!n.read ? "text-foreground" : "text-muted-foreground"}`}>{n.title}</h4>
-                                                    <p className="text-[12px] text-muted-foreground leading-snug font-medium italic opacity-80 line-clamp-2">"{n.message}"</p>
-                                                    <p className="text-[9px] text-muted-foreground/50 font-black uppercase tracking-widest pt-1 flex items-center gap-1">
-                                                        <Clock className="h-2.5 w-2.5" /> {n.time || 'Registry Log'}
+                                                <div className="space-y-1 pr-2">
+                                                    <h4 className={`text-[13px] font-bold ${!n.read ? "text-foreground" : "text-muted-foreground/80"}`}>{n.title}</h4>
+                                                    <p className={`text-[12px] leading-snug font-medium line-clamp-2 ${!n.read ? "text-muted-foreground" : "text-muted-foreground/60"}`}>
+                                                        {n.message}
+                                                    </p>
+                                                    <p className="text-[10px] text-muted-foreground/50 font-black uppercase tracking-widest pt-1 flex items-center gap-1">
+                                                        <Clock className="h-2.5 w-2.5" /> {n.time}
                                                     </p>
                                                 </div>
                                             </div>
@@ -131,9 +142,22 @@ export function NotificationCenter() {
                         </div>
 
                         {notifications.length > 0 && (
-                            <div className="p-4 bg-secondary/10 border-t border-border/40 text-center">
-                                <button className="text-[10px] font-black uppercase tracking-widest text-primary hover:opacity-70 transition-opacity">
-                                    Synchronize Full Activity History
+                            <div className="p-4 bg-secondary/10 border-t border-border/40 grid grid-cols-2 gap-3">
+                                <button 
+                                    onClick={refresh}
+                                    className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-all flex items-center justify-center gap-2 border border-border/40 py-2 rounded-xl bg-white hover:bg-secondary/5 shadow-sm"
+                                >
+                                    <RefreshCw className={`h-3 w-3 ${loading ? 'animate-spin' : ''}`} />
+                                    Sync
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        navigate("/notifications");
+                                        setIsOpen(false);
+                                    }}
+                                    className="text-[10px] font-black uppercase tracking-widest text-primary hover:opacity-70 transition-all flex items-center justify-center gap-2 border border-primary/20 bg-primary/5 py-2 rounded-xl shadow-sm"
+                                >
+                                    See All <ArrowRight className="h-3 w-3" />
                                 </button>
                             </div>
                         )}
@@ -143,3 +167,5 @@ export function NotificationCenter() {
         </div>
     );
 }
+
+export default NotificationCenter;

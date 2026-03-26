@@ -123,7 +123,7 @@ const ChatAssistant = () => {
                                     <h3 className="text-[17px] font-black tracking-tight leading-none mb-1">HostelHub AI</h3>
                                     <div className="flex items-center gap-1.5">
                                         <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shadow-sm shadow-emerald-400/50" />
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/70 italic">Online Assistant</p>
+                                        <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest mt-1">Chat Support</p>
                                     </div>
                                 </div>
                             </div>
@@ -192,7 +192,7 @@ const ChatAssistant = () => {
                                 <Input
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
-                                    placeholder="Inquire about rooms, fees..."
+                                    placeholder="Ask about rooms, payments..."
                                     className="h-14 rounded-2xl pl-5 pr-14 bg-slate-100/50 border-border/40 focus:bg-white focus:ring-primary/20 transition-all font-medium text-[13px]"
                                 />
                                 <button 

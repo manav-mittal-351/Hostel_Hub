@@ -1,4 +1,6 @@
 const GatePass = require('../models/GatePass');
+const { createAndSendNotification } = require('./notificationController');
+const User = require('../models/User');
 
 // @desc    Create a new gate pass request
 // @route   POST /api/gate-pass
@@ -13,6 +15,19 @@ const createGatePass = async (req, res) => {
             reason,
             outDate,
             inDate
+        });
+
+        // Notify Admins & Wardens
+        const staff = await User.find({ role: { $in: ['admin', 'warden'] } });
+        staff.forEach(user => {
+            createAndSendNotification({
+                recipient: user._id,
+                sender: req.user._id,
+                title: "New Gatepass Request",
+                message: `${req.user.name} requested a pass for ${new Date(outDate).toLocaleDateString()}.`,
+                type: "gatepass",
+                link: `/admin/gate-pass`
+            });
         });
 
         res.status(201).json(gatePass);
@@ -58,6 +73,17 @@ const updateGatePassStatus = async (req, res) => {
         if (gatePass) {
             gatePass.status = status;
             const updatedPass = await gatePass.save();
+            
+            // Notify student
+            createAndSendNotification({
+                recipient: gatePass.student.toString(),
+                sender: req.user._id,
+                title: `Pass ${status}`,
+                message: `Your gate pass request for ${new Date(gatePass.outDate).toLocaleDateString()} has been ${status.toLowerCase()} by ${req.user.name}.`,
+                type: status === "Approved" ? "success" : "warning",
+                link: "/gate-pass"
+            });
+
             res.json(updatedPass);
         } else {
             res.status(404).json({ message: 'Gate pass not found' });

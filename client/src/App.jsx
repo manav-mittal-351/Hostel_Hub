@@ -15,6 +15,7 @@ import NonDisciplinaryActions from "@/pages/NonDisciplinaryActions";
 import LandingPage from "@/pages/LandingPage";
 import StudentsList from "@/pages/StudentsList";
 import Maintenance from "@/pages/Maintenance";
+import Notifications from "@/pages/Notifications";
 
 import { Toaster } from "@/components/ui/sonner";
 
@@ -54,6 +55,7 @@ function App() {
                     <Route path="/gate-pass" element={<GatePass />} />
                     <Route path="/maintenance" element={<Maintenance />} />
                     <Route path="/non-disciplinary" element={<NonDisciplinaryActions />} />
+                    <Route path="/notifications" element={<Notifications />} />
                 </Route>
             </Routes>
             <Toaster />
