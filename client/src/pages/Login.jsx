@@ -58,8 +58,8 @@ const Login = () => {
                                 Hostel<span className="text-primary italic">HUB</span>
                             </span>
                         </Link>
-                        <h1 className="text-4xl font-bold text-foreground tracking-tighter mb-3">Registry Access</h1>
-                        <p className="text-muted-foreground text-sm font-semibold uppercase tracking-widest opacity-60">Authentication Protocol required.</p>
+                        <h1 className="text-4xl font-bold text-foreground tracking-tighter mb-3">Secure Access</h1>
+                        <p className="text-muted-foreground text-sm font-semibold uppercase tracking-widest opacity-60">Please sign in to continue.</p>
                     </div>
 
                     <Card className="premium-card p-10 border-border/60 shadow-2xl shadow-primary/5 bg-white rounded-[2.5rem]">
@@ -110,14 +110,14 @@ const Login = () => {
                                 </div>
                             </div>
                             <Button type="submit" className="w-full h-14 bg-primary text-white hover:bg-primary/90 rounded-2xl text-[12px] font-bold uppercase tracking-[0.2em] shadow-xl shadow-primary/10 mt-4 active:scale-95 transition-all" disabled={loading}>
-                                {loading ? "Verifying Registry..." : "Authorized Entry"}
+                                {loading ? "Verifying Identity..." : "Authorized Entry"}
                             </Button>
                         </form>
                     </Card>
 
                     <p className="text-center mt-10 text-[13px] text-muted-foreground font-medium opacity-60">
                         Institutional accounts are professionally provisioned. 
-                        <br/>Contact administrative services for registry synchronization.
+                        <br/>Contact administrative services for account synchronization.
                     </p>
                 </div>
             </div>

@@ -45,7 +45,7 @@ const ChatAssistant = () => {
             return "Digital gatepasses can be generated in the 'Gatepass' section. Ensure you have approval before your exit time.";
         }
         if (lowMsg.includes("maintenance") || lowMsg.includes("repair")) {
-            return "For technical issues like electricity or plumbing, please use the 'Maintenance Registry' page.";
+            return "For technical issues like electricity or plumbing, please use the 'Maintenance' page.";
         }
         
         return "I'm still learning, but I can guide you through Rooms, Payments, Complaints, and Gatepasses. What would you like to know?";

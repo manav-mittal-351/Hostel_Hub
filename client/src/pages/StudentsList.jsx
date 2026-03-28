@@ -89,7 +89,7 @@ const StudentsList = () => {
                  <StudentStatCard 
                     title="Total Students" 
                     value={students.length} 
-                    subtitle="Global Institutional Registry"
+                    subtitle="Global Institutional Database"
                     icon={Users}
                 />
                 <StudentStatCard 

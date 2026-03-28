@@ -203,8 +203,10 @@ const AdminComplaints = () => {
                                     <Hash className="h-5 w-5" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-0.5">Registry ID</p>
-                                    <p className="text-[13px] font-bold text-foreground">{selectedComplaint?.student?.studentId}</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-0.5">Enrollment ID</p>
+                                    <p className="text-[13px] font-bold text-foreground">
+                                        {selectedComplaint?.student?.studentId || (selectedComplaint?.student?._id ? "E-" + selectedComplaint.student._id.toString().slice(-6).toUpperCase() : "N/A")}
+                                    </p>
                                 </div>
                             </div>
                         </div>

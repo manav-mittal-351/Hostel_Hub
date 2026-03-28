@@ -58,7 +58,7 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white flex flex-col relative overflow-hidden">
+        <div className="min-h-screen bg-white flex flex-col relative overflow-x-hidden overflow-y-auto">
             
             {/* Background Decorations */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none opacity-20 z-0">
@@ -165,14 +165,14 @@ const Register = () => {
                     </Card>
 
                     <p className="text-center mt-10 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-[0.2em] animate-pulse">
-                        Administrator Access Only — Registry Update in Progress
+                        Administrator Access Only — System Update in Progress
                     </p>
                 </div>
             </div>
             
             {/* Footer-like text */}
-            <div className="absolute bottom-8 left-0 right-0 text-center pointer-events-none opacity-30 px-6">
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">HostelHub Security Registry System — Integrity Validated</p>
+            <div className="relative py-8 text-center pointer-events-none opacity-30 px-6 z-10">
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">HostelHub Security Enrollment System — Integrity Validated</p>
             </div>
         </div>
     );
