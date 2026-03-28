@@ -90,12 +90,12 @@ const Sidebar = () => {
 
             <div className="p-4 mt-auto">
                 <Link to="/profile" className="premium-card p-3 border border-transparent hover:border-primary/20 hover:bg-white hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 flex items-center gap-3 group">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white text-[13px] font-bold shadow-lg transition-transform group-hover:scale-105 ${user?.role === 'admin' ? 'bg-primary shadow-primary/20' : user?.role === 'warden' ? 'bg-amber-600 shadow-amber-600/20' : 'bg-primary shadow-primary/20'}`}>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-[13px] font-bold bg-primary shadow-lg shadow-primary/20 transition-transform group-hover:scale-105">
                         {user?.name?.charAt(0).toUpperCase()}
                     </div>
                     <div className="overflow-hidden flex-1">
                         <p className="text-[14px] font-bold text-foreground truncate leading-none mb-1 group-hover:text-primary transition-colors">{user?.name}</p>
-                        <p className={`text-[10px] truncate uppercase font-bold tracking-widest ${user?.role === 'warden' ? 'text-amber-600/80' : 'text-muted-foreground/60'}`}>{user?.role} Account</p>
+                        <p className="text-[10px] truncate uppercase font-bold tracking-widest text-muted-foreground/60">{user?.role} Account</p>
                     </div>
                     <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
                 </Link>
