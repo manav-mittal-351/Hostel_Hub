@@ -55,20 +55,20 @@ const StudentDashboard = () => {
 
     return (
         <div className="space-y-10 animate-in fade-in duration-1000">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
+            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-border/50 pb-4">
                 <div>
-                    <h1 className="section-title">
+                    <h1 className="section-title text-2xl sm:text-3xl">
                         Welcome back, <span className="text-primary">{user?.name}</span>
                     </h1>
-                    <p className="section-subtitle">A quick look at your room, payments, and recent updates.</p>
+                    <p className="section-subtitle mb-0">A quick look at your room, payments, and recent updates.</p>
                 </div>
-                <div className="flex items-center gap-3 bg-white border border-border/60 px-4 py-2 rounded-xl shadow-sm">
+                <div className="flex items-center gap-3 bg-white border border-border/60 px-4 py-2 rounded-xl shadow-sm self-start sm:self-auto">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)] animate-pulse" />
                     <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Connected</span>
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 <StatsCard 
                     title="Your Room" 
                     value={user?.roomNumber || "No Room"} 
@@ -107,32 +107,32 @@ const StudentDashboard = () => {
                 <div className="lg:col-span-2 space-y-6">
                     {/* Payment Reminder System */}
                     {user?.roomNumber && (
-                        <div className="bg-primary shadow-2xl shadow-primary/20 rounded-3xl p-8 relative overflow-hidden group animate-in slide-in-from-top-6 duration-1000">
+                        <div className="bg-primary shadow-2xl shadow-primary/20 rounded-[2rem] p-6 sm:p-8 relative overflow-hidden group animate-in slide-in-from-top-6 duration-1000">
                             {/* Decorative Elements */}
                             <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none group-hover:bg-white/15 transition-all duration-700" />
                             <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-indigo-500/20 rounded-full blur-2xl pointer-events-none" />
                             
-                            <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-                                <div className="flex items-center gap-6">
-                                    <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-inner">
-                                        <Clock className="h-8 w-8 text-white animate-pulse" />
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 relative z-10">
+                                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6">
+                                    <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-inner flex-shrink-0">
+                                        <Clock className="h-7 w-7 sm:h-8 sm:w-8 text-white animate-pulse" />
                                     </div>
-                                    <div className="text-left space-y-1">
-                                        <h3 className="text-xl font-black text-white tracking-tight">
+                                    <div className="space-y-1">
+                                        <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">
                                             {pendingDues > 0 ? "Outstanding Dues" : "Payment Reminder"}
                                         </h3>
-                                        <p className="text-white/70 text-[11px] font-black uppercase tracking-[0.2em] leading-none mb-2 italic">
+                                        <p className="text-white/70 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] leading-none mb-2 italic">
                                             {pendingDues > 0 ? `Total Pending: ₹${pendingDues.toLocaleString()}` : `Next Due: ${new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}`}
                                         </p>
-                                        <div className="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full w-fit border border-white/10">
+                                        <div className="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full w-fit border border-white/10 mx-auto sm:mx-0">
                                             <div className="w-2 h-2 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform" />
                                             <span className="text-[9px] font-bold text-white uppercase tracking-widest">Resident</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 w-full md:w-auto">
-                                    <Link to="/payments" className="w-full md:w-auto">
-                                        <Button className="w-full md:w-auto bg-white text-primary hover:bg-slate-50 transition-all font-black uppercase tracking-widest rounded-xl h-12 px-8 text-[11px] shadow-xl active:scale-[0.98]">
+                                    <Link to="/payments" className="w-full">
+                                        <Button className="w-full bg-white text-primary hover:bg-slate-50 transition-all font-black uppercase tracking-widest rounded-xl h-11 sm:h-12 px-6 sm:px-8 text-[10px] sm:text-[11px] shadow-xl active:scale-[0.98]">
                                             See History
                                         </Button>
                                     </Link>

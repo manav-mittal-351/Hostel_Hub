@@ -71,9 +71,9 @@ const Complaints = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <header>
-                <h1 className="section-title">Support</h1>
-                <p className="section-subtitle">Report a problem or check your requests.</p>
+            <header className="border-b border-border/50 pb-4">
+                <h1 className="section-title text-2xl sm:text-3xl">Support</h1>
+                <p className="section-subtitle mb-0">Report a problem or check your requests.</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -148,18 +148,18 @@ const Complaints = () => {
                             <h2 className="text-[17px] font-semibold text-foreground tracking-tight">My Requests</h2>
                             <p className="text-[12px] text-muted-foreground font-medium">You have {complaints.length} requests.</p>
                         </div>
-                        <div className="flex items-center gap-3 w-full sm:w-auto">
-                            <div className="relative flex-1 sm:flex-none group">
+                        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                            <div className="relative w-full sm:w-72 group">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30 group-focus-within:text-primary transition-colors" />
                                 <Input 
-                                    placeholder="Filter by subject or content..."
-                                    className="pl-12 h-11 w-full sm:w-72 text-[13px] bg-white border-border/60 focus:bg-white rounded-xl shadow-sm transition-all"
+                                    placeholder="Filter by subject..."
+                                    className="pl-12 h-11 w-full text-[13px] bg-white border-border/60 focus:bg-white rounded-xl shadow-sm transition-all"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </div>
                             <select 
-                                className="h-11 px-6 text-[11px] font-bold uppercase tracking-wider bg-white border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/5 appearance-none select-custom pr-12 transition-all cursor-pointer hover:bg-muted/50"
+                                className="h-11 px-6 text-[11px] font-bold uppercase tracking-wider bg-white border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/5 appearance-none select-custom pr-12 transition-all cursor-pointer hover:bg-muted/50 w-full sm:w-auto"
                                 value={filterStatus}
                                 onChange={(e) => setFilterStatus(e.target.value)}
                             >
@@ -177,13 +177,13 @@ const Complaints = () => {
                             ))
                         ) : filteredComplaints.length > 0 ? (
                             filteredComplaints.map((complaint) => (
-                                <Card key={complaint._id} className="premium-card bg-white hover:border-primary/30 group transition-all p-6">
-                                    <div className="flex items-start justify-between gap-6">
-                                        <div className="flex gap-5">
-                                            <div className="p-3 bg-secondary/50 group-hover:bg-primary/5 transition-colors rounded-2xl h-fit border border-border/50">
-                                                <MessageSquare className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                                <Card key={complaint._id} className="premium-card bg-white hover:border-primary/30 group transition-all p-5 sm:p-6">
+                                    <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                                        <div className="flex gap-4 sm:gap-5">
+                                            <div className="p-2.5 sm:p-3 bg-secondary/50 group-hover:bg-primary/5 transition-colors rounded-2xl h-fit border border-border/50 shrink-0">
+                                                <MessageSquare className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                                             </div>
-                                            <div className="space-y-2">
+                                            <div className="space-y-3">
                                                 <div className="flex items-center gap-3">
                                                     <span className={`text-[9px] font-bold uppercase tracking-[0.15em] px-2.5 py-1 rounded-lg border-none shadow-sm ${
                                                         complaint.status?.toLowerCase() === 'resolved' 
@@ -198,22 +198,22 @@ const Complaints = () => {
                                                         {new Date(complaint.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
                                                     </span>
                                                 </div>
-                                                <p className="text-[13px] text-muted-foreground leading-relaxed line-clamp-2 max-w-xl font-medium mb-4">{complaint.description}</p>
+                                                <p className="text-[13px] text-muted-foreground leading-relaxed line-clamp-2 max-w-xl font-medium">{complaint.description}</p>
                                                 
                                                 {/* Status Timeline */}
-                                                <div className="pt-4 flex items-center gap-1 w-full max-w-lg">
+                                                <div className="pt-2 flex items-center gap-1 w-full max-w-md overflow-x-auto no-scrollbar pb-1">
                                                     <StatusTimelineStep 
                                                         label="Submitted" 
                                                         active={true} 
                                                         completed={['pending', 'in progress', 'resolved'].includes(complaint.status?.toLowerCase())} 
                                                     />
-                                                    <div className={`h-0.5 flex-1 ${['in progress', 'resolved'].includes(complaint.status?.toLowerCase()) ? 'bg-primary' : 'bg-slate-100'}`} />
+                                                    <div className={`h-0.5 min-w-[20px] flex-1 ${['in progress', 'resolved'].includes(complaint.status?.toLowerCase()) ? 'bg-primary' : 'bg-slate-100'}`} />
                                                     <StatusTimelineStep 
                                                         label="In Progress" 
                                                         active={complaint.status?.toLowerCase() === 'in progress'} 
                                                         completed={['resolved'].includes(complaint.status?.toLowerCase())} 
                                                     />
-                                                    <div className={`h-0.5 flex-1 ${['resolved'].includes(complaint.status?.toLowerCase()) ? 'bg-primary' : 'bg-slate-100'}`} />
+                                                    <div className={`h-0.5 min-w-[20px] flex-1 ${['resolved'].includes(complaint.status?.toLowerCase()) ? 'bg-primary' : 'bg-slate-100'}`} />
                                                     <StatusTimelineStep 
                                                         label="Resolved" 
                                                         active={complaint.status?.toLowerCase() === 'resolved'} 
@@ -222,7 +222,7 @@ const Complaints = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <Badge className="rounded-lg bg-secondary/50 border-none text-[9px] uppercase font-bold text-muted-foreground px-2.5 py-1">
+                                        <Badge className="rounded-lg bg-secondary/50 border-none text-[9px] uppercase font-bold text-muted-foreground px-2.5 py-1 self-end sm:self-auto">
                                             {complaint.category}
                                         </Badge>
                                     </div>

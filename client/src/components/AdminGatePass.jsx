@@ -53,18 +53,18 @@ const AdminGatePass = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 py-2 border-b border-border/50">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 py-2 border-b border-border/50">
                 <div>
                     <h2 className="text-[17px] font-semibold text-foreground tracking-tight">Gatepass Applications</h2>
-                    <p className="text-[12px] text-muted-foreground font-medium">There are {requests.filter(r => r.status === 'Pending').length} pending gatepass requests.</p>
+                    <p className="text-[12px] text-muted-foreground font-medium">There are {requests.filter(r => r.status === 'Pending').length} pending requests.</p>
                 </div>
-                <div className="flex gap-3">
-                    <div className="relative group">
+                <div className="flex gap-3 w-full sm:w-auto">
+                    <div className="relative group w-full sm:w-auto">
                         <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
                         <select 
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value)}
-                            className="h-10 pl-11 pr-10 text-[11px] font-bold uppercase tracking-widest bg-white border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/5 appearance-none cursor-pointer hover:bg-muted/50 transition-all"
+                            className="h-10 pl-11 pr-10 text-[11px] font-bold uppercase tracking-widest bg-white border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/5 appearance-none cursor-pointer hover:bg-muted/50 transition-all w-full sm:w-44"
                         >
                             <option value="All">All Passes</option>
                             <option value="Pending">Pending</option>
@@ -139,35 +139,35 @@ const AdminGatePass = () => {
                                     </div>
                                 </div>
 
-                                <div className={`lg:w-56 p-7 flex flex-col justify-center gap-3 border-l border-border/50 ${
+                                <div className={`lg:w-56 p-6 sm:p-7 flex flex-row lg:flex-col justify-between lg:justify-center items-center gap-3 border-t lg:border-t-0 lg:border-l border-border/50 ${
                                     req.status === 'Pending' ? 'bg-secondary/10' : 'bg-muted/5'
                                 }`}>
                                     {req.status === 'Pending' ? (
-                                        <>
+                                        <div className="flex flex-row lg:flex-col gap-2 w-full">
                                             <Button 
                                                 onClick={() => updateStatus(req._id, 'Approved')}
-                                                className="w-full btn-primary h-10 text-[11px] font-bold uppercase tracking-widest active:scale-95 shadow-md shadow-primary/10"
+                                                className="flex-1 lg:w-full btn-primary h-10 text-[11px] font-bold uppercase tracking-widest active:scale-95 shadow-md shadow-primary/10"
                                             >
                                                 Approve
                                             </Button>
                                             <Button 
                                                 variant="outline"
                                                 onClick={() => updateStatus(req._id, 'Rejected')}
-                                                className="w-full h-10 text-[11px] font-bold uppercase tracking-widest border-red-100 text-red-600 hover:bg-red-50 rounded-xl"
+                                                className="flex-1 lg:w-full h-10 text-[11px] font-bold uppercase tracking-widest border-red-100 text-red-600 hover:bg-red-50 rounded-xl sm:px-4"
                                             >
                                                 Reject
                                             </Button>
-                                        </>
+                                        </div>
                                     ) : (
-                                        <div className="flex flex-col items-center gap-3 text-muted-foreground/40 animate-in zoom-in duration-500">
-                                            {req.status === 'Approved' ? <CheckCircle2 className="h-8 w-8 text-emerald-500/50" /> : <XCircle className="h-8 w-8 text-red-500/50" />}
+                                        <div className="flex items-center lg:flex-col gap-3 text-muted-foreground/40 animate-in zoom-in duration-500">
+                                            {req.status === 'Approved' ? <CheckCircle2 className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-500/50" /> : <XCircle className="h-6 w-6 sm:h-8 sm:w-8 text-red-500/50" />}
                                             <span className="text-[9px] font-bold uppercase tracking-[0.2em]">Processed</span>
                                         </div>
                                     )}
                                     <Button 
                                         variant="ghost" 
                                         onClick={() => setSelectedRequest(req)}
-                                        className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors h-auto p-0 mt-2"
+                                        className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors h-auto p-0 lg:mt-2"
                                     >
                                         View Details
                                     </Button>

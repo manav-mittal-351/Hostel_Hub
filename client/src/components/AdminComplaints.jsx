@@ -55,10 +55,10 @@ const AdminComplaints = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-6">
+            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-border/50 pb-6">
                 <div>
-                    <h1 className="section-title">Complaint Resolution</h1>
-                    <p className="text-sm text-muted-foreground mt-1">There are {complaints.filter(c => c.status === 'pending').length} active complaints that need your attention.</p>
+                    <h1 className="section-title text-2xl sm:text-3xl">Complaint Resolution</h1>
+                    <p className="text-[12px] sm:text-sm text-muted-foreground mt-1">There are {complaints.filter(c => c.status === 'pending').length} active complaints.</p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
                     <div className="relative w-full sm:w-64 group">
@@ -100,8 +100,8 @@ const AdminComplaints = () => {
                 ) : (
                     filteredComplaints.map((complaint) => (
                         <Card key={complaint._id} className="premium-card bg-white p-0 group hover:border-primary/30 transition-all overflow-hidden">
-                            <div className="flex flex-col md:flex-row min-h-[160px]">
-                                <div className="p-7 flex-1 space-y-4">
+                            <div className="flex flex-col lg:flex-row min-h-[160px]">
+                                <div className="p-6 sm:p-7 flex-1 space-y-4">
                                     <div className="flex items-center gap-3">
                                         <Badge className={`rounded-lg px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest border-none ${
                                             complaint.status === 'resolved' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
@@ -114,7 +114,7 @@ const AdminComplaints = () => {
                                         </span>
                                     </div>
                                     <div>
-                                        <h3 className="text-[17px] font-bold text-foreground leading-tight mb-2">{complaint.title || 'Untitled Request'}</h3>
+                                        <h3 className="text-[16px] sm:text-[17px] font-bold text-foreground leading-tight mb-2">{complaint.title || 'Untitled Request'}</h3>
                                         <p className="text-[13px] text-muted-foreground leading-relaxed italic line-clamp-2 max-w-2xl font-medium">"{complaint.description}"</p>
                                     </div>
                                     <div className="flex flex-wrap gap-3 pt-1">
@@ -126,20 +126,20 @@ const AdminComplaints = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="md:w-56 bg-secondary/20 border-l border-border/50 p-7 flex flex-col justify-center items-center gap-4">
+                                <div className="lg:w-56 bg-secondary/10 lg:bg-secondary/20 border-t lg:border-t-0 lg:border-l border-border/50 p-6 sm:p-7 flex flex-row lg:flex-col justify-between lg:justify-center items-center gap-4">
                                     {complaint.status === 'pending' ? (
                                         <Button 
                                             onClick={() => resolveComplaint(complaint._id)}
-                                            className="w-full btn-primary h-11 text-[11px] font-bold uppercase tracking-wider active:scale-95 shadow-md shadow-primary/10"
+                                            className="w-full sm:w-auto lg:w-full btn-primary h-11 text-[11px] font-bold uppercase tracking-wider active:scale-95 shadow-md shadow-primary/10"
                                         >
-                                            Mark Resolved
+                                            Resolve
                                         </Button>
                                     ) : (
-                                        <div className="flex flex-col items-center gap-2 text-emerald-600 animate-in zoom-in duration-500">
+                                        <div className="flex items-center lg:flex-col gap-2 text-emerald-600 animate-in zoom-in duration-500">
                                             <div className="p-2 bg-emerald-100 rounded-full">
-                                                <CheckCircle2 className="h-5 w-5" />
+                                                <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />
                                             </div>
-                                            <span className="text-[10px] font-black uppercase tracking-widest">Fixed & Resolved</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest">Fixed</span>
                                         </div>
                                     )}
                                     <Button 
@@ -147,7 +147,7 @@ const AdminComplaints = () => {
                                         onClick={() => setSelectedComplaint(complaint)}
                                         className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors h-auto p-0 hover:bg-transparent"
                                     >
-                                        View Full Record
+                                        View Full
                                     </Button>
                                 </div>
                             </div>

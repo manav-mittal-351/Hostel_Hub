@@ -73,11 +73,9 @@ const Maintenance = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
-                <div>
-                    <h1 className="section-title">Repairs</h1>
-                <p className="section-subtitle">Request a fix for your room or common areas.</p>
-                </div>
+            <header className="border-b border-border/50 pb-4">
+                <h1 className="section-title text-2xl sm:text-3xl">Repairs</h1>
+                <p className="section-subtitle mb-0">Request a fix for your room or common areas.</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -137,7 +135,7 @@ const Maintenance = () => {
                 </Card>
 
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="flex items-center justify-between px-1">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-1">
                         <h2 className="text-[17px] font-bold text-foreground flex items-center gap-2">
                             <History className="h-4 w-4 text-primary" /> Active Service Tickets
                         </h2>
@@ -153,15 +151,15 @@ const Maintenance = () => {
                             ))
                         ) : requests.length > 0 ? (
                             requests.map(req => (
-                                <Card key={req._id} className="premium-card bg-white p-6 hover:border-primary/30 group transition-all">
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex gap-5">
-                                            <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border/50 group-hover:bg-primary/5 group-hover:text-primary transition-all">
+                                <Card key={req._id} className="premium-card bg-white p-5 sm:p-6 hover:border-primary/30 group transition-all">
+                                    <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                                        <div className="flex gap-4 sm:gap-5">
+                                            <div className="p-2.5 sm:p-3.5 rounded-2xl bg-secondary/50 border border-border/50 group-hover:bg-primary/5 group-hover:text-primary transition-all shrink-0">
                                                 {categories.find(c => c.name === req.category)?.icon ? 
                                                     (() => {
                                                         const Icon = categories.find(c => c.name === req.category).icon;
-                                                        return <Icon className="h-5 w-5" />;
-                                                    })() : <Wrench className="h-5 w-5" />
+                                                        return <Icon className="h-4.5 w-4.5 sm:h-5 sm:w-5" />;
+                                                    })() : <Wrench className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
                                                 }
                                             </div>
                                             <div className="space-y-2">
@@ -175,13 +173,13 @@ const Maintenance = () => {
                                                         {new Date(req.createdAt).toLocaleDateString()}
                                                     </span>
                                                 </div>
-                                                <h3 className="text-[15px] font-black text-foreground">{req.title}</h3>
+                                                <h3 className="text-[14px] sm:text-[15px] font-black text-foreground">{req.title}</h3>
                                                 <p className="text-[12px] text-muted-foreground font-medium italic opacity-80 leading-relaxed max-w-lg">
                                                     "{req.description}"
                                                 </p>
                                             </div>
                                         </div>
-                                        <Badge className="bg-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-md border-none">
+                                        <Badge className="bg-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-md border-none self-end sm:self-auto">
                                             {req.category}
                                         </Badge>
                                     </div>

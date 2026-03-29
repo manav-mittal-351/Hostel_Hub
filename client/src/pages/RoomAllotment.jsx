@@ -271,17 +271,17 @@ const RoomAllotment = () => {
                 loading={checkoutLoading}
                 variant="destructive"
             />
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-border/50 pb-6">
                 <div>
-                    <h1 className="section-title">
+                    <h1 className="section-title text-2xl sm:text-3xl">
                         My <span className="text-primary">{user?.roomNumber ? "Room" : "Selection"}</span>
                     </h1>
-                    <p className="section-subtitle">View your room details or choose a new room.</p>
+                    <p className="section-subtitle mb-0">View your room details or choose a new room.</p>
                 </div>
                 {user?.roomNumber && (
                     <Button 
                         variant="ghost" 
-                        className="text-red-500 hover:text-red-600 hover:bg-red-50 px-6 h-12 rounded-2xl font-bold text-[11px] uppercase tracking-widest flex items-center gap-2 transition-all border border-red-100/50 active:scale-95"
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50 px-6 h-12 rounded-2xl font-bold text-[11px] uppercase tracking-widest flex items-center gap-2 transition-all border border-red-100/50 active:scale-95 self-start sm:self-auto"
                         onClick={handleCheckout}
                     >
                         <LogOut className="w-3.5 h-3.5" />
@@ -293,13 +293,13 @@ const RoomAllotment = () => {
             {user?.roomNumber && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                     <Card className="premium-card lg:col-span-3 border-border/80 bg-white text-foreground overflow-hidden shadow-xl shadow-primary/5 p-0">
-                        <CardContent className="p-0 flex flex-col md:flex-row items-stretch justify-between relative min-h-[160px]">
-                            <div className="p-10 flex-1 flex items-center gap-8 relative z-10 border-r border-dashed border-border/60">
-                                <div className="w-20 h-20 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-                                    <BedDouble className="w-10 h-10 text-white" />
+                        <CardContent className="p-0 flex flex-col lg:flex-row items-stretch justify-between relative min-h-[160px]">
+                            <div className="p-6 sm:p-10 flex-1 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 sm:gap-8 relative z-10 border-b lg:border-b-0 lg:border-r border-dashed border-border/60">
+                                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
+                                    <BedDouble className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                                 </div>
                                 <div className="space-y-2">
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
                                         <Badge className="bg-emerald-500 text-white border-none px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-sm shadow-emerald-500/10">
                                             Booked
                                         </Badge>
@@ -308,8 +308,8 @@ const RoomAllotment = () => {
                                             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Active</span>
                                         </div>
                                     </div>
-                                    <h2 className="text-4xl font-bold tracking-tight text-foreground">Room {user.roomNumber}</h2>
-                                    <div className="flex items-center gap-3 text-muted-foreground">
+                                    <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">Room {user.roomNumber}</h2>
+                                    <div className="flex items-center justify-center sm:justify-start gap-3 text-muted-foreground">
                                         <p className="text-[11px] font-bold uppercase tracking-[0.1em]">Order ID</p>
                                         <div className="px-2 py-0.5 bg-secondary/50 rounded font-mono text-[10px] border border-border/50 uppercase tracking-tighter">
                                             {user._id?.slice(-12)}
@@ -317,18 +317,18 @@ const RoomAllotment = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="p-10 flex items-center gap-12 bg-secondary/10 relative z-10 min-w-[320px]">
-                                <div className="text-right space-y-1">
+                            <div className="p-6 sm:p-10 flex flex-col sm:flex-row items-center justify-between lg:justify-end gap-6 sm:gap-12 bg-secondary/5 lg:bg-secondary/10 relative z-10 min-w-0 lg:min-w-[400px]">
+                                <div className="text-center sm:text-right space-y-1">
                                     <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Monthly Fee</p>
-                                    <p className="text-3xl font-bold tracking-tighter text-foreground italic flex items-baseline justify-end gap-1">
+                                    <p className="text-3xl font-bold tracking-tighter text-foreground italic flex items-baseline justify-center sm:justify-end gap-1">
                                         <span className="text-lg translate-y-[-2px]">₹</span>
                                         {user.hostelBlock?.includes('AC') && !user.hostelBlock?.includes('Non-AC') ? '8,000' : '5,000'}
                                         <span className="text-sm text-muted-foreground font-medium opacity-60">/mo</span>
                                     </p>
                                 </div>
-                                <div className="w-px h-12 bg-border/40" />
+                                <div className="hidden sm:block w-px h-12 bg-border/40" />
                                 <Button 
-                                    className="bg-primary text-white hover:bg-primary/90 transition-all rounded-xl h-12 px-8 font-bold uppercase tracking-widest text-[11px] shadow-lg shadow-primary/10 active:scale-95"
+                                    className="w-full sm:w-auto bg-primary text-white hover:bg-primary/90 transition-all rounded-xl h-11 sm:h-12 px-8 font-bold uppercase tracking-widest text-[10px] sm:text-[11px] shadow-lg shadow-primary/10 active:scale-95"
                                     onClick={() => setShowReceipt(true)}
                                 >
                                     <Printer className="h-3.5 w-3.5 mr-2" /> Download Receipt
@@ -599,8 +599,8 @@ const RoomAllotment = () => {
                                             </div>
 
                                             <Card className="premium-card bg-white/60 backdrop-blur-md border border-border/40 overflow-hidden shadow-2xl shadow-primary/5 transition-all group-hover:border-primary/20">
-                                                <div className="p-1 md:p-8 relative">
-                                                    <div className="flex flex-col gap-6">
+                                                <div className="p-4 sm:p-8 relative overflow-x-auto no-scrollbar">
+                                                    <div className="flex flex-col gap-6 min-w-[800px] lg:min-w-0">
                                                         {/* Wing 1 */}
                                                         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-10 gap-2.5">
                                                             {leftWing.map(room => (
@@ -642,7 +642,7 @@ const RoomAllotment = () => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in slide-in-from-bottom-4 duration-700 pb-20">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 animate-in slide-in-from-bottom-4 duration-700 pb-20">
                     {loadingRooms ? (
                         Array.from({ length: 3 }).map((_, i) => (
                             <div key={i} className="h-56 rounded-2xl bg-muted animate-pulse border border-border/50" />

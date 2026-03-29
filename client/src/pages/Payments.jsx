@@ -205,21 +205,21 @@ const Payments = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
+            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-border/50 pb-4">
                 <div>
-                    <h1 className="section-title">Payments & Fees</h1>
-                    <p className="section-subtitle">Track your hostel fees, payments, and dues easily.</p>
+                    <h1 className="section-title text-2xl sm:text-3xl">Payments & Fees</h1>
+                    <p className="section-subtitle mb-0">Track your hostel fees, payments, and dues easily.</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                     <Button 
                         variant="outline" 
                         onClick={() => setIsStatementOpen(true)}
-                        className="h-10 px-5 text-[11px] font-bold uppercase tracking-widest border-border/60 bg-white hover:bg-secondary/50 rounded-xl flex items-center gap-2"
+                        className="h-10 px-4 sm:px-5 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest border-border/60 bg-white hover:bg-secondary/50 rounded-xl flex items-center gap-2 flex-1 sm:flex-none justify-center"
                     >
                         <Printer className="h-3.5 w-3.5" /> Statement
                     </Button>
                     <Button 
-                        className="btn-primary h-10 px-8 text-[11px] font-bold uppercase tracking-widest active:scale-95 shadow-lg shadow-primary/10"
+                        className="btn-primary h-10 px-6 sm:px-8 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest active:scale-95 shadow-lg shadow-primary/10 flex-1 sm:flex-none justify-center"
                         onClick={() => setIsPayModalOpen(true)}
                         disabled={pendingDues === 0}
                     >
@@ -228,7 +228,7 @@ const Payments = () => {
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 <PaymentSummaryCard 
                     title="Total Paid" 
                     value={`₹${totalPaid.toLocaleString()}`} 
@@ -250,19 +250,19 @@ const Payments = () => {
             </div>
 
             <Card className="premium-card bg-white p-0 overflow-hidden border-border/60 shadow-sm">
-                <CardHeader className="p-7 border-b border-border bg-secondary/5 flex-row items-center justify-between space-y-0">
+                <CardHeader className="p-5 sm:p-7 border-b border-border bg-secondary/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 sm:space-y-0">
                     <div>
                         <CardTitle className="text-[17px] font-bold text-foreground">Transaction History</CardTitle>
                         <CardDescription className="text-[12px] font-medium">Track your recent payments.</CardDescription>
                     </div>
-                    <div className="flex flex-col items-end gap-2">
+                    <div className="flex flex-col items-start sm:items-end gap-2 w-full sm:w-auto">
                         <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-[0.2em] pr-1">Filter Status</p>
-                        <div className="flex bg-secondary/10 p-1 rounded-xl gap-1 border border-border/40">
+                        <div className="flex bg-secondary/10 p-1 rounded-xl gap-1 border border-border/40 w-full sm:w-auto overflow-x-auto no-scrollbar">
                             {["all", "paid", "pending"].map((filter) => (
                                 <button
                                     key={filter}
                                     onClick={() => setActiveFilter(filter)}
-                                    className={`px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all ${
+                                    className={`flex-1 sm:flex-none px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all min-w-max ${
                                         activeFilter === filter
                                             ? "bg-white text-primary shadow-sm border border-border/40"
                                             : "text-foreground/50 hover:text-foreground hover:bg-white/50"
@@ -274,7 +274,7 @@ const Payments = () => {
                         </div>
                     </div>
                 </CardHeader>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto w-full custom-scrollbar">
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-secondary/10 border-b border-border/50">

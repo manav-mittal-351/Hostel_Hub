@@ -13,7 +13,7 @@ import {
 import { useContext } from "react";
 import AuthContext from "@/context/AuthContext";
 
-const Sidebar = () => {
+const Sidebar = ({ className = "", onClose }) => {
     const { user } = useContext(AuthContext);
     const location = useLocation();
 
@@ -50,10 +50,14 @@ const Sidebar = () => {
     if (user?.role === 'admin') links = adminLinks;
     if (user?.role === 'warden') links = wardenLinks;
 
+    const handleLinkClick = () => {
+        if (onClose) onClose();
+    };
+
     return (
-        <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-border z-40 hidden lg:flex flex-col">
+        <aside className={`h-full w-64 bg-white border-r border-border flex flex-col ${className}`}>
             <div className="px-7 py-8">
-                <Link to="/" className="flex items-center gap-3 group">
+                <Link to="/" className="flex items-center gap-3 group" onClick={handleLinkClick}>
                     <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/20 group-hover:bg-primary/90 transition-all duration-300 rotate-[-4deg] group-hover:rotate-0">
                         <Users className="h-5 w-5 text-white" />
                     </div>
@@ -75,6 +79,7 @@ const Sidebar = () => {
                         <Link
                             key={link.path}
                             to={link.path}
+                            onClick={handleLinkClick}
                             className={`sidebar-link ${
                                 isActive 
                                 ? "sidebar-link-active" 
@@ -89,7 +94,11 @@ const Sidebar = () => {
             </nav>
 
             <div className="p-4 mt-auto">
-                <Link to="/profile" className="premium-card p-3 border border-transparent hover:border-primary/20 hover:bg-white hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 flex items-center gap-3 group">
+                <Link 
+                    to="/profile" 
+                    onClick={handleLinkClick}
+                    className="premium-card p-3 border border-transparent hover:border-primary/20 hover:bg-white hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 flex items-center gap-3 group"
+                >
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-[13px] font-bold bg-primary shadow-lg shadow-primary/20 transition-transform group-hover:scale-105">
                         {user?.name?.charAt(0).toUpperCase()}
                     </div>

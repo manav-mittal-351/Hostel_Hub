@@ -48,9 +48,9 @@ const Profile = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <header>
-                <h1 className="section-title">My Profile</h1>
-                <p className="section-subtitle">Manage your personal information and settings.</p>
+            <header className="border-b border-border/50 pb-4">
+                <h1 className="section-title text-2xl sm:text-3xl">My Profile</h1>
+                <p className="section-subtitle mb-0">Manage your personal information and settings.</p>
             </header>
 
             {/* Profile Hero Section */}
@@ -59,26 +59,26 @@ const Profile = () => {
                     <div className="h-40 w-full bg-secondary/30 relative">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent"></div>
                     </div>
-                    <div className="px-8 pb-10">
-                        <div className="flex flex-col md:flex-row items-center md:items-end gap-8 -mt-16 relative z-10">
+                    <div className="px-6 sm:px-8 pb-10">
+                        <div className="flex flex-col lg:flex-row items-center lg:items-end gap-6 sm:gap-8 -mt-20 sm:-mt-16 relative z-10">
                             <div className="relative">
-                                <div className="h-44 w-44 rounded-[2rem] bg-white p-2 shadow-xl ring-4 ring-secondary/20">
+                                <div className="h-40 w-40 sm:h-44 sm:w-44 rounded-[2rem] bg-white p-2 shadow-xl ring-4 ring-secondary/20">
                                     <div className="h-full w-full rounded-[1.8rem] bg-secondary/50 flex items-center justify-center overflow-hidden relative group border border-border/50">
-                                        <User className="h-20 w-20 text-primary/20" />
+                                        <User className="h-16 w-16 sm:h-20 sm:w-20 text-primary/20" />
                                         <div className="absolute inset-0 bg-primary/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                                             <Camera className="h-6 w-6 text-primary" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex-1 text-center md:text-left space-y-3 pt-4">
-                                <div className="flex flex-col md:flex-row items-center gap-4">
-                                    <h1 className="text-3xl font-bold text-foreground tracking-tight">{user.name}</h1>
-                                    <Badge className="bg-primary text-primary-foreground border-none font-bold uppercase tracking-[0.2em] text-[10px] px-4 py-1.5 rounded-lg shadow-sm">
+                            <div className="flex-1 text-center lg:text-left space-y-3 pt-2">
+                                <div className="flex flex-col lg:flex-row items-center gap-3 lg:gap-4">
+                                    <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{user.name}</h1>
+                                    <Badge className="bg-primary text-primary-foreground border-none font-bold uppercase tracking-[0.2em] text-[9px] sm:text-[10px] px-4 py-1 sm:py-1.5 rounded-lg shadow-sm">
                                         {user.role}
                                     </Badge>
                                 </div>
-                                <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-muted-foreground font-semibold text-[13px]">
+                                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 text-muted-foreground font-semibold text-[12px] sm:text-[13px]">
                                     <span className="flex items-center gap-2 bg-secondary/40 px-3 py-1.5 rounded-xl border border-border/30">
                                         <Mail className="h-3.5 w-3.5 text-primary opacity-70" /> {user.email}
                                     </span>
@@ -89,12 +89,14 @@ const Profile = () => {
                                     )}
                                 </div>
                             </div>
-                            <div className="flex gap-3 pb-2 pt-6 md:pt-0">
-                                <EditProfileDialog />
+                            <div className="flex flex-col sm:flex-row gap-3 pb-2 pt-6 lg:pt-0 w-full lg:w-auto">
+                                <div className="flex-1 sm:flex-none">
+                                    <EditProfileDialog />
+                                </div>
                                 <Button 
                                     onClick={logout} 
                                     variant="outline" 
-                                    className="h-11 px-6 text-[11px] font-bold uppercase tracking-widest border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all rounded-xl active:scale-95"
+                                    className="h-11 px-6 text-[11px] font-bold uppercase tracking-widest border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all rounded-xl active:scale-95 w-full sm:w-auto"
                                 >
                                     <LogOut className="h-3.5 w-3.5 mr-2" /> Logout
                                 </Button>
@@ -111,8 +113,8 @@ const Profile = () => {
                         <CardTitle className="text-[17px] font-bold tracking-tight">Details</CardTitle>
                         <CardDescription className="text-[12px] font-medium">Manage your details here</CardDescription>
                     </CardHeader>
-                    <CardContent className="p-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <CardContent className="p-6 sm:p-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                             <InfoItem icon={User} label="Full Name" value={user.name} />
                             <InfoItem icon={Mail} label="Email" value={user.email} />
                             <InfoItem icon={Shield} label={labels.id} value={user.studentId || "AUTO-GEN"} />

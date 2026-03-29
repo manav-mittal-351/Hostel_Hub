@@ -57,9 +57,9 @@ const Header = ({ onMenuClick }) => {
     };
 
     return (
-        <header className="h-20 border-b border-border bg-white/80 backdrop-blur-xl sticky top-0 z-30 px-8 flex items-center justify-between shadow-sm">
-            <div className="flex items-center gap-6 flex-1">
-                <Button variant="ghost" size="icon" className="lg:hidden rounded-lg hover:bg-secondary/50" onClick={onMenuClick}>
+        <header className="h-20 border-b border-border bg-white/80 backdrop-blur-xl sticky top-0 z-30 px-4 sm:px-8 flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-2 sm:gap-6 flex-1">
+                <Button variant="ghost" size="icon" className="lg:hidden rounded-lg hover:bg-secondary/50 shrink-0" onClick={onMenuClick}>
                     <Menu className="h-5 w-5 text-muted-foreground" />
                 </Button>
                 

@@ -68,12 +68,12 @@ const StudentsList = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
+            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-border/50 pb-4">
                 <div>
-                    <h1 className="section-title">All Students</h1>
-                    <p className="section-subtitle">View and manage all student accounts.</p>
+                    <h1 className="section-title text-2xl sm:text-3xl">All Students</h1>
+                    <p className="section-subtitle mb-0">View and manage all student accounts.</p>
                 </div>
-                <div className="flex bg-secondary/10 p-1 rounded-xl border border-border/40 min-w-[320px] items-center relative group">
+                <div className="flex bg-secondary/10 p-1 rounded-xl border border-border/40 w-full sm:min-w-[320px] sm:w-auto items-center relative group">
                     <Search className="absolute left-4 h-4 w-4 text-muted-foreground opacity-50 group-focus-within:opacity-100 transition-opacity" />
                     <Input 
                         type="text" 
@@ -85,7 +85,7 @@ const StudentsList = () => {
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                  <StudentStatCard 
                     title="Total Students" 
                     value={students.length} 
@@ -116,7 +116,7 @@ const StudentsList = () => {
                         {filteredStudents.length} Students Found
                     </Badge>
                 </CardHeader>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto w-full custom-scrollbar">
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-secondary/10 border-b border-border/50">

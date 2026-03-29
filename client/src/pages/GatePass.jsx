@@ -80,9 +80,9 @@ const GatePass = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <header>
-                <h1 className="section-title">Gatepass</h1>
-                <p className="section-subtitle">Get a digital pass to leave the hostel.</p>
+            <header className="border-b border-border/50 pb-4">
+                <h1 className="section-title text-2xl sm:text-3xl">Gatepass</h1>
+                <p className="section-subtitle mb-0">Get a digital pass to leave the hostel.</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -127,13 +127,13 @@ const GatePass = () => {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                     <div className="space-y-2">
                                         <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Departure Schedule</Label>
                                         <Input 
                                             id="outDate"
                                             type="datetime-local" 
-                                            className="h-11 font-medium"
+                                            className="h-11 font-medium text-[13px]"
                                             value={formData.outDate}
                                             onChange={handleChange}
                                             required
@@ -144,7 +144,7 @@ const GatePass = () => {
                                         <Input 
                                             id="inDate"
                                             type="datetime-local" 
-                                            className="h-11 font-medium"
+                                            className="h-11 font-medium text-[13px]"
                                             value={formData.inDate}
                                             onChange={handleChange}
                                             required
@@ -180,11 +180,11 @@ const GatePass = () => {
                         <div className="grid gap-4">
                             {requests.length > 0 ? (
                                 requests.map(req => (
-                                    <Card key={req._id} className="premium-card bg-white p-6 group hover:border-primary/30">
-                                        <div className="flex items-start justify-between">
-                                            <div className="flex gap-5">
-                                                <div className="p-3 bg-secondary/50 group-hover:bg-primary/5 transition-colors rounded-2xl h-fit border border-border/50 text-muted-foreground group-hover:text-primary">
-                                                    <Clock className="h-5 w-5" />
+                                    <Card key={req._id} className="premium-card bg-white p-5 sm:p-6 group hover:border-primary/30">
+                                        <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                                            <div className="flex gap-4 sm:gap-5">
+                                                <div className="p-2.5 sm:p-3 bg-secondary/50 group-hover:bg-primary/5 transition-colors rounded-2xl h-fit border border-border/50 text-muted-foreground group-hover:text-primary shrink-0">
+                                                    <Clock className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <div className="flex items-center gap-3">
@@ -195,13 +195,13 @@ const GatePass = () => {
                                                             {new Date(req.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
                                                         </span>
                                                     </div>
-                                                    <h3 className="text-[15px] font-bold text-foreground leading-tight">{req.reason}</h3>
-                                                    <p className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5 italic">
-                                                        <Calendar className="h-3 w-3" /> Scheduled Absence: {new Date(req.outDate).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })} — {new Date(req.inDate).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                                                    <h3 className="text-[14px] sm:text-[15px] font-bold text-foreground leading-tight">{req.reason}</h3>
+                                                    <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium flex items-center gap-1.5 italic">
+                                                        <Calendar className="h-3 w-3" /> {new Date(req.outDate).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })} — {new Date(req.inDate).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                                                     </p>
                                                 </div>
                                             </div>
-                                            <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-lg ${
+                                            <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-lg self-end sm:self-auto ${
                                                 req.status === 'Approved' ? 'bg-emerald-50 text-emerald-600' :
                                                 req.status === 'Rejected' ? 'bg-red-50 text-red-600' :
                                                 'bg-amber-50 text-amber-600'

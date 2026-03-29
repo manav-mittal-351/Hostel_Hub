@@ -42,28 +42,28 @@ const AdminDashboard = () => {
 
     return (
         <div className="space-y-10 animate-in fade-in duration-1000">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-2">
+            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-border/50 pb-4">
                 <div>
-                    <h1 className="section-title">Admin Dashboard</h1>
-                    <p className="section-subtitle">Overview of hostel activity and key stats.</p>
+                    <h1 className="section-title text-2xl sm:text-3xl">Admin Dashboard</h1>
+                    <p className="section-subtitle mb-0">Overview of hostel activity and key stats.</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                     <Button 
                         variant="outline" 
                         onClick={() => navigate('/profile')}
-                        className="h-10 px-5 text-[11px] font-bold uppercase tracking-widest border-border/60 bg-white hover:bg-secondary/50 rounded-xl flex items-center gap-2 transition-all"
+                        className="h-10 px-4 sm:px-5 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest border-border/60 bg-white hover:bg-secondary/50 rounded-xl flex items-center gap-2 transition-all flex-1 sm:flex-none justify-center"
                     >
                         <Settings className="h-3.5 w-3.5" /> Settings
                     </Button>
-                    <Link to="/register">
-                        <Button className="btn-primary h-10 px-8 text-[11px] font-bold uppercase tracking-widest active:scale-95 shadow-lg shadow-primary/10 flex items-center gap-2">
+                    <Link to="/register" className="flex-1 sm:flex-none">
+                        <Button className="btn-primary h-10 w-full px-6 sm:px-8 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest active:scale-95 shadow-lg shadow-primary/10 flex items-center gap-2 justify-center">
                             <Plus className="h-4 w-4" /> Add Student
                         </Button>
                     </Link>
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 <AdminStatsCard 
                     title="All Students" 
                     value={stats.totalStudents} 
@@ -169,13 +169,13 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
                 <div className="lg:col-span-3">
                     <Card className="premium-card bg-white p-0 overflow-hidden border-border/60 shadow-sm">
-                        <CardHeader className="p-7 border-b border-border bg-secondary/10">
+                        <CardHeader className="p-5 sm:p-7 border-b border-border bg-secondary/10">
                             <div>
-                                <CardTitle className="text-[17px] font-bold text-foreground">Admin Tasks</CardTitle>
-                                <CardDescription className="text-[12px] font-medium">Manage students, rooms, and payments.</CardDescription>
+                                <CardTitle className="text-[16px] sm:text-[17px] font-bold text-foreground">Admin Tasks</CardTitle>
+                                <CardDescription className="text-[11px] sm:text-[12px] font-medium">Manage students, rooms, and payments.</CardDescription>
                             </div>
                         </CardHeader>
-                        <div className="p-7 grid grid-cols-1 md:grid-cols-2 gap-6 bg-white">
+                        <div className="p-5 sm:p-7 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 bg-white">
                             <ManagementGridLink 
                                 to="/room-allotment" 
                                 icon={BedDouble} 
