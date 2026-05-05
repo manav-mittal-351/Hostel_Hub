@@ -180,6 +180,6 @@ MONGO_URI= JWT_SECRET= PORT=5000
 ## Author
 
 Manav Mittal\
-CSE Student \| MERN Developer.
+CSE Student \| MERN Developer
 
 
