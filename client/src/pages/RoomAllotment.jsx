@@ -11,14 +11,12 @@ import {
     Dialog,
     DialogContent,
 } from "@/components/ui/dialog";
-import { useNotifications } from "@/context/NotificationContext";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 
 const RoomAllotment = () => {
     const { user, updateUser } = useContext(AuthContext);
-    const { addNotification } = useNotifications();
     const [rooms, setRooms] = useState([]);
     const [loadingRooms, setLoadingRooms] = useState(false);
     const [error, setError] = useState(null);
@@ -94,6 +92,9 @@ const RoomAllotment = () => {
         }
     }, [user, token]);
     
+    const myRoomData = rooms.find(r => r.roomNumber === user?.roomNumber);
+    const isACRoom = myRoomData ? myRoomData.type === 'AC' : (user?.hostelBlock?.includes('AC') && !user?.hostelBlock?.includes('Non-AC'));
+
     const handleDownloadReceipt = () => {
         console.log("Generating receipt for:", user.name);
         const doc = new jsPDF();
@@ -148,7 +149,7 @@ const RoomAllotment = () => {
         doc.text("Standard Room Rent", 25, 190);
         doc.text("₹5,000.00", 150, 190);
         
-        if (user.hostelBlock?.includes('AC')) {
+        if (isACRoom) {
             doc.text("Premium AC Facility", 25, 200);
             doc.text("₹3,000.00", 150, 200);
         }
@@ -159,7 +160,7 @@ const RoomAllotment = () => {
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
         doc.text("TOTAL PAID", 25, 222);
-        doc.text(`₹${user.hostelBlock?.includes('AC') ? '8,000.00' : '5,000.00'}`, 150, 222);
+        doc.text(`₹${isACRoom ? '8,000.00' : '5,000.00'}`, 150, 222);
         
         // Footer
         doc.setFontSize(9);
@@ -196,12 +197,6 @@ const RoomAllotment = () => {
                 paymentType: 'hostel_fee'
             }, config);
 
-            addNotification({
-                title: "Room Booked",
-                message: `Room ${roomToBook.roomNumber} (${roomToBook.type}) is yours. Welcome!`,
-                type: "success"
-            });
-
             toast.success("Room Booked Successfully! Welcome to your new home.");
             if (data.user) {
                 updateUser(data.user);
@@ -223,12 +218,6 @@ const RoomAllotment = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${token}` } };
             const { data } = await axios.post("/api/rooms/checkout", {}, config);
-
-            addNotification({
-                title: "Checked Out",
-                message: "Your room has been cancelled successfully.",
-                type: "warning"
-            });
 
             toast.success("Checked out successfully!");
             if (data.user) {
@@ -322,7 +311,7 @@ const RoomAllotment = () => {
                                     <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em]">Monthly Fee</p>
                                     <p className="text-3xl font-bold tracking-tighter text-foreground italic flex items-baseline justify-center sm:justify-end gap-1">
                                         <span className="text-lg translate-y-[-2px]">₹</span>
-                                        {user.hostelBlock?.includes('AC') && !user.hostelBlock?.includes('Non-AC') ? '8,000' : '5,000'}
+                                        {isACRoom ? '8,000' : '5,000'}
                                         <span className="text-sm text-muted-foreground font-medium opacity-60">/mo</span>
                                     </p>
                                 </div>
@@ -444,7 +433,7 @@ const RoomAllotment = () => {
                                         <span className="text-muted-foreground">Rent</span>
                                         <span className="font-semibold text-foreground">₹5,000.00</span>
                                     </div>
-                                    {user.hostelBlock?.includes('AC') && (
+                                    {isACRoom && (
                                         <div className="flex justify-between text-[12px]">
                                             <span className="text-muted-foreground">Premium Fee</span>
                                             <span className="font-semibold text-foreground">₹3,000.00</span>
@@ -452,7 +441,7 @@ const RoomAllotment = () => {
                                     )}
                                     <div className="pt-3 mt-1 border-t border-dashed border-border flex justify-between text-[14px] font-bold">
                                         <span>Total</span>
-                                        <span className="text-primary">₹{user.hostelBlock?.includes('AC') ? '8,000.00' : '5,000.00'}</span>
+                                        <span className="text-primary">₹{isACRoom ? '8,000.00' : '5,000.00'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -756,7 +745,7 @@ const RoomAllotment = () => {
                             <div className="py-8 flex flex-col items-center bg-secondary/20 rounded-2xl mt-4">
                                 <p className="text-[10px] text-primary font-bold uppercase tracking-wider mb-2">Total Amount Paid</p>
                                 <p className="text-4xl font-bold text-primary italic tracking-tight">
-                                    ₹{user.hostelBlock?.includes('AC') ? '8,000.00' : '5,000.00'}
+                                    ₹{isACRoom ? '8,000.00' : '5,000.00'}
                                 </p>
                             </div>
                         </div>
