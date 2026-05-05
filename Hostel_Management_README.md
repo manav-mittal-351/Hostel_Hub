@@ -1,4 +1,4 @@
-# 🏨 Hostel Management System (MERN Stack)
+# Hostel Management System (MERN Stack)
 
 A full-stack Hostel Management System built strictly using the MERN
 Stack (MongoDB, Express.js, React.js, Node.js) with ShadCN UI + Framer
@@ -8,7 +8,7 @@ Tech Constraints Followed: - Only MERN Stack used - No extra
 frameworks - Frontend uses ShadCN UI + Framer Motion - Custom manually
 selected color palette (No AI-generated palettes)
 
-## 📌 Tech Stack
+## Tech Stack
 
 ### Frontend
 
@@ -31,7 +31,7 @@ selected color palette (No AI-generated palettes)
 
 -   MongoDB Atlas / Local MongoDB
 
-## 🎨 Frontend Design Rules
+## Frontend Design Rules
 
 -   Clean hostel admin dashboard UI
 -   ShadCN components used for Forms, Cards, Dialogs, Tables, Buttons
@@ -43,15 +43,15 @@ selected color palette (No AI-generated palettes)
     -   Red → Alerts & notices
     -   Gray → Neutral UI balance
 
-## 👥 User Roles
+## User Roles
 
 1.  Admin
 2.  Student
 3.  Warden
 
-## ✨ Core Features
+## Core Features
 
-### 🔐 Authentication System
+### Authentication System
 
 -   Student Registration
 -   Admin Login
@@ -59,7 +59,7 @@ selected color palette (No AI-generated palettes)
 -   Password Encryption
 -   Role-based access control
 
-## 🖥️ Frontend Features
+## Frontend Features
 
 ### Dashboard
 
@@ -97,7 +97,7 @@ selected color palette (No AI-generated palettes)
 -   View complaint status
 -   Admin resolution panel
 
-## ⚙️ Backend Features
+## Backend Features
 
 ### Student Management APIs
 
@@ -142,33 +142,33 @@ selected color palette (No AI-generated palettes)
 -   Password hashing
 -   Secure API routes
 
-## 🗂️ Folder Structure
+## Folder Structure
 
 hostel-management/ │ ├── client/ │ ├── components/ │ ├── pages/ │ ├──
 animations/ │ ├── ui/ │ └── App.js │ ├── server/ │ ├── controllers/ │
 ├── models/ │ ├── routes/ │ ├── middleware/ │ └── server.js │ └──
 README.md
 
-## 🚀 Installation Guide
+## Installation Guide
 
-### 1️⃣ Clone Repo
+### 1. Clone Repo
 
 git clone https://github.com/yourusername/hostel-management.git cd
 hostel-management
 
-### 2️⃣ Backend Setup
+### 2. Backend Setup
 
 cd server npm install npm start
 
-### 3️⃣ Frontend Setup
+### 3. Frontend Setup
 
 cd client npm install npm run dev
 
-## 🔑 Environment Variables (.env)
+## Environment Variables (.env)
 
 MONGO_URI= JWT_SECRET= PORT=5000
 
-## 📊 Future Improvements
+## Future Improvements
 
 -   Online fee payment integration
 -   QR-based attendance
@@ -177,14 +177,13 @@ MONGO_URI= JWT_SECRET= PORT=5000
 -   Multi-hostel support
 -   Visitor entry system
 
-## 👨‍💻 Author
+## Author
 
 Manav Mittal\
 CSE Student \| MERN Developer
 
-## ⭐ Resume-Ready Description
+## Resume-Ready Description
 
 Developed a full-stack Hostel Management System using the MERN stack
 with secure authentication, room allocation, complaint tracking, and fee
-management. Designed an interactive UI using ShadCN and Framer Motion
-with a custom professional color palette.
+management.
