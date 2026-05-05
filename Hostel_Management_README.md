@@ -182,8 +182,4 @@ MONGO_URI= JWT_SECRET= PORT=5000
 Manav Mittal\
 CSE Student \| MERN Developer
 
-## Resume-Ready Description
 
-Developed a full-stack Hostel Management System using the MERN stack
-with secure authentication, room allocation, complaint tracking, and fee
-management.
